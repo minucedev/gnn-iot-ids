@@ -12,7 +12,7 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
 | [0.1](#01-chốt-phát-biểu-bài-toán-và-chỉ-tiêu-nghiệm-thu) | Chốt phát biểu bài toán và chỉ tiêu | GĐ0 | Phúc | Tự kiểm | 2 | B | Chưa làm |
 | [0.2](#02-chốt-7-quyết-định-mở-d1d7) | Chốt quyết định D1–D7 | GĐ0 | Phúc | Tự kiểm | 2 | B | Chưa làm |
 | [0.3](#03-repo-github-cấu-trúc-thư-mục-requirements) | Repo GitHub, cấu trúc, requirements | GĐ0 | Phúc | Tự kiểm | 2 | B | **Xong** |
-| [0.4](#04-tách-code-notebook-thành-srcbuild_graphpy) | Tách `src/build_graph.py` | GĐ0 | Phúc | Tự kiểm | 2 | B | Chưa làm |
+| [0.4](#04-tách-code-notebook-thành-srcbuild_graphpy) | Tách `src/build_graph.py` | GĐ0 | Phúc | Tự kiểm | 2 | B | **Xong** |
 | [0.5](#05-module-đánh-giá-chung-srcevaluatepy) | Module `src/evaluate.py` | GĐ0 | Phúc | Tự kiểm | 2 | B | **Xong** |
 | [0.6](#06-chuyển-pipeline-lên-kaggle) | Chuyển pipeline lên Kaggle | GĐ0 | Phúc | Tự kiểm | 2 | B | Chưa làm |
 | [1.0](#10-tuần-1-pipeline-v1) | [Tuần 1] Pipeline v1 | GĐ1 | Phúc | Tự kiểm | 1 | B | **Cần sửa** |
@@ -104,7 +104,7 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
 
 ### 0.4 Tách code notebook thành src/build_graph.py
 
-- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 2 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** **Xong** · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 2 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** EDA & tiền xử lý
 - **Đầu vào:** [phong_tuan1_dataset_graph.ipynb](../../notebooks/phong_tuan1/phong_tuan1_dataset_graph.ipynb) (các hàm `load_*`, `clean_flows`, `assign_windows`, `node_edge_tables`, `to_pyg`, `build_dataset`)
 - **Đầu ra:** `src/build_graph.py` (có docstring); `tests/test_build_graph.py`; notebook gọi module thay cho code nhúng
@@ -113,6 +113,11 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
   2. Có test với 1 cửa sổ 6–10 flow tự tính tay: số node, số cạnh, 18 đặc trưng và nhãn đều khớp.
   3. Thêm bộ mới chỉ cần viết một hàm adapter.
 - **Phụ thuộc:** 0.3
+- **Kết quả:** (03/11/2026) [src/build_graph.py](../../src/build_graph.py), [tests/test_build_graph.py](../../tests/test_build_graph.py), [scripts/check_graph_hash.py](../../scripts/check_graph_hash.py). `pytest`: 16 passed (cả `test_evaluate.py`).
+  1. **Đạt.** Notebook [02_check_build_graph_hash.ipynb](../../notebooks/02_check_build_graph_hash.ipynb) chạy trên Kaggle (`minucelowcode/gnn-iot-ids-02-check-build-graph-hash`, bản 2, clone `main` tại `dbd9591`) với NF-ToN-IoT-v2 (`athena21/netflow-datasets-v2`, file 2.676.491.000 byte, trùng dung lượng file Phong dùng): **hash `cb8842d60f9a3a5a` trùng notebook Tuần 1**, đầy đủ `cb8842d60f9a3a5a379397a6fcccff7cdbf344e4dc0017d5feccf59ea15874d2`; 16.941 đồ thị (train 11.858 / val 2.541 / test 2.542 cửa sổ); số dòng sau làm sạch 16.871.353, khớp notebook. Chạy với torch 2.11.0 và pandas 3.1.0 của Kaggle, trong khi Phong dùng pandas 3.0.6, nên kết quả không phụ thuộc phiên bản này. Bản 1 lỗi vì `pip` đè numpy trong kernel đang chạy; đã chuyển sang chạy trong tiến trình con.
+  2. **Đạt.** `test_hand_computed_window`: 1 cửa sổ 7 flow (1 flow tự vòng bị bỏ) tự tính tay; 4 node, 4 cạnh, đủ 18 đặc trưng node, 3 đặc trưng cạnh và nhãn (gồm cả trường hợp hòa nhãn và node chỉ có flow vào) đều khớp đến `rtol=1e-12`.
+  3. **Đạt.** `test_new_dataset_needs_only_adapter`: bộ NF v3 chạy qua `load_clean("nf_ton_iot_v3", ...)` chỉ nhờ adapter `load_nf_v3` (ts thật = `FLOW_START_MILLISECONDS` / 1000), phần dựng đồ thị dùng chung. Mới thử trên dữ liệu giả nhỏ, **chưa chạy trên NF-ToN-IoT-v3 thật** (việc của task 1.6).
+  - **Chưa làm:** notebook Tuần 1 của Phong vẫn giữ code nhúng (cố ý, để giữ nguyên output); chưa có notebook nào được viết lại để gọi module ngoài notebook 02. Thêm `GROUP_MAP` cho tên lớp của CIC (ví dụ `DoS_attacks-Hulk`) để task 1.4/1.6 quyết định.
 
 ### 0.5 Module đánh giá chung src/evaluate.py
 
