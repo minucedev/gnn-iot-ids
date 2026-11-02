@@ -84,7 +84,7 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
 
 ### 0.3 Repo GitHub, cấu trúc thư mục, requirements
 
-- **Trạng thái:** **Xong** (mục 6 của Kết quả chờ Phúc chạy Kaggle) · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 2 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** **Xong** · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 2 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** Môi trường
 - **Đầu vào:** Notebook Tuần 1 của Phong; cấu trúc repo ở [docs/plan/00_TONG_QUAN.md](../plan/00_TONG_QUAN.md) mục 4.2. Nếu nhóm trưởng đã tạo repo theo `plan/` thì clone repo đó, không tạo repo mới.
 - **Đầu ra:** Repo có `data/`, `notebooks/`, `src/`, `models/`, `reports/{figures,tables}/`, `docs/`; `requirements.txt`; `.gitignore`; README hướng dẫn cài đặt
@@ -100,7 +100,7 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
   3. **Đạt.** `git status` sạch sau commit cuối. `git check-ignore -v` xác nhận `data/raw/x.csv` (`data/raw/**`), `models/a.pt` (`models/*.pt`), `.venv` (`.venv/`), `data/processed/g.parquet` (`*.parquet`) đều bị bỏ qua; `data/raw/.gitkeep`, `data/processed/.gitkeep` không bị bỏ qua. File lớn hơn 50 MB bị chặn bởi `.githooks/pre-commit`: thử với file 51 MB thì hook thoát 1, không có file lớn thì thoát 0.
   4. **Đạt.** `scripts/check_links.py` quét mọi file `.md` trong repo: 0 link tương đối hỏng (link trong `docs/gnn_ids/` đã đổi từ `../../plan/`, `../Phong/` sang `../plan/`, `../dataset_cards/`, `../../notebooks/phong_tuan1/`).
   5. **Bỏ theo quyết định của Phúc (02/11/2026).** Không bật bảo vệ nhánh `main`, không dùng nhánh hay PR; mọi commit push thẳng lên `main` của `minucedev/gnn-iot-ids`.
-  6. **Chờ Phúc chạy [notebooks/00_kaggle_env_check.ipynb](../../notebooks/00_kaggle_env_check.ipynb) trên Kaggle.** Notebook giữ torch có sẵn của Kaggle và bỏ qua `jupyter`, `ipykernel`.
+  6. **Đạt (Kaggle).** [notebooks/00_kaggle_env_check.ipynb](../../notebooks/00_kaggle_env_check.ipynb) đẩy bằng Kaggle API (`minucelowcode/gnn-iot-ids-00-env-check`, GPU T4), bản 2 clone `main` tại `c58965a`: `pip install -r requirements.txt` (bỏ qua torch, jupyter, ipykernel) mất 82 s, `check_env.py` thoát mã 0 với Python 3.13.15, torch 2.11.0+cu128 có sẵn, Tesla T4. Bản 1 lỗi cú pháp trong notebook, đã sửa. Chi tiết ở [docs/notes_env.md](../notes_env.md#kaggle).
 
 ### 0.4 Tách code notebook thành src/build_graph.py
 

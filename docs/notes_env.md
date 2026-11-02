@@ -70,4 +70,19 @@ Khi import torch_geometric có cảnh báo `FutureWarning: torch.jit.script is d
 
 ## Kaggle
 
-Chờ Phúc chạy [notebooks/00_kaggle_env_check.ipynb](../notebooks/00_kaggle_env_check.ipynb). Chạy xong thì ghi vào đây: phiên bản Python, torch có sẵn của Kaggle, loại GPU, thời gian cài, output `check_env.py`.
+[notebooks/00_kaggle_env_check.ipynb](../notebooks/00_kaggle_env_check.ipynb) được đẩy và chạy bằng Kaggle API (`kaggle kernels push`, notebook riêng tư `minucelowcode/gnn-iot-ids-00-env-check`, GPU T4, Internet bật), ngày 02/11/2026.
+
+- **Bản 1:** lỗi `SyntaxError` ở ô cài đặt (chuỗi `"\n"` bị hỏng khi sinh notebook). Đã sửa ở commit `c58965a`.
+- **Bản 2:** clone `main` tại `c58965a`; **`check_env.py` thoát mã 0**. Tổng thời gian khoảng 123 s, trong đó pip cài mất 82 s.
+
+| Mục | Kaggle | Máy cá nhân |
+|---|---|---|
+| Python | 3.13.15 | 3.11.17 |
+| torch | **2.11.0+cu128** (có sẵn của Kaggle, giữ nguyên) | 2.14.1+cu126 |
+| GPU | Tesla T4, 14,6 GiB, compute capability 7.5 | RTX A1000, 4 GiB, 8.6 |
+| torch_geometric, numpy, pandas, pyarrow, sklearn | 2.8.1, 2.4.6, 3.1.0, 26.0.0, 1.9.1 (cài theo `requirements.txt`) | giống |
+| GATv2Conv | out (50, 64), 2752 tham số, chênh lệch CPU/GPU 2,38e-07 | giống, 3,58e-07 |
+
+Khi cài trên Kaggle, pip báo xung đột với một số gói Kaggle cài sẵn mà dự án không dùng: `ydata-profiling`, `cudf-cu12`, `numba` (cần numpy < 2.3), `google-colab`, `gradio`, `grpcio-*` (cần protobuf < 6). Nếu sau này cần `numba` thì phải xử lý riêng. pandas cũng cảnh báo `bottleneck` 1.4.2 cũ, không ảnh hưởng.
+
+**Lưu ý tái lập:** torch trên Kaggle (2.11) khác bản local (2.14). Khi so số liệu giữa hai nơi (KE_HOACH mục 3, chỉ tiêu "Tái lập"), cần ghi rõ phiên bản torch của từng lần chạy.
