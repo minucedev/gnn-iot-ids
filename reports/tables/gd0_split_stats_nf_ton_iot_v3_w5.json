@@ -1,0 +1,126 @@
+{
+ "dataset": "nf_ton_iot_v3",
+ "window": 5,
+ "stride": 5,
+ "classes": [
+  "Normal",
+  "DoS_DDoS",
+  "Botnet_Backdoor",
+  "Truy_cap_trai_phep",
+  "Khac"
+ ],
+ "clean_log": [
+  {
+   "buoc": "Ban đầu",
+   "so_dong": 27520260
+  },
+  {
+   "buoc": "Bỏ thiếu / vô cực",
+   "so_dong": 27520260
+  },
+  {
+   "buoc": "Bỏ giá trị âm",
+   "so_dong": 27520260
+  },
+  {
+   "buoc": "Bỏ bản ghi trùng lặp",
+   "so_dong": 25661634
+  }
+ ],
+ "flow_class_counts": {
+  "Normal": 15042476,
+  "Truy_cap_trai_phep": 6166144,
+  "DoS_DDoS": 4342281,
+  "Botnet_Backdoor": 101691,
+  "Khac": 9042
+ },
+ "ts_range_utc": [
+  "2019-04-23 14:09:50.618000031",
+  "2019-04-29 14:45:55.177000046"
+ ],
+ "graph_stats": {
+  "n_windows": 66722,
+  "n_nodes": 812318,
+  "n_edges": 979504,
+  "nodes_per_window": {
+   "p50": 11.0,
+   "p95": 19.0,
+   "p99": 68.0,
+   "p100": 269.0
+  },
+  "edges_per_window": {
+   "p50": 11.0,
+   "p95": 26.0,
+   "p99": 79.0,
+   "p100": 705.0
+  },
+  "node_class_counts": {
+   "Normal": 530302,
+   "Truy_cap_trai_phep": 136570,
+   "DoS_DDoS": 106573,
+   "Botnet_Backdoor": 36475,
+   "Khac": 2398
+  }
+ },
+ "splits": {
+  "chronological": {
+   "train": {
+    "n_windows": 46705,
+    "n_nodes": 700439,
+    "Normal": 456291,
+    "DoS_DDoS": 106573,
+    "Botnet_Backdoor": 197,
+    "Truy_cap_trai_phep": 136570,
+    "Khac": 808
+   },
+   "val": {
+    "n_windows": 10008,
+    "n_nodes": 65350,
+    "Normal": 43544,
+    "DoS_DDoS": 0,
+    "Botnet_Backdoor": 21806,
+    "Truy_cap_trai_phep": 0,
+    "Khac": 0
+   },
+   "test": {
+    "n_windows": 10009,
+    "n_nodes": 46529,
+    "Normal": 30467,
+    "DoS_DDoS": 0,
+    "Botnet_Backdoor": 14472,
+    "Truy_cap_trai_phep": 0,
+    "Khac": 1590
+   }
+  },
+  "blocked": {
+   "train": {
+    "n_windows": 46702,
+    "n_nodes": 594433,
+    "Normal": 380154,
+    "DoS_DDoS": 73351,
+    "Botnet_Backdoor": 27227,
+    "Truy_cap_trai_phep": 113308,
+    "Khac": 393
+   },
+   "val": {
+    "n_windows": 10010,
+    "n_nodes": 98722,
+    "Normal": 63504,
+    "DoS_DDoS": 15492,
+    "Botnet_Backdoor": 5013,
+    "Truy_cap_trai_phep": 13549,
+    "Khac": 1164
+   },
+   "test": {
+    "n_windows": 10010,
+    "n_nodes": 119163,
+    "Normal": 86644,
+    "DoS_DDoS": 17730,
+    "Botnet_Backdoor": 4235,
+    "Truy_cap_trai_phep": 9713,
+    "Khac": 841
+   }
+  }
+ },
+ "peak_ram_gb": 18.9
+}

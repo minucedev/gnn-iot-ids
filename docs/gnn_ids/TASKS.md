@@ -9,8 +9,8 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
 
 | Mã | Task | Giai đoạn | Phụ trách | Kiểm tra | Tuần | Ưu tiên | Trạng thái |
 |---|---|---|---|---|---|---|---|
-| [0.1](#01-chốt-phát-biểu-bài-toán-và-chỉ-tiêu-nghiệm-thu) | Chốt phát biểu bài toán và chỉ tiêu | GĐ0 | Phúc | Tự kiểm | 2 | B | Chưa làm |
-| [0.2](#02-chốt-7-quyết-định-mở-d1d7) | Chốt quyết định D1–D7 | GĐ0 | Phúc | Tự kiểm | 2 | B | Chưa làm |
+| [0.1](#01-chốt-phát-biểu-bài-toán-và-chỉ-tiêu-nghiệm-thu) | Chốt phát biểu bài toán và chỉ tiêu | GĐ0 | Phúc | Tự kiểm | 2 | B | **Xong** |
+| [0.2](#02-chốt-7-quyết-định-mở-d1d7) | Chốt quyết định D1–D7 | GĐ0 | Phúc | Tự kiểm | 2 | B | **Xong** |
 | [0.3](#03-repo-github-cấu-trúc-thư-mục-requirements) | Repo GitHub, cấu trúc, requirements | GĐ0 | Phúc | Tự kiểm | 2 | B | **Xong** |
 | [0.4](#04-tách-code-notebook-thành-srcbuild_graphpy) | Tách `src/build_graph.py` | GĐ0 | Phúc | Tự kiểm | 2 | B | **Xong** |
 | [0.5](#05-module-đánh-giá-chung-srcevaluatepy) | Module `src/evaluate.py` | GĐ0 | Phúc | Tự kiểm | 2 | B | **Xong** |
@@ -58,7 +58,7 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
 
 ### 0.1 Chốt phát biểu bài toán và chỉ tiêu nghiệm thu
 
-- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 2 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** **Xong** · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 2 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** Báo cáo
 - **Đầu vào:** Mô tả đề tài của thầy; mục 1–3 của [KE_HOACH.md](KE_HOACH.md); [docs/plan/00_TONG_QUAN.md](../plan/00_TONG_QUAN.md)
 - **Đầu ra:** Mục 1–3 của KE_HOACH.md đã được cả 3 xác nhận; tin nhắn hoặc email gửi thầy kèm phản hồi (lưu link)
@@ -69,10 +69,16 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
   4. Có phản hồi của thầy về phạm vi, hoặc ghi rõ ngày đã gửi mà chưa có phản hồi.
   5. Đã thống nhất với kế hoạch gốc trong [docs/plan/](../plan/): hạn nộp, ngưỡng tham số (50K hay 100K), có làm AHP không.
 - **Phụ thuộc:** —
+- **Kết quả:** (03/11/2026) Chốt trong [KE_HOACH.md](KE_HOACH.md) mục 3 và mục 5b.
+  1. **Đạt, điều chỉnh theo Phúc.** Phúc chốt mục 1–3 ngày 03/11/2026 (ghi dưới mục 3). Phúc quyết định **không gửi Phong và Tấn**, nên không có xác nhận của hai người.
+  2. **Đạt.** Mọi chỉ tiêu ở bảng mục 3 đều có ngưỡng và cách đo. Các ngưỡng đề xuất (100K tham số, F1-macro 0,80, recall 95%) được giữ nguyên.
+  3. **Đạt.** Node, cửa sổ, nhãn node, nhiệm vụ ở mục 1; FPR và độ trễ ở mục 1 và bảng mục 3.
+  4. **Bỏ theo quyết định của Phúc.** Phúc quyết định tự chốt, không hỏi thầy; chưa có phản hồi nào của thầy về phạm vi. Rủi ro: D6 (AHP dùng để chọn mô hình triển khai) chưa được thầy xác nhận, ghi ở mục 5b.
+  5. **Đạt.** Hạn nộp **8/11/2026**; ngưỡng tham số **≤ 100.000** (< 50.000 chỉ là mục tiêu mong muốn); **có làm AHP**. Do hạn nộp ngắn nên lịch 9 tuần được thay bằng [lịch rút gọn](KE_HOACH.md#5b-lịch-rút-gọn-đến-hạn-nộp-8112026).
 
 ### 0.2 Chốt 7 quyết định mở D1–D7
 
-- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 2 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** **Xong** · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 2 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** Bộ dữ liệu, Thuật toán & đánh giá
 - **Đầu vào:** Log quyết định (mục 7 của KE_HOACH.md); kết quả task 1.2 (task 1.3 đã bỏ)
 - **Đầu ra:** Cột "Đã chốt" của D1–D7 được điền: lựa chọn, lý do, người duyệt, ngày
@@ -81,6 +87,11 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
   2. Mỗi quyết định có lý do dựa trên số liệu (ví dụ D3 phải kèm bảng số node mỗi lớp trong từng tập).
   3. Muốn đổi quyết định đã chốt thì phải ghi dòng mới, không sửa đè.
 - **Phụ thuộc:** 1.2
+- **Kết quả:** (03/11/2026) Cột "Đã chốt" của D1–D7 điền ở [KE_HOACH.md mục 7](KE_HOACH.md#7-log-quyết-định). Phúc duyệt các đề xuất qua chat; không hỏi thầy.
+  1. **Đạt.** D1–D7 đều đã điền, không còn ô trống.
+  2. **Đạt.** D1: số liệu task 1.2. D2: 66.722 cửa sổ, node mỗi cửa sổ p50 11, p95 19, p99 68. D3: bảng số node mỗi lớp trong train/val/test của cả hai cách chia (chronological làm val và test có 0 node ở DoS_DDoS và Truy_cap_trai_phep). D5: số node lớp Khac theo từng tập. D4, D6, D7 là quyết định phương pháp, không có số liệu; D6 chưa có xác nhận của thầy.
+  3. **Đạt.** Mới chốt lần đầu nên chưa có quyết định bị đổi.
+  - **Đổi so với đề xuất ban đầu:** D3 thêm `gap = 1`; D7 chọn laptop 1 luồng thay vì Docker (Docker chỉ làm nếu còn thời gian). Chi tiết D3: chronological không phải 0 node Botnet_Backdoor ở train (197 node) mà là val và test thiếu hẳn DoS_DDoS và Truy_cap_trai_phep, nên lập luận của đề xuất cũ cần đọc theo bảng mới.
 
 ### 0.3 Repo GitHub, cấu trúc thư mục, requirements
 

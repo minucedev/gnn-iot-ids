@@ -3,7 +3,9 @@
 Hướng làm theo pipeline Phong đã dựng ở Tuần 1: NetFlow, IP = node, flow = cạnh, phân loại node theo cửa sổ.
 Danh sách task chi tiết: [TASKS.md](TASKS.md).
 
-> **Cần đối chiếu với kế hoạch gốc [docs/plan/00_TONG_QUAN.md](../plan/00_TONG_QUAN.md).** Kế hoạch gốc kéo dài 3 tuần và kết thúc 8/11/2026. File này giả định 9 tuần (Tuần 2 bắt đầu 02/11/2026) và bổ sung các yêu cầu trong mô tả của thầy (AHP, Kaggle/Colab, ≥ 2 bộ dữ liệu thêm). Khi biết hạn nộp thật, chỉnh lại cột "Tuần" trong [TASKS.md](TASKS.md).
+> **Cần đối chiếu với kế hoạch gốc [docs/plan/00_TONG_QUAN.md](../plan/00_TONG_QUAN.md).** Kế hoạch gốc kéo dài 3 tuần và kết thúc 8/11/2026. File này ban đầu giả định 9 tuần (Tuần 2 bắt đầu 02/11/2026) và bổ sung các yêu cầu trong mô tả của thầy (AHP, Kaggle/Colab, ≥ 2 bộ dữ liệu thêm).
+>
+> **Hạn nộp thật: 8/11/2026** (Phúc xác nhận 03/11/2026). Lịch 9 tuần và cột "Tuần" trong [TASKS.md](TASKS.md) không còn dùng được; dùng [lịch rút gọn ở mục 5b](#5b-lịch-rút-gọn-đến-hạn-nộp-8112026).
 >
 > Nhóm: Nguyễn Minh Phúc (nhóm trưởng), Lê Trung Phong, Văn Bá Phạm Tấn. **Phúc thực hiện toàn bộ task**; Phong đã làm phần Tuần 1 (khảo sát dataset, pipeline v1).
 
@@ -69,7 +71,7 @@ Danh sách task chi tiết: [TASKS.md](TASKS.md).
 | Số bộ dữ liệu | ≥ 3 (1 NetFlow chính + ≥ 2 bộ khác) | Theo yêu cầu của thầy |
 | Tái lập | Chạy lại trên Kaggle lệch ≤ 0,5 điểm % | So với `results.csv` |
 
-Chỉ tiêu 91% và 4,08% lấy từ mô tả đề tài. Đây là **ngưỡng tối thiểu**. Các ngưỡng còn lại (100K tham số, F1-macro 0,80, recall 95%) là đề xuất, cần chốt ở task 0.1.
+Chỉ tiêu 91% và 4,08% lấy từ mô tả đề tài. Đây là **ngưỡng tối thiểu**. Các ngưỡng còn lại (100K tham số, F1-macro 0,80, recall 95%) đề xuất ban đầu, **Phúc chốt ngày 03/11/2026 (task 0.1)**: giữ nguyên các ngưỡng trong bảng; tham số ≤ 100.000 là ngưỡng nghiệm thu, < 50.000 (mục tiêu của kế hoạch gốc) chỉ là mong muốn, không ràng buộc. Có làm AHP (D6). Không gửi thầy và không gửi Phong, Tấn để xác nhận lại.
 
 ## 4. Phân công
 
@@ -98,6 +100,26 @@ Phải đạt hết cổng nghiệm thu của một giai đoạn mới sang giai
 | GĐ8 Mô phỏng thời gian thực | 6–8 | Chứng minh chạy được dưới 1 giây | Mô hình được AHP gợi ý, `build_graph.py` | `stream_features.py`, `detector.py`, log cảnh báo, báo cáo độ trễ | Đặc trưng online khớp offline; p95 ≤ 1 s; dự đoán online khớp offline ≥ 99,9% |
 | GĐ9 Báo cáo & bảo vệ | 8–9 | Hoàn thiện sản phẩm nộp | Tất cả đầu ra ở trên | Báo cáo, slide, README, video demo | Review chéo xong; người ngoài clone repo chạy lại được |
 
+## 5b. Lịch rút gọn đến hạn nộp 8/11/2026
+
+Do hạn nộp là 8/11/2026 (còn 5 ngày kể từ 03/11), áp dụng đúng mục rủi ro cuối file: cắt task "Nên có" và "Tùy chọn", chỉ giữ 1 bộ phụ, bỏ ablation theo W. Lịch và phần cắt dưới đây do Claude đề xuất, Phúc duyệt ngày 03/11/2026 qua "theo đề xuất của bạn".
+
+| Ngày | Việc | Task |
+|---|---|---|
+| 03/11 | Chốt D1–D7; chọn cách chia tập; dựng đồ thị NF-ToN-IoT-v3 trên Kaggle và lưu thành Kaggle Dataset riêng tư | 0.1, 0.2, 1.5, 1.6, 0.6 |
+| 04/11 | Baseline ML trên đặc trưng node; vòng huấn luyện PyG; EDA rút gọn | 4.1, 5.1, 2.1–2.3 (rút gọn) |
+| 05/11 | GCN, GraphSAGE, GAT nhẹ multi-head, bản cải tiến | 5.2, 5.3, 5.4 |
+| 06/11 | Chạy test một lần với 3 seed; bảng và hình; AHP; replay thời gian thực và đo độ trễ | 6.1–6.3, 7.1–7.2, 8.1–8.3 |
+| 07/11 | Viết báo cáo, làm slide | 9.2, 9.3, 3.x (ngắn) |
+| 08/11 | Sửa lỗi, kiểm tra repo chạy lại được, nộp | — |
+
+**Phần cắt so với kế hoạch 9 tuần (ghi lại làm hạn chế trong báo cáo):**
+- Số bộ dữ liệu: 2 thay vì ≥ 3 (NF-ToN-IoT-v3 là bộ chính; bộ phụ là NF-ToN-IoT-v2, đã dựng đồ thị và đã kiểm hash `cb8842d60f9a3a5a`). Chưa đáp ứng yêu cầu "≥ 2 bộ dữ liệu thêm" của thầy.
+- Task 1.3 đã bỏ; 1.4, 1.7, 3.4, 4.2, 6.4, 8.4 bỏ hoặc gộp vào task liền kề.
+- Ablation chỉ chạy số head và số lớp, bỏ ablation kích thước cửa sổ W.
+- EDA khoảng 6 hình thay vì ≥ 12; tổng quan lý thuyết viết ngắn, số tài liệu có thể dưới 15.
+- Chưa có xác nhận của thầy về D6 (AHP dùng để chọn mô hình triển khai).
+
 ## 6. Quy ước bắt buộc
 
 1. **Seed:** `RANDOM_STATE = 42` khi phát triển. Kết quả cuối chạy 3 seed 42, 43, 44 và báo cáo trung bình ± độ lệch chuẩn.
@@ -117,13 +139,26 @@ Chốt trong GĐ0. Muốn đổi quyết định đã chốt thì thêm dòng m�
 
 | Mã | Câu hỏi | Lựa chọn | Đề xuất | Đã chốt (lựa chọn, lý do, người duyệt, ngày) |
 |---|---|---|---|---|
-| D1 | Bộ NetFlow chính | NF-ToN-IoT-v3 (nếu xác minh được là có `FLOW_START_MILLISECONDS`) / NF-ToN-IoT-v2 (cửa sổ 1.000 flow) | v3, vì có timestamp thật và đáp ứng "tính thời sự". Nếu không có v3 thì dùng v2 | |
-| D2 | Kích thước cửa sổ | 1 / 2 / 5 / 10 giây | 5 giây làm mặc định, các mức còn lại đưa vào ablation | |
-| D3 | Cách chia tập | `chronological` / `blocked` (10 khối) | `blocked`, vì chia `chronological` làm Botnet_Backdoor có 0 node ở train. Lưu ý kế hoạch gốc cấm đổi cách chia "cho dễ", nên cần nhóm trưởng duyệt kèm số liệu | |
-| D4 | Mức phân loại | Node / Edge (flow) / Cả hai | Node là chính (đúng pipeline hiện tại); edge là tùy chọn nếu còn thời gian | |
-| D5 | Lớp Khac (mitm, ransomware ≈ 0,06%) | Giữ / Gộp vào lớp khác / Loại | Giữ 5 lớp nhưng tính chỉ tiêu F1-macro trên 4 lớp chính; báo cáo lớp Khac riêng | |
-| D6 | AHP dùng để làm gì | Chọn mô hình triển khai / Xếp hạng cảnh báo | Chọn mô hình triển khai. Hỏi thầy xác nhận | |
-| D7 | Máy đo độ trễ | Kaggle CPU / laptop / Docker giới hạn CPU-RAM / Raspberry Pi | Docker giới hạn CPU-RAM như kế hoạch gốc; nếu không kịp thì laptop giới hạn 1 luồng | |
+| D1 | Bộ NetFlow chính | NF-ToN-IoT-v3 (nếu xác minh được là có `FLOW_START_MILLISECONDS`) / NF-ToN-IoT-v2 (cửa sổ 1.000 flow) | v3, vì có timestamp thật và đáp ứng "tính thời sự". Nếu không có v3 thì dùng v2 |  **NF-ToN-IoT-v3.** Task 1.2 xác minh có `FLOW_START_MILLISECONDS` thật, file sắp theo thời gian 100%, số dòng khớp UQ (27.520.260). Phúc (theo đề xuất, qua chat), 03/11/2026 |
+| D2 | Kích thước cửa sổ | 1 / 2 / 5 / 10 giây | 5 giây làm mặc định, các mức còn lại đưa vào ablation |  **5 giây** (W = S). Trên v3: 66.722 cửa sổ, 812.318 node; số node mỗi cửa sổ p50 = 11, p95 = 19, p99 = 68, tối đa 269, nên đồ thị rất nhỏ. Bỏ ablation theo W do hạn nộp 8/11. Phúc (theo đề xuất, qua chat), 03/11/2026 |
+| D3 | Cách chia tập | `chronological` / `blocked` (10 khối) | `blocked`, vì chia `chronological` làm Botnet_Backdoor có 0 node ở train. Lưu ý kế hoạch gốc cấm đổi cách chia "cho dễ", nên cần nhóm trưởng duyệt kèm số liệu |  **`blocked`, 10 khối, mỗi ranh giới giữa hai tập cách 1 cửa sổ (`gap = 1`).** Chia `chronological` làm val và test không có node DoS_DDoS và Truy_cap_trai_phep nào (xem bảng bên dưới), nên không tính được F1 trên 4 lớp chính; `blocked` có đủ 5 lớp ở cả 3 tập. Đây không phải đổi cách chia "cho dễ" mà vì chia thời gian thuần túy không đo được. Hạn chế phải ghi vào báo cáo: các tấn công diễn ra theo ngày, nên `blocked` đo khả năng tổng quát hóa sang các đoạn thời gian xen kẽ, không phải dự đoán hoàn toàn trong tương lai. Phúc (theo đề xuất, qua chat), 03/11/2026 |
+| D4 | Mức phân loại | Node / Edge (flow) / Cả hai | Node là chính (đúng pipeline hiện tại); edge là tùy chọn nếu còn thời gian |  **Node** là chính; edge bỏ do hạn nộp. Phúc (theo đề xuất, qua chat), 03/11/2026 |
+| D5 | Lớp Khac (mitm, ransomware ≈ 0,06%) | Giữ / Gộp vào lớp khác / Loại | Giữ 5 lớp nhưng tính chỉ tiêu F1-macro trên 4 lớp chính; báo cáo lớp Khac riêng |  **Giữ 5 lớp**; F1-macro tính trên 4 lớp chính, báo cáo Khac riêng. Khac có 2.398 node (0,3%): train 393, val 1.164, test 841 (chia `blocked`). Phúc (theo đề xuất, qua chat), 03/11/2026 |
+| D6 | AHP dùng để làm gì | Chọn mô hình triển khai / Xếp hạng cảnh báo | Chọn mô hình triển khai. Hỏi thầy xác nhận |  **Chọn mô hình triển khai.** Chưa có xác nhận của thầy (Phúc quyết định không hỏi thầy); ghi là rủi ro ở mục 5b. Phúc (theo đề xuất, qua chat), 03/11/2026 |
+| D7 | Máy đo độ trễ | Kaggle CPU / laptop / Docker giới hạn CPU-RAM / Raspberry Pi | Docker giới hạn CPU-RAM như kế hoạch gốc; nếu không kịp thì laptop giới hạn 1 luồng |  **Laptop i7-12800H giới hạn 1 luồng** (`torch.set_num_threads(1)`), ghi rõ cấu hình máy. Docker giới hạn CPU-RAM chỉ làm nếu còn thời gian, đây chính là phương án dự phòng trong đề xuất ban đầu do hạn nộp 8/11. Phúc (theo đề xuất, qua chat), 03/11/2026 |
+
+**Bằng chứng D3: số node mỗi lớp ở từng tập** (NF-ToN-IoT-v3, W = S = 5 s, gap = 0; dữ liệu trong [reports/tables/gd0_split_stats_nf_ton_iot_v3_w5.json](../../reports/tables/gd0_split_stats_nf_ton_iot_v3_w5.json), sinh bởi [notebooks/03_split_stats_nf_ton_iot_v3.ipynb](../../notebooks/03_split_stats_nf_ton_iot_v3.ipynb) trên Kaggle). Số liệu lấy với gap = 0; gap = 1 chỉ bỏ thêm vài cửa sổ ở ranh giới.
+
+| Cách chia | Tập | Cửa sổ | Node | Normal | DoS_DDoS | Botnet_Backdoor | Truy_cap_trai_phep | Khac |
+|---|---|---|---|---|---|---|---|---|
+| chronological | train | 46.705 | 700.439 | 456.291 | 106.573 | 197 | 136.570 | 808 |
+| chronological | val | 10.008 | 65.350 | 43.544 | **0** | 21.806 | **0** | **0** |
+| chronological | test | 10.009 | 46.529 | 30.467 | **0** | 14.472 | **0** | 1.590 |
+| blocked | train | 46.702 | 594.433 | 380.154 | 73.351 | 27.227 | 113.308 | 393 |
+| blocked | val | 10.010 | 98.722 | 63.504 | 15.492 | 5.013 | 13.549 | 1.164 |
+| blocked | test | 10.010 | 119.163 | 86.644 | 17.730 | 4.235 | 9.713 | 841 |
+
+Làm sạch: 27.520.260 flow, bỏ 1.858.626 bản ghi trùng còn 25.661.634. RAM đỉnh 18,9 GB trên Kaggle.
 
 ## 8. Rủi ro và phương án dự phòng
 

@@ -122,3 +122,14 @@ def test_fingerprint_deterministic(tmp_path):
         graphs, _, _, _ = bg.build_dataset(flows, 2, 2, ratios=(0.5, 0.25, 0.25))
         fps.append(bg.fingerprint(graphs))
     assert fps[0] == fps[1] and len(fps[0]) == 64
+
+
+def test_gap_between_splits():
+    wins = np.arange(100)
+    a = bg.time_split(wins, bg.SPLIT_RATIO, 0)
+    b = bg.time_split(wins, bg.SPLIT_RATIO, 1)
+    assert a["val"][0] == a["train"][-1] + 1                 # gap = 0: hai tập liền kề
+    assert b["val"][0] == b["train"][-1] + 2                 # gap = 1: cách 1 cửa sổ
+    assert b["test"][0] == b["val"][-1] + 2
+    bb = bg.time_split(wins, bg.SPLIT_RATIO, 1, mode="blocked", blocks=4)
+    assert len(set(bb["train"]) | set(bb["val"]) | set(bb["test"])) == len(bb["train"]) + len(bb["val"]) + len(bb["test"])

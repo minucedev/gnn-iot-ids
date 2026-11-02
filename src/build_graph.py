@@ -327,14 +327,17 @@ def build_tables(flows, window_sec, stride_sec, chunk=BUILD_CHUNK_WINDOWS):
 
 
 def build_dataset(flows, window_sec, stride_sec, ratios=SPLIT_RATIO, mode=SPLIT_MODE, blocks=SPLIT_BLOCKS,
-                  chunk=BUILD_CHUNK_WINDOWS):
+                  chunk=BUILD_CHUNK_WINDOWS, gap=None):
     """Toàn bộ quy trình offline: cửa sổ → node/cạnh → chia thời gian → scaler(train) → Data.
 
+    gap: số cửa sổ bỏ ở mỗi ranh giới giữa hai tập; None = window_sec // stride_sec - 1 (đủ để cửa sổ trượt không chồng
+    lên nhau, bằng 0 khi W = S). Đặt gap >= 1 nếu muốn có khoảng trống thật giữa các tập.
     Trả về (graphs, split, scaler, nodes): split = {"train"|"val"|"test": mảng mã cửa sổ}.
     """
     nodes, edges = build_tables(flows, window_sec, stride_sec, chunk)
     wins = np.unique(nodes["win"].to_numpy())
-    split = time_split(wins, ratios, window_sec // stride_sec - 1, mode=mode, blocks=blocks)
+    gap = window_sec // stride_sec - 1 if gap is None else gap
+    split = time_split(wins, ratios, gap, mode=mode, blocks=blocks)
     scaler = StandardScaler().fit(nodes.loc[nodes["win"].isin(split["train"]), FEATURES].to_numpy(np.float64))
     keep = np.concatenate(list(split.values()))
     graphs = to_pyg(nodes[nodes["win"].isin(keep)], edges[edges["win"].isin(keep)], scaler, stride_sec)
