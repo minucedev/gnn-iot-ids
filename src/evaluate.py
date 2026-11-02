@@ -135,17 +135,23 @@ def log_result(metrics, *, dataset, model, task, seed, split, n_params, size_kb,
 
 
 def count_params(model):
-    """Số tham số: torch.nn.Module (tổng numel), sklearn tuyến tính (coef_ + intercept_),
-    sklearn cây/rừng (tổng số node)."""
+    """Số tham số: torch.nn.Module (tổng numel), sklearn tuyến tính (coef_ + intercept_), MLP (trọng số + bias),
+    cây/rừng/boosting (tổng số node của mọi cây)."""
     if hasattr(model, "parameters") and callable(model.parameters):
         return int(sum(p.numel() for p in model.parameters()))
     if hasattr(model, "coef_"):
         return int(np.size(model.coef_) + np.size(getattr(model, "intercept_", 0)))
+    if hasattr(model, "coefs_"):                       # sklearn MLP
+        return int(sum(w.size for w in model.coefs_) + sum(b.size for b in model.intercepts_))
     if hasattr(model, "tree_"):
         return int(model.tree_.node_count)
     if hasattr(model, "estimators_"):
         ests = np.ravel(model.estimators_)
         return int(sum(e.tree_.node_count for e in ests))
+    if hasattr(model, "get_booster"):                  # XGBoost: tổng số node của mọi cây
+        return int(len(model.get_booster().trees_to_dataframe()))
+    if hasattr(model, "booster_"):                     # LightGBM
+        return int(len(model.booster_.trees_to_dataframe()))
     raise TypeError(f"Chưa hỗ trợ đếm tham số cho {type(model).__name__}")
 
 

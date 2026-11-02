@@ -118,3 +118,16 @@ def test_plots_written(tmp_path):
     p1 = ev.plot_confusion(Y_TRUE, Y_PRED, tmp_path / "gd0_confusion.png")
     p2 = ev.plot_roc_pr(Y_TRUE, proba, tmp_path / "gd0_roc_pr.png")
     assert p1.stat().st_size > 0 and p2.stat().st_size > 0
+
+
+def test_count_params_boosting_and_mlp():
+    from lightgbm import LGBMClassifier
+    from sklearn.neural_network import MLPClassifier
+    from xgboost import XGBClassifier
+    rng = np.random.default_rng(0)
+    X = rng.normal(size=(120, 4))
+    y = np.array([0, 1, 2] * 40)
+    mlp = MLPClassifier(hidden_layer_sizes=(8,), max_iter=30, random_state=0).fit(X, y)
+    assert ev.count_params(mlp) == 4 * 8 + 8 * 3 + 8 + 3
+    assert ev.count_params(XGBClassifier(n_estimators=5, max_depth=2).fit(X, y)) > 0
+    assert ev.count_params(LGBMClassifier(n_estimators=5, num_leaves=4, verbose=-1).fit(X, y)) > 0
