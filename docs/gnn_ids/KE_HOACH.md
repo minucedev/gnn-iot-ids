@@ -5,7 +5,7 @@ Danh sách task chi tiết: [TASKS.md](TASKS.md).
 
 > **Cần đối chiếu với kế hoạch gốc [docs/plan/00_TONG_QUAN.md](../plan/00_TONG_QUAN.md).** Kế hoạch gốc kéo dài 3 tuần và kết thúc 8/11/2026. File này ban đầu giả định 9 tuần (Tuần 2 bắt đầu 02/11/2026) và bổ sung các yêu cầu trong mô tả của thầy (AHP, Kaggle/Colab, ≥ 2 bộ dữ liệu thêm).
 >
-> **Hạn nộp thật: 8/11/2026** (Phúc xác nhận 03/11/2026). Lịch 9 tuần và cột "Tuần" trong [TASKS.md](TASKS.md) không còn dùng được; dùng [lịch rút gọn ở mục 5b](#5b-lịch-rút-gọn-đến-hạn-nộp-8112026).
+> **Hạn nộp thật: 15/11/2026** (Phúc xác nhận 03/11/2026; lúc đầu ghi nhầm 8/11, đã sửa trong ngày). Lịch 9 tuần và cột "Tuần" trong [TASKS.md](TASKS.md) không còn dùng được; dùng [lịch ở mục 5b](#5b-lịch-đến-hạn-nộp-15112026). **Không cắt phạm vi** so với mục 2 và 3.
 >
 > Nhóm: Nguyễn Minh Phúc (nhóm trưởng), Lê Trung Phong, Văn Bá Phạm Tấn. **Phúc thực hiện toàn bộ task**; Phong đã làm phần Tuần 1 (khảo sát dataset, pipeline v1).
 
@@ -100,24 +100,23 @@ Phải đạt hết cổng nghiệm thu của một giai đoạn mới sang giai
 | GĐ8 Mô phỏng thời gian thực | 6–8 | Chứng minh chạy được dưới 1 giây | Mô hình được AHP gợi ý, `build_graph.py` | `stream_features.py`, `detector.py`, log cảnh báo, báo cáo độ trễ | Đặc trưng online khớp offline; p95 ≤ 1 s; dự đoán online khớp offline ≥ 99,9% |
 | GĐ9 Báo cáo & bảo vệ | 8–9 | Hoàn thiện sản phẩm nộp | Tất cả đầu ra ở trên | Báo cáo, slide, README, video demo | Review chéo xong; người ngoài clone repo chạy lại được |
 
-## 5b. Lịch rút gọn đến hạn nộp 8/11/2026
+## 5b. Lịch đến hạn nộp 15/11/2026
 
-Do hạn nộp là 8/11/2026 (còn 5 ngày kể từ 03/11), áp dụng đúng mục rủi ro cuối file: cắt task "Nên có" và "Tùy chọn", chỉ giữ 1 bộ phụ, bỏ ablation theo W. Lịch và phần cắt dưới đây do Claude đề xuất, Phúc duyệt ngày 03/11/2026 qua "theo đề xuất của bạn".
+Còn 12 ngày kể từ 03/11. Giữ nguyên phạm vi ở mục 2 và 3 (≥ 3 bộ dữ liệu, ablation đủ 5 chiều, bộ hình đầy đủ, ≥ 15 tài liệu). Task 1.3 đã bỏ theo quyết định của Phúc (v3 có timestamp thật). Lịch do Claude đề xuất, Phúc duyệt qua chat 03/11/2026.
 
 | Ngày | Việc | Task |
 |---|---|---|
-| 03/11 | Chốt D1–D7; chọn cách chia tập; dựng đồ thị NF-ToN-IoT-v3 trên Kaggle và lưu thành Kaggle Dataset riêng tư | 0.1, 0.2, 1.5, 1.6, 0.6 |
-| 04/11 | Baseline ML trên đặc trưng node; vòng huấn luyện PyG; EDA rút gọn | 4.1, 5.1, 2.1–2.3 (rút gọn) |
-| 05/11 | GCN, GraphSAGE, GAT nhẹ multi-head, bản cải tiến | 5.2, 5.3, 5.4 |
-| 06/11 | Chạy test một lần với 3 seed; bảng và hình; AHP; replay thời gian thực và đo độ trễ | 6.1–6.3, 7.1–7.2, 8.1–8.3 |
-| 07/11 | Viết báo cáo, làm slide | 9.2, 9.3, 3.x (ngắn) |
-| 08/11 | Sửa lỗi, kiểm tra repo chạy lại được, nộp | — |
+| 03–04/11 | Dựng đồ thị v3 và v2; baseline ML; vòng huấn luyện PyG; chọn và dựng bộ thứ 3; từ điển dữ liệu | 1.5, 1.6, 0.6, 4.1, 5.1, 1.4, 1.7 |
+| 05–06/11 | EDA đủ ≥ 12 hình, trực quan hóa đồ thị; viết lý thuyết IDS và GNN; GCN, GraphSAGE | 2.1–2.3, 3.1, 3.2, 5.2 |
+| 07–08/11 | GAT nhẹ multi-head; bản cải tiến; baseline mức flow nếu còn chỗ | 5.3, 5.4, 4.2 |
+| 09–10/11 | Ablation đủ 5 chiều (gồm cả kích thước cửa sổ); bộ phụ và tổng quát hóa giữa các bộ; `stream_features.py` | 5.5, 5.6, 8.1 |
+| 11–12/11 | **Đóng băng mô hình bằng commit hash**, chạy test một lần với 3 seed; bảng và hình; McNemar; AHP; `detector.py` và đo độ trễ | 6.1–6.3, 7.1, 7.2, 8.2, 8.3 |
+| 13–14/11 | Đánh giá triển khai; lý thuyết baseline/AHP và tổng quan nghiên cứu; so sánh với nghiên cứu khác; viết báo cáo; slide, video demo | 8.4, 3.3, 3.4, 6.4, 9.1, 9.2, 9.3 |
+| 15/11 | Chạy lại từ repo sạch, kiểm tra README, nộp | — |
 
-**Phần cắt so với kế hoạch 9 tuần (ghi lại làm hạn chế trong báo cáo):**
-- Số bộ dữ liệu: 2 thay vì ≥ 3 (NF-ToN-IoT-v3 là bộ chính; bộ phụ là NF-ToN-IoT-v2, đã dựng đồ thị và đã kiểm hash `cb8842d60f9a3a5a`). Chưa đáp ứng yêu cầu "≥ 2 bộ dữ liệu thêm" của thầy.
-- Task 1.3 đã bỏ; 1.4, 1.7, 3.4, 4.2, 6.4, 8.4 bỏ hoặc gộp vào task liền kề.
-- Ablation chỉ chạy số head và số lớp, bỏ ablation kích thước cửa sổ W.
-- EDA khoảng 6 hình thay vì ≥ 12; tổng quan lý thuyết viết ngắn, số tài liệu có thể dưới 15.
+**Điểm nghẽn cần để mắt:**
+- Ngày 11/11 là mốc cứng: sau khi đóng băng mô hình không được chỉnh theo kết quả test (quy ước 6.2). Ablation và cải tiến phải xong trước đó.
+- Báo cáo (9.2) viết dồn vào 2 ngày cuối là rủi ro lớn nhất; phần không phụ thuộc kết quả (lý thuyết, dữ liệu, phương pháp) nên viết từ 05/11.
 - Chưa có xác nhận của thầy về D6 (AHP dùng để chọn mô hình triển khai).
 
 ## 6. Quy ước bắt buộc
@@ -146,6 +145,14 @@ Chốt trong GĐ0. Muốn đổi quyết định đã chốt thì thêm dòng m�
 | D5 | Lớp Khac (mitm, ransomware ≈ 0,06%) | Giữ / Gộp vào lớp khác / Loại | Giữ 5 lớp nhưng tính chỉ tiêu F1-macro trên 4 lớp chính; báo cáo lớp Khac riêng |  **Giữ 5 lớp**; F1-macro tính trên 4 lớp chính, báo cáo Khac riêng. Khac có 2.398 node (0,3%): train 393, val 1.164, test 841 (chia `blocked`). Phúc (theo đề xuất, qua chat), 03/11/2026 |
 | D6 | AHP dùng để làm gì | Chọn mô hình triển khai / Xếp hạng cảnh báo | Chọn mô hình triển khai. Hỏi thầy xác nhận |  **Chọn mô hình triển khai.** Chưa có xác nhận của thầy (Phúc quyết định không hỏi thầy); ghi là rủi ro ở mục 5b. Phúc (theo đề xuất, qua chat), 03/11/2026 |
 | D7 | Máy đo độ trễ | Kaggle CPU / laptop / Docker giới hạn CPU-RAM / Raspberry Pi | Docker giới hạn CPU-RAM như kế hoạch gốc; nếu không kịp thì laptop giới hạn 1 luồng |  **Laptop i7-12800H giới hạn 1 luồng** (`torch.set_num_threads(1)`), ghi rõ cấu hình máy. Docker giới hạn CPU-RAM chỉ làm nếu còn thời gian, đây chính là phương án dự phòng trong đề xuất ban đầu do hạn nộp 8/11. Phúc (theo đề xuất, qua chat), 03/11/2026 |
+
+**Điều chỉnh 03/11/2026** (hạn nộp thật là 15/11, không phải 8/11; các ô D2, D4, D7 ở trên được viết khi còn tưởng hạn là 8/11, phần lý do đó **không còn hiệu lực**):
+
+| Mã | Điều chỉnh |
+|---|---|
+| D2 | Khôi phục ablation theo kích thước cửa sổ (1 / 2 / 5 / 10 giây); 5 giây vẫn là mặc định |
+| D4 | Giữ đề xuất gốc: node là chính, edge là tùy chọn nếu còn thời gian (task 4.2) |
+| D7 | Giữ đề xuất gốc: Docker giới hạn CPU-RAM; laptop 1 luồng là phương án dự phòng nếu không kịp |
 
 **Bằng chứng D3: số node mỗi lớp ở từng tập** (NF-ToN-IoT-v3, W = S = 5 s, gap = 0; dữ liệu trong [reports/tables/gd0_split_stats_nf_ton_iot_v3_w5.json](../../reports/tables/gd0_split_stats_nf_ton_iot_v3_w5.json), sinh bởi [notebooks/03_split_stats_nf_ton_iot_v3.ipynb](../../notebooks/03_split_stats_nf_ton_iot_v3.ipynb) trên Kaggle). Số liệu lấy với gap = 0; gap = 1 chỉ bỏ thêm vài cửa sổ ở ranh giới.
 

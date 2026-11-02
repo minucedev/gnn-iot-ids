@@ -74,7 +74,7 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
   2. **Đạt.** Mọi chỉ tiêu ở bảng mục 3 đều có ngưỡng và cách đo. Các ngưỡng đề xuất (100K tham số, F1-macro 0,80, recall 95%) được giữ nguyên.
   3. **Đạt.** Node, cửa sổ, nhãn node, nhiệm vụ ở mục 1; FPR và độ trễ ở mục 1 và bảng mục 3.
   4. **Bỏ theo quyết định của Phúc.** Phúc quyết định tự chốt, không hỏi thầy; chưa có phản hồi nào của thầy về phạm vi. Rủi ro: D6 (AHP dùng để chọn mô hình triển khai) chưa được thầy xác nhận, ghi ở mục 5b.
-  5. **Đạt.** Hạn nộp **8/11/2026**; ngưỡng tham số **≤ 100.000** (< 50.000 chỉ là mục tiêu mong muốn); **có làm AHP**. Do hạn nộp ngắn nên lịch 9 tuần được thay bằng [lịch rút gọn](KE_HOACH.md#5b-lịch-rút-gọn-đến-hạn-nộp-8112026).
+  5. **Đạt.** Hạn nộp **15/11/2026** (lúc đầu ghi nhầm 8/11, Phúc sửa ngày 03/11/2026); ngưỡng tham số **≤ 100.000** (< 50.000 chỉ là mục tiêu mong muốn); **có làm AHP**. Cột "Tuần" của 9 tuần được thay bằng [lịch 12 ngày](KE_HOACH.md#5b-lịch-đến-hạn-nộp-15112026); không cắt phạm vi.
 
 ### 0.2 Chốt 7 quyết định mở D1–D7
 
@@ -91,7 +91,7 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
   1. **Đạt.** D1–D7 đều đã điền, không còn ô trống.
   2. **Đạt.** D1: số liệu task 1.2. D2: 66.722 cửa sổ, node mỗi cửa sổ p50 11, p95 19, p99 68. D3: bảng số node mỗi lớp trong train/val/test của cả hai cách chia (chronological làm val và test có 0 node ở DoS_DDoS và Truy_cap_trai_phep). D5: số node lớp Khac theo từng tập. D4, D6, D7 là quyết định phương pháp, không có số liệu; D6 chưa có xác nhận của thầy.
   3. **Đạt.** Mới chốt lần đầu nên chưa có quyết định bị đổi.
-  - **Đổi so với đề xuất ban đầu:** D3 thêm `gap = 1`; D7 chọn laptop 1 luồng thay vì Docker (Docker chỉ làm nếu còn thời gian). Chi tiết D3: chronological không phải 0 node Botnet_Backdoor ở train (197 node) mà là val và test thiếu hẳn DoS_DDoS và Truy_cap_trai_phep, nên lập luận của đề xuất cũ cần đọc theo bảng mới.
+  - **Đổi so với đề xuất ban đầu:** D3 thêm `gap = 1`. D7 ban đầu ghi laptop 1 luồng do tưởng hạn là 8/11; đã điều chỉnh về Docker (xem "Điều chỉnh 03/11/2026" ở KE_HOACH mục 7). Chi tiết D3: chronological không phải 0 node Botnet_Backdoor ở train (197 node) mà là val và test thiếu hẳn DoS_DDoS và Truy_cap_trai_phep, nên lập luận của đề xuất cũ cần đọc theo bảng mới.
 
 ### 0.3 Repo GitHub, cấu trúc thư mục, requirements
 
