@@ -1,6 +1,7 @@
 {
+ "dataset": "NF-ToN-IoT-v3",
  "source": "kaggle:athena21/netflow-v3-datasets",
- "official": {
+ "official_uq_page": {
   "rows": 27520260,
   "benign": 16792214,
   "attack": 10728046
@@ -68,6 +69,10 @@
   "Attack"
  ],
  "n_columns": 55,
+ "has_time_cols": {
+  "FLOW_START_MILLISECONDS": true,
+  "FLOW_END_MILLISECONDS": true
+ },
  "head5": [
   {
    "FLOW_START_MILLISECONDS": "1556028590618",
@@ -355,6 +360,10 @@
    "Attack": "Benign"
   }
  ],
+ "read": {
+  "seconds": 109.2,
+  "gib_ram": 1.7
+ },
  "counts": {
   "rows": 27520260,
   "benign": 16792214,
@@ -386,6 +395,7 @@
   "span_hours": 144.6012663888889,
   "frac_nondecreasing": 1.0,
   "frac_strictly_increasing": 0.44693558298270375,
+  "n_backward_steps": 0,
   "max_backward_jump_s": 0.0,
   "frac_end_ge_start": 1.0,
   "duration_ms_p50": 0.0,

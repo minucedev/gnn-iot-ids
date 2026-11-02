@@ -7,7 +7,7 @@ Dung lượng: 5.302.886.266 byte (4,94 GiB), CSV   Số mẫu: 27.520.260   Th�
 
 **Nguồn dữ liệu đã kiểm:** link tải chính thức của UQ (`api.rdm.uq.edu.au`) trả về 401 nếu không đăng nhập. Vì vậy dùng bản đăng lại `athena21/netflow-v3-datasets` trên Kaggle (tác giả ghi là bản gốc, không chỉnh sửa, nguồn là trang UQ). Bản này **khớp đúng số liệu UQ công bố**: 27.520.260 dòng, 16.792.214 benign, 10.728.046 tấn công. SHA-256 file: `53ec8f468a43ede9b1536fabc0390af2fa33ab4312b23ce4d864f186a4651f78`.
 
-Bằng chứng: notebook `notebooks/01_verify_nf_ton_iot_v3.ipynb` (commit `1840dc9`, sau đó gộp vào [notebooks/01_verify_netflow_v3.ipynb](../../notebooks/01_verify_netflow_v3.ipynb) để kiểm cả 4 bộ v3) chạy trên Kaggle (`minucelowcode/gnn-iot-ids-01-verify-nf-ton-iot-v3`, bản 1); output ở [reports/tables/gd1_nf_ton_iot_v3_check.json](../../reports/tables/gd1_nf_ton_iot_v3_check.json).
+Bằng chứng: [notebooks/01_verify_netflow_v3.ipynb](../../notebooks/01_verify_netflow_v3.ipynb) chạy trên Kaggle (`minucelowcode/gnn-iot-ids-01-verify-netflow-v3`, bản 1); output ở [reports/tables/gd1_nf_ton_iot_v3_check.json](../../reports/tables/gd1_nf_ton_iot_v3_check.json). Lần chạy trước bằng notebook riêng cho ToN (commit `1840dc9`) cho cùng kết quả và cùng SHA-256. Ba bộ v3 còn lại: [netflow_v3_others.md](netflow_v3_others.md).
 
 ## Điều kiện bắt buộc
 | # | Đạt? | Bằng chứng |
@@ -69,7 +69,7 @@ Bảng 4 của bản arXiv ghi 10 ngày, 3 ngày đầu chỉ có benign. Dữ l
 | ransomware | 3.971 | 0,014 | Khac |
 
 Theo nhóm: Normal 61,018%; Truy_cap_trai_phep 22,420%; DoS_DDoS 15,787%; Botnet_Backdoor 0,739%; Khac 0,036%.
-**Lưu ý cho task 0.4:** v3 viết `Backdoor` (hoa), còn v2 và bảng ánh xạ của Phong dùng `backdoor`, nên phải chuẩn hóa chữ thường trước khi ánh xạ.
+v3 viết `Backdoor` (hoa), còn v2 viết `backdoor`. `to_group` trong `src/build_graph.py` đã chuyển sang chữ thường trước khi ánh xạ, có test `test_to_group_case_insensitive`.
 
 ## Thống kê
 Số IP nguồn khác nhau: 15.270   Số IP đích khác nhau: 8.777

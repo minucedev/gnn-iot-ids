@@ -17,7 +17,7 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
 | [0.6](#06-chuyển-pipeline-lên-kaggle) | Chuyển pipeline lên Kaggle | GĐ0 | Phúc | Tự kiểm | 2 | B | Chưa làm |
 | [1.0](#10-tuần-1-pipeline-v1) | [Tuần 1] Pipeline v1 | GĐ1 | Phúc | Tự kiểm | 1 | B | **Cần sửa** |
 | [1.1](#11-tuần-1-khảo-sát-4-bộ-dữ-liệu) | [Tuần 1] Khảo sát 4 bộ dữ liệu | GĐ1 | Phúc | Tự kiểm | 1 | B | **Xong** |
-| [1.2](#12-xác-minh-và-tải-netflow-v3) | Xác minh và tải NetFlow v3 | GĐ1 | Phúc | Tự kiểm | 2 | B | Chưa làm |
+| [1.2](#12-xác-minh-và-tải-netflow-v3) | Xác minh và tải NetFlow v3 | GĐ1 | Phúc | Tự kiểm | 2 | B | **Xong** |
 | [1.3](#13-tải-ton-iot-có-ts-và-kiểm-chứng-giả-định-thứ-tự-dòng) | ToN-IoT có `ts`, kiểm chứng thứ tự dòng | GĐ1 | Phúc | Tự kiểm | 2 | B | Chưa làm |
 | [1.4](#14-chốt-danh-sách--3-bộ-dữ-liệu) | Chốt ≥ 3 bộ dữ liệu | GĐ1 | Phúc | Tự kiểm | 3 | B | Chưa làm |
 | [1.5](#15-sửa-chiến-lược-chia-tập) | Sửa chiến lược chia tập | GĐ1 | Phúc | Tự kiểm | 3 | B | Chưa làm |
@@ -172,7 +172,7 @@ Phiếu dataset và chấm điểm.
 
 Đáp ứng yêu cầu "tính thời sự" của thầy. Hỏi Phong trước xem đã tải bản v3 chưa.
 
-- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 2 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** **Xong** · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 2 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** Bộ dữ liệu
 - **Đầu vào:** Trang NIDS datasets của University of Queensland; bài báo giới thiệu NetFlow v3
 - **Đầu ra:** Phiếu dataset cho NF-ToN-IoT-v3 (và NF-UNSW-NB15-v3 hoặc NF-CSE-CIC-IDS2018-v3 nếu có); ghi chú năm phát hành và khác biệt so với v2
@@ -183,6 +183,12 @@ Phiếu dataset và chấm điểm.
   4. Có trích dẫn đầy đủ bài báo gốc.
   5. Nếu không có v3 thì ghi rõ đã tìm ở đâu, và D1 chuyển sang phương án v2.
 - **Phụ thuộc:** —
+- **Kết quả:** (02/11/2026) Phiếu [nf_ton_iot_v3.md](../dataset_cards/nf_ton_iot_v3.md) và [netflow_v3_others.md](../dataset_cards/netflow_v3_others.md). Notebook [01_verify_netflow_v3.ipynb](../../notebooks/01_verify_netflow_v3.ipynb) chạy trên Kaggle (`minucelowcode/gnn-iot-ids-01-verify-netflow-v3`); output `reports/tables/gd1_*_check.json`. Toàn bộ xử lý trên Kaggle, không tải dữ liệu về máy. Chưa hỏi được Phong đã tải v3 chưa.
+  1. **Đạt, có ghi chú.** Nguồn chính thức: trang UQ NIDS datasets và bản ghi UQ eSpace DOI 10.48610/44d7c5e (Open Access, "Permitted Re-Use with Commercial Use Restriction"). Link tải UQ (`api.rdm.uq.edu.au`) trả về 401 khi chưa đăng nhập, nên dùng bản Kaggle `athena21/netflow-v3-datasets`. Bản này có nguồn rõ ràng (ghi nguồn là trang UQ, khai báo không chỉnh sửa) và đã kiểm bằng code: NF-ToN-IoT-v3 khớp đúng 27.520.260 / 16.792.214 / 10.728.046 của UQ, CIC khớp cả 3 số, BoT và UNSW chỉ lệch đúng ở 2 chỗ trang UQ đánh máy nhầm. Chưa so được SHA-256 với file của UQ.
+  2. **Đạt.** NF-ToN-IoT-v3 có 55 cột, gồm `FLOW_START_MILLISECONDS` và `FLOW_END_MILLISECONDS` (Unix ms), không null; 5 dòng đầu in trong phiếu.
+  3. **Đạt.** NF-ToN-IoT-v3: 100% dòng có ts không giảm (0 bước lùi), 44,7% tăng ngặt; bao phủ 2019-04-23 14:09 → 2019-04-29 14:45 UTC (144,6 h). Bộ CIC đạt 99,99999%, BoT 99,76%, UNSW 85,8% (hai bộ sau phải sắp lại).
+  4. **Đạt.** Trích dẫn: dữ liệu (Luay et al. 2025, DOI 10.48610/44d7c5e); bài báo IEEE Access vol. 14, pp. 66899–66913, 2026, DOI 10.1109/ACCESS.2026.3688204 (đã kiểm trên Crossref); preprint arXiv:2503.04404; ToN-IoT gốc Moustafa 2021, DOI 10.1016/j.scs.2021.102994.
+  5. Không áp dụng: có v3. **Đề xuất D1 = NF-ToN-IoT-v3**, Phúc chốt ở task 0.2. Lưu ý cho D3: Backdoor chỉ có ngày 28–29/04, ransomware 28/04, mitm 29/04.
 
 ### 1.3 Tải ToN-IoT có ts và kiểm chứng giả định thứ tự dòng
 
