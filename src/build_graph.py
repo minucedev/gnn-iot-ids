@@ -34,6 +34,13 @@ GROUP_MAP = {
     "password": "Truy_cap_trai_phep", "injection": "Truy_cap_trai_phep",
     "xss": "Truy_cap_trai_phep", "theft": "Truy_cap_trai_phep",
     "mitm": "Khac", "ransomware": "Khac",
+    # NF-CSE-CIC-IDS2018-v3 (không có lớp Khac): DoS/DDoS, Bot, brute force/injection/infiltration
+    "ddos_attack-hoic": "DoS_DDoS", "ddos_attacks-loic-http": "DoS_DDoS", "ddos_attack-loic-udp": "DoS_DDoS",
+    "dos_attacks-slowhttptest": "DoS_DDoS", "dos_attacks-hulk": "DoS_DDoS",
+    "dos_attacks-goldeneye": "DoS_DDoS", "dos_attacks-slowloris": "DoS_DDoS",
+    "ftp-bruteforce": "Truy_cap_trai_phep", "ssh-bruteforce": "Truy_cap_trai_phep",
+    "brute_force_-web": "Truy_cap_trai_phep", "brute_force_-xss": "Truy_cap_trai_phep",
+    "sql_injection": "Truy_cap_trai_phep", "infilteration": "Truy_cap_trai_phep",   # "Infilteration" là tên gốc của bộ dữ liệu
 }
 
 
@@ -163,7 +170,8 @@ def load_nf_v3(path):
 
 
 ADAPTERS = {"bot_iot": load_bot_iot, "ton_iot": load_ton_iot, "nf_ton_iot_v2": load_nf_v2,
-            "nf_bot_iot_v2": load_nf_v2, "nf_ton_iot_v3": load_nf_v3}
+            "nf_bot_iot_v2": load_nf_v2, "nf_ton_iot_v3": load_nf_v3,
+            "nf_cicids2018_v3": load_nf_v3}
 TS_IS_ORDER = {"nf_ton_iot_v2": True, "nf_bot_iot_v2": True}     # ts là số thứ tự dòng, không phải thời gian thật
 
 

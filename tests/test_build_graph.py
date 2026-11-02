@@ -133,3 +133,19 @@ def test_gap_between_splits():
     assert b["test"][0] == b["val"][-1] + 2
     bb = bg.time_split(wins, bg.SPLIT_RATIO, 1, mode="blocked", blocks=4)
     assert len(set(bb["train"]) | set(bb["val"]) | set(bb["test"])) == len(bb["train"]) + len(bb["val"]) + len(bb["test"])
+
+
+CIC_LABELS = {
+    "Benign": "Normal", "DDOS_attack-HOIC": "DoS_DDoS", "DDoS_attacks-LOIC-HTTP": "DoS_DDoS",
+    "DDOS_attack-LOIC-UDP": "DoS_DDoS", "DoS_attacks-SlowHTTPTest": "DoS_DDoS", "DoS_attacks-Hulk": "DoS_DDoS",
+    "DoS_attacks-GoldenEye": "DoS_DDoS", "DoS_attacks-Slowloris": "DoS_DDoS", "Bot": "Botnet_Backdoor",
+    "FTP-BruteForce": "Truy_cap_trai_phep", "SSH-Bruteforce": "Truy_cap_trai_phep",
+    "Brute_Force_-Web": "Truy_cap_trai_phep", "Brute_Force_-XSS": "Truy_cap_trai_phep",
+    "SQL_Injection": "Truy_cap_trai_phep", "Infilteration": "Truy_cap_trai_phep",
+}
+
+
+def test_cicids2018_label_mapping_covers_all_14_attack_classes():
+    assert len(CIC_LABELS) == 15                       # 14 loại tấn công + Benign
+    assert dict(zip(CIC_LABELS, bg.to_group(list(CIC_LABELS)))) == CIC_LABELS
+    assert "nf_cicids2018_v3" in bg.ADAPTERS
