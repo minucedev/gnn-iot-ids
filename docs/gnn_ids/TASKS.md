@@ -13,7 +13,7 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
 | [0.2](#02-chốt-7-quyết-định-mở-d1d7) | Chốt quyết định D1–D7 | GĐ0 | Phúc | Tự kiểm | 2 | B | Chưa làm |
 | [0.3](#03-repo-github-cấu-trúc-thư-mục-requirements) | Repo GitHub, cấu trúc, requirements | GĐ0 | Phúc | Tự kiểm | 2 | B | **Xong** |
 | [0.4](#04-tách-code-notebook-thành-srcbuild_graphpy) | Tách `src/build_graph.py` | GĐ0 | Phúc | Tự kiểm | 2 | B | Chưa làm |
-| [0.5](#05-module-đánh-giá-chung-srcevaluatepy) | Module `src/evaluate.py` | GĐ0 | Phúc | Tự kiểm | 2 | B | Chưa làm |
+| [0.5](#05-module-đánh-giá-chung-srcevaluatepy) | Module `src/evaluate.py` | GĐ0 | Phúc | Tự kiểm | 2 | B | **Xong** |
 | [0.6](#06-chuyển-pipeline-lên-kaggle) | Chuyển pipeline lên Kaggle | GĐ0 | Phúc | Tự kiểm | 2 | B | Chưa làm |
 | [1.0](#10-tuần-1-pipeline-v1) | [Tuần 1] Pipeline v1 | GĐ1 | Phúc | Tự kiểm | 1 | B | **Cần sửa** |
 | [1.1](#11-tuần-1-khảo-sát-4-bộ-dữ-liệu) | [Tuần 1] Khảo sát 4 bộ dữ liệu | GĐ1 | Phúc | Tự kiểm | 1 | B | **Xong** |
@@ -116,7 +116,7 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
 
 ### 0.5 Module đánh giá chung src/evaluate.py
 
-- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 2 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** **Xong** · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 2 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** Thuật toán & đánh giá
 - **Đầu vào:** Danh sách chỉ tiêu (mục 3) và các cột `results.csv` (quy ước 6) trong KE_HOACH.md
 - **Đầu ra:** `evaluate.py` gồm: `compute_metrics()`, `log_result()` ghi vào `results.csv`, `plot_confusion()`, `plot_roc_pr()`, `count_params()`, `measure_latency()`
@@ -126,6 +126,11 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
   3. `results.csv` có đúng 20 cột theo quy ước, không thêm hay bớt cột.
   4. `measure_latency` khởi động nóng (warm-up) 20 lần rồi đo ≥ 200 lần, trả về trung bình, p50, p95, p99 (theo [docs/plan/00_TONG_QUAN.md](../plan/00_TONG_QUAN.md) mục 3).
 - **Phụ thuộc:** 0.3
+- **Kết quả:** (02/11/2026) [src/evaluate.py](../../src/evaluate.py), [tests/test_evaluate.py](../../tests/test_evaluate.py). `.venv\Scripts\python.exe -m pytest -q`: **10 passed**. Có thêm `model_size_kb()` (cột `size_kb`) và `git_commit()` (cột `commit`, gắn `-dirty` nếu còn thay đổi chưa commit). `roc_auc` là AUC nhị phân (tấn công so với Normal, điểm = 1 − P(Normal)).
+  1. **Đạt.** Bộ tính tay 12 node, 5 lớp (`test_hand_computed_metrics`): accuracy 9/12, FPR 1/5, recall tấn công 6/7, F1-macro = (4/5 + 4/7 + 2/3 + 1 + 1)/5 = 0,8076, đều khớp. Tham số `macro_labels=[0,1,2,3]` cho F1-macro trên 4 lớp chính (D5) = 0,7595. `DummyClassifier(most_frequent)` trên 70% Normal: accuracy 0,70, FPR 0, recall tấn công 0.
+  2. **Đạt.** FPR và recall tấn công tính trên nhãn gộp (Normal = 0 là âm). Nhầm giữa hai lớp tấn công không bị tính là FP (`test_fpr_is_binary_normal_negative`); không có Normal thì FPR = NaN.
+  3. **Đạt.** `RESULT_COLUMNS` có đúng 20 cột theo quy ước 6; ghi 2 dòng thì mọi dòng đều 20 cột; header sai hoặc `split` sai thì `log_result` báo lỗi.
+  4. **Đạt.** `measure_latency` gọi hàm 20 + 200 lần (đếm được 220 lần gọi), trả về `mean_ms`, `p50_ms`, `p95_ms`, `p99_ms`; `n_runs < 200` thì báo lỗi; `cuda_sync=True` đồng bộ GPU sau mỗi lần đo.
 
 ### 0.6 Chuyển pipeline lên Kaggle
 
