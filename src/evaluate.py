@@ -58,12 +58,14 @@ def compute_metrics(y_true, y_pred, y_score=None, class_names=CLASSES, macro_lab
 
     y_true, y_pred: nhãn số nguyên (Normal = 0). y_score: xác suất (n, K) hoặc điểm tấn công (n,), tùy chọn.
     class_names: tên lớp theo thứ tự mã 0..K-1. macro_labels: các mã lớp dùng cho chỉ số macro
-    (mặc định mọi lớp; ví dụ [0, 1, 2, 3] để bỏ lớp Khac theo D5).
+    (mặc định mọi lớp; ví dụ [0, 1, 2, 3] để bỏ lớp Khac theo D5). Lớp nào không xuất hiện trong y_true
+    bị bỏ khỏi các chỉ số macro, tránh F1 = 0 giả tạo khi một tập thiếu hẳn một lớp.
     """
     y_true = np.asarray(y_true)
     y_pred = np.asarray(y_pred)
     labels = list(range(len(class_names)))
     macro = labels if macro_labels is None else list(macro_labels)
+    macro = [c for c in macro if c in set(y_true.tolist())]     # lớp không có mẫu thật thì bỏ khỏi macro (không tính F1 = 0)
 
     attack_true = y_true != NORMAL
     attack_pred = y_pred != NORMAL

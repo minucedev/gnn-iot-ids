@@ -131,3 +131,13 @@ def test_count_params_boosting_and_mlp():
     assert ev.count_params(mlp) == 4 * 8 + 8 * 3 + 8 + 3
     assert ev.count_params(XGBClassifier(n_estimators=5, max_depth=2).fit(X, y)) > 0
     assert ev.count_params(LGBMClassifier(n_estimators=5, num_leaves=4, verbose=-1).fit(X, y)) > 0
+
+
+def test_macro_ignores_class_absent_from_y_true():
+    # lớp 2 không có mẫu thật: macro chỉ tính trên lớp 0, 1, 3
+    y_true = [0, 0, 1, 1, 3, 3]
+    y_pred = [0, 0, 1, 0, 3, 3]
+    m = ev.compute_metrics(y_true, y_pred, macro_labels=[0, 1, 2, 3])
+    f = m["f1_per_class"]
+    assert m["f1_macro"] == pytest.approx((f["Normal"] + f["DoS_DDoS"] + f["Truy_cap_trai_phep"]) / 3)
+    assert f["Botnet_Backdoor"] == 0.0
