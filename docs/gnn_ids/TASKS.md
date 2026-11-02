@@ -11,7 +11,7 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
 |---|---|---|---|---|---|---|---|
 | [0.1](#01-chốt-phát-biểu-bài-toán-và-chỉ-tiêu-nghiệm-thu) | Chốt phát biểu bài toán và chỉ tiêu | GĐ0 | Phúc | Tự kiểm | 2 | B | Chưa làm |
 | [0.2](#02-chốt-7-quyết-định-mở-d1d7) | Chốt quyết định D1–D7 | GĐ0 | Phúc | Tự kiểm | 2 | B | Chưa làm |
-| [0.3](#03-repo-github-cấu-trúc-thư-mục-requirements) | Repo GitHub, cấu trúc, requirements | GĐ0 | Phúc | Tự kiểm | 2 | B | Chưa làm |
+| [0.3](#03-repo-github-cấu-trúc-thư-mục-requirements) | Repo GitHub, cấu trúc, requirements | GĐ0 | Phúc | Tự kiểm | 2 | B | **Xong** |
 | [0.4](#04-tách-code-notebook-thành-srcbuild_graphpy) | Tách `src/build_graph.py` | GĐ0 | Phúc | Tự kiểm | 2 | B | Chưa làm |
 | [0.5](#05-module-đánh-giá-chung-srcevaluatepy) | Module `src/evaluate.py` | GĐ0 | Phúc | Tự kiểm | 2 | B | Chưa làm |
 | [0.6](#06-chuyển-pipeline-lên-kaggle) | Chuyển pipeline lên Kaggle | GĐ0 | Phúc | Tự kiểm | 2 | B | Chưa làm |
@@ -84,7 +84,7 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
 
 ### 0.3 Repo GitHub, cấu trúc thư mục, requirements
 
-- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 2 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** **Xong** (mục 5–6 của Kết quả chờ Phúc) · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 2 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** Môi trường
 - **Đầu vào:** Notebook Tuần 1 của Phong; cấu trúc repo ở [docs/plan/00_TONG_QUAN.md](../plan/00_TONG_QUAN.md) mục 4.2. Nếu nhóm trưởng đã tạo repo theo `plan/` thì clone repo đó, không tạo repo mới.
 - **Đầu ra:** Repo có `data/`, `notebooks/`, `src/`, `models/`, `reports/{figures,tables}/`, `docs/`; `requirements.txt`; `.gitignore`; README hướng dẫn cài đặt
@@ -94,6 +94,13 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
   3. `.gitignore` loại `data/`, `models/*.pt`, checkpoint.
   4. Bật bảo vệ nhánh `main`, chỉ merge qua PR.
 - **Phụ thuộc:** —
+- **Kết quả:** (02/11/2026, nhánh `chore/0.3-repo-setup` của repo `minucedev/gnn-iot-ids`; chi tiết ở [docs/notes_env.md](../notes_env.md). Mục 1 và 6 ứng với tiêu chí 1 ở trên, mục 2–3 ứng với tiêu chí 2–3, mục 4 là kiểm tra link mới thêm, mục 5 ứng với tiêu chí 4.)
+  1. **Đạt (máy cá nhân).** Xóa `.venv` rồi cài lại đúng theo README (uv, Python 3.11.17, `torch==2.14.1` từ index `cu126`, sau đó `-r requirements.txt`): cài mất 34,1 s nhờ cache của uv. Lần đầu tải mới mất khoảng 39 phút (torch 2,4 GB ở khoảng 1,7 MB/s). `.venv\Scripts\python.exe -I scripts\check_env.py` thoát mã 0: `cuda.is_available: True`, RTX A1000; GATv2Conv (heads=4, edge_dim=3) cho out (50, 64), 2752 tham số trên CPU và GPU, chênh lệch CPU/GPU 3,58e-07; parquet ghi/đọc khớp. Kernel Jupyter `gnn-iot-ids` đã đăng ký.
+  2. **Đạt.** `requirements.txt` có 20 gói cấp cao nhất, gói nào cũng ghi `==`, gồm `torch==2.14.1` (bản thật 2.14.1+cu126, cách cài ghi trong README) và `torch-geometric==2.8.1`. `uv pip check`: 148 gói tương thích.
+  3. **Đạt.** `git status` sạch sau commit cuối. `git check-ignore -v` xác nhận `data/raw/x.csv` (`data/raw/**`), `models/a.pt` (`models/*.pt`), `.venv` (`.venv/`), `data/processed/g.parquet` (`*.parquet`) đều bị bỏ qua; `data/raw/.gitkeep`, `data/processed/.gitkeep` không bị bỏ qua. File lớn hơn 50 MB bị chặn bởi `.githooks/pre-commit`: thử với file 51 MB thì hook thoát 1, không có file lớn thì thoát 0.
+  4. **Đạt.** `scripts/check_links.py` quét mọi file `.md` trong repo: 0 link tương đối hỏng (link trong `docs/gnn_ids/` đã đổi từ `../../plan/`, `../Phong/` sang `../plan/`, `../dataset_cards/`, `../../notebooks/phong_tuan1/`).
+  5. **Chờ xác nhận.** Bảo vệ nhánh `main` chưa bật; cần Phúc đồng ý rồi mới push và bật bằng `gh`.
+  6. **Chờ Phúc chạy [notebooks/00_kaggle_env_check.ipynb](../../notebooks/00_kaggle_env_check.ipynb) trên Kaggle.** Notebook giữ torch có sẵn của Kaggle và bỏ qua `jupyter`, `ipykernel`.
 
 ### 0.4 Tách code notebook thành src/build_graph.py
 
