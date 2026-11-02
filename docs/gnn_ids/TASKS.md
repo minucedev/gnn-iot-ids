@@ -18,7 +18,7 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
 | [1.0](#10-tuần-1-pipeline-v1) | [Tuần 1] Pipeline v1 | GĐ1 | Phúc | Tự kiểm | 1 | B | **Cần sửa** |
 | [1.1](#11-tuần-1-khảo-sát-4-bộ-dữ-liệu) | [Tuần 1] Khảo sát 4 bộ dữ liệu | GĐ1 | Phúc | Tự kiểm | 1 | B | **Xong** |
 | [1.2](#12-xác-minh-và-tải-netflow-v3) | Xác minh và tải NetFlow v3 | GĐ1 | Phúc | Tự kiểm | 2 | B | **Xong** |
-| [1.3](#13-tải-ton-iot-có-ts-và-kiểm-chứng-giả-định-thứ-tự-dòng) | ToN-IoT có `ts`, kiểm chứng thứ tự dòng | GĐ1 | Phúc | Tự kiểm | 2 | B | Chưa làm |
+| [1.3](#13-tải-ton-iot-có-ts-và-kiểm-chứng-giả-định-thứ-tự-dòng) | ToN-IoT có `ts`, kiểm chứng thứ tự dòng | GĐ1 | Phúc | Tự kiểm | 2 | B | **Bỏ** |
 | [1.4](#14-chốt-danh-sách--3-bộ-dữ-liệu) | Chốt ≥ 3 bộ dữ liệu | GĐ1 | Phúc | Tự kiểm | 3 | B | Chưa làm |
 | [1.5](#15-sửa-chiến-lược-chia-tập) | Sửa chiến lược chia tập | GĐ1 | Phúc | Tự kiểm | 3 | B | Chưa làm |
 | [1.6](#16-dựng-lại-đồ-thị-cho-mọi-bộ-đã-chốt) | Dựng lại đồ thị mọi bộ | GĐ1 | Phúc | Tự kiểm | 3 | B | Chưa làm |
@@ -74,13 +74,13 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
 
 - **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 2 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** Bộ dữ liệu, Thuật toán & đánh giá
-- **Đầu vào:** Log quyết định (mục 7 của KE_HOACH.md); kết quả task 1.2, 1.3
+- **Đầu vào:** Log quyết định (mục 7 của KE_HOACH.md); kết quả task 1.2 (task 1.3 đã bỏ)
 - **Đầu ra:** Cột "Đã chốt" của D1–D7 được điền: lựa chọn, lý do, người duyệt, ngày
 - **Tiêu chí kiểm tra:**
   1. Hết Tuần 2 không còn quyết định nào để trống.
   2. Mỗi quyết định có lý do dựa trên số liệu (ví dụ D3 phải kèm bảng số node mỗi lớp trong từng tập).
   3. Muốn đổi quyết định đã chốt thì phải ghi dòng mới, không sửa đè.
-- **Phụ thuộc:** 1.2, 1.3
+- **Phụ thuộc:** 1.2
 
 ### 0.3 Repo GitHub, cấu trúc thư mục, requirements
 
@@ -199,7 +199,7 @@ Phiếu dataset và chấm điểm.
 
 Bản `Processed_Network_dataset`.
 
-- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 2 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** **Bỏ** · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 2 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** Bộ dữ liệu
 - **Đầu vào:** Trang ToN-IoT của UNSW
 - **Đầu ra:** Phiếu dataset ToN-IoT network (bản gốc); đoạn kết luận giả định "thứ tự dòng NF-ToN-IoT-v2 = thời gian" đúng hay sai
@@ -208,6 +208,7 @@ Bản `Processed_Network_dataset`.
   2. So thứ tự các pha nhãn theo `ts` với thứ tự pha theo số dòng của NF-v2, kèm bảng hoặc hình.
   3. Kết luận có số liệu, không chỉ nhận xét bằng mắt.
 - **Phụ thuộc:** —
+- **Kết quả:** (03/11/2026) **Bỏ theo quyết định của Phúc.** Task này sinh ra để kiểm chứng giả định "thứ tự dòng NF-ToN-IoT-v2 = thời gian" khi v2 không có timestamp. Task 1.2 đã xác minh NF-ToN-IoT-v3 có `FLOW_START_MILLISECONDS` thật, file sắp theo thời gian 100% ([nf_ton_iot_v3.md](../dataset_cards/nf_ton_iot_v3.md)), và D1 đề xuất dùng v3, nên giả định đó không còn cần. Nếu sau này phải quay lại v2 (ví dụ D1 đổi) thì mở lại task này. Task 0.2 và 1.4 không còn phụ thuộc 1.3.
 
 ### 1.4 Chốt danh sách ≥ 3 bộ dữ liệu
 
@@ -215,14 +216,14 @@ Kèm bảng "Phân tích lựa chọn bộ dữ liệu".
 
 - **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 3 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** Bộ dữ liệu, Báo cáo
-- **Đầu vào:** Phiếu của 1.1, 1.2, 1.3
+- **Đầu vào:** Phiếu của 1.1, 1.2
 - **Đầu ra:** `docs/dataset_selection.md`: bảng so sánh mọi bộ đã khảo sát, gồm năm, phiên bản, điểm 7 tiêu chí, quyết định chọn hay loại
 - **Tiêu chí kiểm tra:**
   1. Có 1 bộ NetFlow chính và ≥ 2 bộ khác, đúng yêu cầu của thầy.
   2. Mỗi bộ bị loại có lý do định lượng.
   3. Có mục "tính thời sự": năm phát hành và lần dùng gần nhất trong bài báo.
   4. License và bài báo gốc đã được xác minh, không còn ghi "cần xác minh".
-- **Phụ thuộc:** 1.2, 1.3
+- **Phụ thuộc:** 1.2
 
 ### 1.5 Sửa chiến lược chia tập
 
