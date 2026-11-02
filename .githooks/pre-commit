@@ -1,0 +1,15 @@
+#!/bin/sh
+# Chặn commit file lớn hơn 50 MB (.gitignore không lọc được theo dung lượng).
+# Bật một lần sau khi clone: git config core.hooksPath .githooks
+limit=$((50 * 1024 * 1024))
+big=$(git -c core.quotepath=off diff --cached --name-only --diff-filter=ACM |
+  while IFS= read -r f; do
+    size=$(git cat-file -s ":$f")
+    [ "$size" -gt "$limit" ] && echo "  $f ($((size / 1024 / 1024)) MB)"
+  done)
+if [ -n "$big" ]; then
+  echo "pre-commit: các file sau lớn hơn 50 MB, không được commit:" >&2
+  echo "$big" >&2
+  exit 1
+fi
+exit 0

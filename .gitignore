@@ -1,2 +1,36 @@
+# Dữ liệu: không commit, chỉ giữ .gitkeep
+data/raw/**
+!data/raw/.gitkeep
+data/processed/**
+!data/processed/.gitkeep
+*.parquet
+
+# Mô hình đã huấn luyện
+models/*.pt
+models/*.pth
+models/*.pkl
+models/*.joblib
+models/*.onnx
+
+# File lớn thường gặp (file > 50 MB bất kỳ bị chặn bởi .githooks/pre-commit)
+*.zip
+*.7z
+*.tar
+*.tar.gz
+*.pcap
+*.pcapng
+
+# Môi trường Python
 .venv/
 __pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Bí mật
+kaggle.json
+.env
+
+# Hệ điều hành
+Thumbs.db
+.DS_Store
