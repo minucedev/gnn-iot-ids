@@ -87,6 +87,7 @@ gnn-iot-ids/
 
 ## Quy ước làm việc
 
-- Mỗi task một nhánh `<type>/<mã-task>-<slug>`, ví dụ `chore/0.3-repo-setup`, `feat/0.4-build-graph`. Các type: `feat`, `fix`, `refactor`, `chore`, `docs`.
-- Tách nhánh từ `origin/main` mới nhất, mở PR, tự kiểm đủ tiêu chí của task trong [TASKS.md](docs/gnn_ids/TASKS.md) rồi mới merge.
+- Commit và push thẳng lên `main`, không tạo nhánh hay PR.
+- Commit ghi `<type>(<mã-task>): <mô tả>`, ví dụ `feat(0.4): tách build_graph.py`. Các type: `feat`, `fix`, `refactor`, `chore`, `docs`.
+- Tự kiểm đủ tiêu chí của task trong [TASKS.md](docs/gnn_ids/TASKS.md) và ghi bằng chứng vào dòng **Kết quả** trước khi chuyển task sang "Xong".
 - Seed, cách chia tập, cột `results.csv`, cách đặt tên hình: theo [KE_HOACH.md mục 6](docs/gnn_ids/KE_HOACH.md#6-quy-ước-bắt-buộc).

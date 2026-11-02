@@ -108,7 +108,7 @@ Phải đạt hết cổng nghiệm thu của một giai đoạn mới sang giai
 6. **Cột của `results.csv`:** `dataset, model, task, seed, split, accuracy, balanced_acc, precision_macro, recall_macro, f1_macro, f1_per_class, fpr, recall_attack, roc_auc, n_params, size_kb, train_time_s, infer_ms_per_window, author, commit`.
 7. **Hình** lưu ở `reports/figures/gd<số>_<tên>.png`, dpi ≥ 150, có tiêu đề, nhãn trục và đơn vị.
 8. **Môi trường:** huấn luyện trên Kaggle (ưu tiên vì RAM khoảng 30 GB), Colab, hoặc máy cá nhân có GPU. Một notebook chỉ được chuyển sang "Chờ review" khi đã chạy "Run All" không lỗi trên Kaggle.
-9. **Git:** mỗi task một nhánh `<type>/<mã-task>-<slug>` (ví dụ `chore/0.3-repo-setup`), mở PR, tự kiểm đủ tiêu chí rồi mới merge vào `main`.
+9. **Git:** commit và push thẳng lên `main`, không tạo nhánh, không PR, không bật bảo vệ nhánh (Phúc quyết định 02/11/2026). Commit ghi mã task ở đầu, ví dụ `feat(0.4): ...`. Tự kiểm đủ tiêu chí rồi mới chuyển task sang "Xong".
 10. **Trạng thái task:** Chưa làm → Đang làm → Chờ review → (Cần sửa →) Xong. Cập nhật trực tiếp trong [TASKS.md](TASKS.md).
 
 ## 7. Log quyết định
