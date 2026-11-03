@@ -40,10 +40,20 @@ def make_models(seed):
         "lightgbm": (lambda c: LGBMClassifier(n_estimators=c["n"], num_leaves=c["l"], learning_rate=0.1,
                                               n_jobs=-1, random_state=seed, verbose=-1),
                      [{"n": 100, "l": 15}, {"n": 200, "l": 31}, {"n": 300, "l": 63}]),
-        "mlp": (lambda c: MLPClassifier(hidden_layer_sizes=c["h"], max_iter=60, early_stopping=True,
+        "mlp": (lambda c: MLPClassifier(hidden_layer_sizes=c["h"], max_iter=c.get("it", 60), early_stopping=True,
                                         random_state=seed),
                 [{"h": (32,)}, {"h": (64, 64)}]),
     }
+
+
+# Chế độ nhanh cho dữ liệu rất lớn (CIC: 6,6 triệu node train): ít cấu hình hơn, MLP ít vòng lặp hơn
+FAST_GRIDS = {
+    "logreg": [{"C": 1.0}],
+    "random_forest": [{"n": 100, "d": 20}],
+    "xgboost": [{"n": 200, "d": 6}, {"n": 300, "d": 8}],
+    "lightgbm": [{"n": 200, "l": 31}, {"n": 300, "l": 63}],
+    "mlp": [{"h": (64, 64), "it": 25}],
+}
 
 
 def fit(name, model, X, y, w):
@@ -60,7 +70,11 @@ def fit(name, model, X, y, w):
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
     data_dir, dataset, results_csv = sys.argv[1:4]
-    search_log = sys.argv[4] if len(sys.argv) > 4 else None
+    rest = sys.argv[4:]
+    opt = dict(a.split("=", 1) for a in rest if "=" in a)           # tùy chọn: models=a,b  fast=1
+    search_log = next((a for a in rest if "=" not in a), None)
+    only = opt["models"].split(",") if "models" in opt else None
+    fast = opt.get("fast", "0") == "1"
 
     graphs, meta = D.load_split(data_dir)
     classes = meta["classes"]
@@ -77,6 +91,10 @@ def main():
 
     log = {}
     for name, (make, grid) in make_models(42).items():
+        if only and name not in only:
+            continue
+        if fast:
+            grid = FAST_GRIDS[name]
         log[name] = []
         for cfg in grid:
             t0 = time.time()
@@ -106,9 +124,8 @@ def main():
             print(f"[{name} seed {seed}] acc {metrics['accuracy']:.4f} F1-macro4 {metrics['f1_macro']:.4f} "
                   f"FPR {metrics['fpr']:.4f} recall_tc {metrics['recall_attack']:.4f} "
                   f"p95 {lat['p95_ms']:.2f} ms ({row['commit']})")
-
-    if search_log:
-        Path(search_log).write_text(json.dumps(log, ensure_ascii=False, indent=1), encoding="utf-8")
+        if search_log:                                              # ghi sau từng mô hình, kernel bị dừng vẫn còn log
+            Path(search_log).write_text(json.dumps(log, ensure_ascii=False, indent=1), encoding="utf-8")
     return 0
 
 
