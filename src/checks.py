@@ -43,7 +43,7 @@ def check_graphs(graphs, split, scaler, classes, gap):
 
     # 5. scaler chỉ fit trên train
     part_graphs = {p: [g for g in graphs if int(g.win) in sets[p]] for p in sets}
-    x_train = torch.cat([g.x for g in part_graphs["train"]]).numpy()
+    x_train = torch.cat([g.x for g in part_graphs["train"]]).numpy().astype(np.float64)   # float64: tránh sai số cộng float32
     n_train = len(x_train)
     add("Scaler chỉ fit trên train (số mẫu = số node train)", scaler.n_samples_seen_ == n_train,
         f"scaler {scaler.n_samples_seen_} / train {n_train}")

@@ -1,0 +1,119 @@
+{
+ "dataset": "nf_cicids2018_v3",
+ "tag": "nf_cicids2018_v3_w5s5_blocked",
+ "n_graphs": 72098,
+ "fingerprint_sha256": "25de791de3231c079420983391b040ec17c7ca2dd3cfa3e9487e6e491598745b",
+ "checks": [
+  {
+   "name": "Không cửa sổ trùng giữa các tập",
+   "ok": true,
+   "detail": "0 cửa sổ trùng"
+  },
+  {
+   "name": "Gap >= 1 cửa sổ ở mọi ranh giới giữa các tập",
+   "ok": true,
+   "detail": "0 ranh giới vi phạm"
+  },
+  {
+   "name": "Không có NaN hoặc inf trong x và edge_attr",
+   "ok": true,
+   "detail": "0 đồ thị lỗi"
+  },
+  {
+   "name": "x có 18 đặc trưng, edge_attr có 3",
+   "ok": true,
+   "detail": "0 đồ thị sai hình dạng"
+  },
+  {
+   "name": "Chỉ số cạnh nằm trong số node",
+   "ok": true,
+   "detail": "0 đồ thị lỗi"
+  },
+  {
+   "name": "IP và cổng không nằm trong đặc trưng",
+   "ok": true,
+   "detail": "đặc trưng: 18 cột thống kê"
+  },
+  {
+   "name": "Scaler chỉ fit trên train (số mẫu = số node train)",
+   "ok": true,
+   "detail": "scaler 6599473.0 / train 6599473"
+  },
+  {
+   "name": "Đặc trưng train sau chuẩn hóa có trung bình ~0",
+   "ok": false,
+   "detail": "|mean| lớn nhất 2.36e-03"
+  },
+  {
+   "name": "Mỗi lớp chính có >= 100 node train, >= 30 node val và test",
+   "ok": true,
+   "detail": "đủ"
+  },
+  {
+   "name": "Tỉ lệ node train/val/test trong 70/15/15 ± 3 điểm %",
+   "ok": true,
+   "detail": "70.0/15.0/15.0"
+  },
+  {
+   "name": "Tái lập: dựng lại lần 2 cho cùng hash",
+   "ok": true,
+   "detail": "25de791de3231c07 / 25de791de3231c07"
+  }
+ ],
+ "options": {
+  "mode": "blocked",
+  "blocks": 20,
+  "balance_nodes": true,
+  "gap": 1
+ },
+ "clean_log": [
+  {
+   "buoc": "Ban đầu",
+   "so_dong": 20115529
+  },
+  {
+   "buoc": "Bỏ thiếu / vô cực",
+   "so_dong": 20115529
+  },
+  {
+   "buoc": "Bỏ giá trị âm",
+   "so_dong": 20115529
+  },
+  {
+   "buoc": "Bỏ bản ghi trùng lặp",
+   "so_dong": 19486767
+  }
+ ],
+ "split_counts": {
+  "train": {
+   "n_graphs": 47837,
+   "n_nodes": 6599473,
+   "Normal": 6534564,
+   "DoS_DDoS": 16714,
+   "Botnet_Backdoor": 20770,
+   "Truy_cap_trai_phep": 27425
+  },
+  "val": {
+   "n_graphs": 10463,
+   "n_nodes": 1412342,
+   "Normal": 1397286,
+   "DoS_DDoS": 520,
+   "Botnet_Backdoor": 4701,
+   "Truy_cap_trai_phep": 9835
+  },
+  "test": {
+   "n_graphs": 13798,
+   "n_nodes": 1413280,
+   "Normal": 1402533,
+   "DoS_DDoS": 1464,
+   "Botnet_Backdoor": 6053,
+   "Truy_cap_trai_phep": 3230
+  }
+ },
+ "files": {
+  "graph_stats.csv": 216,
+  "graphs_nf_cicids2018_v3_w5s5_blocked.pt": 1306990405,
+  "split.json": 1288133,
+  "scaler.pkl": 848
+ }
+}
