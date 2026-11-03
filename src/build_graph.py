@@ -303,13 +303,26 @@ def to_pyg(nodes, edges, scaler, stride_sec):
 
 
 # ---------------------------------------------------------------- chia tập và dựng toàn bộ
-def time_split(wins, ratios=SPLIT_RATIO, gap=0, mode=SPLIT_MODE, blocks=SPLIT_BLOCKS):
-    """Chia danh sách cửa sổ (đã sắp theo thời gian). gap = số cửa sổ bỏ ở mỗi ranh giới giữa hai tập."""
+def time_split(wins, ratios=SPLIT_RATIO, gap=0, mode=SPLIT_MODE, blocks=SPLIT_BLOCKS, weights=None):
+    """Chia danh sách cửa sổ (đã sắp theo thời gian). gap = số cửa sổ bỏ ở mỗi ranh giới giữa hai tập.
+
+    weights: trọng số mỗi cửa sổ (ví dụ số node), cùng độ dài với wins. Có weights thì ranh giới train/val/test trong
+    mỗi khối đặt theo tỉ lệ tổng trọng số thay vì tỉ lệ số cửa sổ, để tỉ lệ node gần 70/15/15 hơn.
+    """
     segs = [wins] if mode == "chronological" else np.array_split(wins, blocks)
+    if weights is None:
+        wsegs = [None] * len(segs)
+    else:
+        wsegs = [np.asarray(weights)] if mode == "chronological" else np.array_split(np.asarray(weights), blocks)
     out = {"train": [], "val": [], "test": []}
     for i, seg in enumerate(segs):
         n = len(seg)
-        a, b = int(n * ratios[0]), int(n * (ratios[0] + ratios[1]))
+        if wsegs[i] is None or n == 0:
+            a, b = int(n * ratios[0]), int(n * (ratios[0] + ratios[1]))
+        else:
+            c = np.cumsum(wsegs[i], dtype=np.float64)
+            a = int(np.searchsorted(c, c[-1] * ratios[0], side="right"))
+            b = int(np.searchsorted(c, c[-1] * (ratios[0] + ratios[1]), side="right"))
         out["train"].append(seg[(gap if i else 0):a])        # khối sau bắt đầu ngay sau test của khối trước
         out["val"].append(seg[a + gap:b])
         out["test"].append(seg[b + gap:])
@@ -335,17 +348,18 @@ def build_tables(flows, window_sec, stride_sec, chunk=BUILD_CHUNK_WINDOWS):
 
 
 def build_dataset(flows, window_sec, stride_sec, ratios=SPLIT_RATIO, mode=SPLIT_MODE, blocks=SPLIT_BLOCKS,
-                  chunk=BUILD_CHUNK_WINDOWS, gap=None):
+                  chunk=BUILD_CHUNK_WINDOWS, gap=None, balance_nodes=False):
     """Toàn bộ quy trình offline: cửa sổ → node/cạnh → chia thời gian → scaler(train) → Data.
 
     gap: số cửa sổ bỏ ở mỗi ranh giới giữa hai tập; None = window_sec // stride_sec - 1 (đủ để cửa sổ trượt không chồng
     lên nhau, bằng 0 khi W = S). Đặt gap >= 1 nếu muốn có khoảng trống thật giữa các tập.
+    balance_nodes=True: đặt ranh giới tập theo số node thay vì số cửa sổ (xem time_split).
     Trả về (graphs, split, scaler, nodes): split = {"train"|"val"|"test": mảng mã cửa sổ}.
     """
     nodes, edges = build_tables(flows, window_sec, stride_sec, chunk)
-    wins = np.unique(nodes["win"].to_numpy())
+    wins, n_per_win = np.unique(nodes["win"].to_numpy(), return_counts=True)
     gap = window_sec // stride_sec - 1 if gap is None else gap
-    split = time_split(wins, ratios, gap, mode=mode, blocks=blocks)
+    split = time_split(wins, ratios, gap, mode=mode, blocks=blocks, weights=n_per_win if balance_nodes else None)
     scaler = StandardScaler().fit(nodes.loc[nodes["win"].isin(split["train"]), FEATURES].to_numpy(np.float64))
     keep = np.concatenate(list(split.values()))
     graphs = to_pyg(nodes[nodes["win"].isin(keep)], edges[edges["win"].isin(keep)], scaler, stride_sec)

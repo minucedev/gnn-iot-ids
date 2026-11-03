@@ -26,7 +26,10 @@ def main():
     sys.stdout.reconfigure(encoding="utf-8")
     name, csv, window, stride, mode, gap, outdir = sys.argv[1:8]
     window, stride, gap = int(window), int(stride), int(gap)
-    tag = sys.argv[8] if len(sys.argv) > 8 else f"{name}_w{window}s{stride}_{mode}"
+    opt = dict(a.split("=", 1) for a in sys.argv[8:])           # tùy chọn: blocks=N balance=1 tag=...
+    blocks = int(opt.get("blocks", bg.SPLIT_BLOCKS))
+    balance = opt.get("balance", "0") == "1"
+    tag = opt.get("tag", f"{name}_w{window}s{stride}_{mode}")
     out = Path(outdir)
     out.mkdir(parents=True, exist_ok=True)
 
@@ -37,7 +40,8 @@ def main():
     print(log.to_string())
 
     t0 = time.time()
-    graphs, split, scaler, _ = bg.build_dataset(flows, window, stride, mode=mode, gap=gap)
+    graphs, split, scaler, _ = bg.build_dataset(flows, window, stride, mode=mode, blocks=blocks, gap=gap,
+                                                balance_nodes=balance)
     print(f"Dựng {len(graphs):,} đồ thị trong {time.time() - t0:.0f} s")
 
     win_pos = {g.win: i for i, g in enumerate(graphs)}
@@ -55,7 +59,7 @@ def main():
         "dataset": name, "graph_file": graph_file.name, "seed": 42,
         "ts_unit": "flow" if ts_is_order else "giây",
         "ts_note": "ts = số thứ tự dòng (giả định theo thời gian)" if ts_is_order else "ts = giây epoch (FLOW_START_MILLISECONDS / 1000)",
-        "split_mode": mode, "split_blocks": bg.SPLIT_BLOCKS if mode == "blocked" else None,
+        "split_mode": mode, "split_blocks": blocks if mode == "blocked" else None, "balance_nodes": balance,
         "window_sec": window, "stride_sec": stride, "ratios": bg.SPLIT_RATIO, "gap_windows": gap,
         "classes": classes, "features": bg.FEATURES, "log1p_features": bg.LOG_FEATURES,
         "edge_features": bg.EDGE_FEATURES, "edge_direction": "src->dst (có hướng)",
