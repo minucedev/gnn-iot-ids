@@ -154,6 +154,16 @@ Chốt trong GĐ0. Muốn đổi quyết định đã chốt thì thêm dòng m�
 | D4 | Giữ đề xuất gốc: node là chính, edge là tùy chọn nếu còn thời gian (task 4.2) |
 | D7 | Giữ đề xuất gốc: Docker giới hạn CPU-RAM; laptop 1 luồng là phương án dự phòng nếu không kịp |
 
+**Điều chỉnh D3 (03/11/2026)**, sau khi thử 12 cấu hình chia trên từng bộ ([reports/tables/split_search/](../../reports/tables/split_search/), sinh bởi [notebooks/08_split_search.ipynb](../../notebooks/08_split_search.ipynb)). Cách chia phải đạt cả hai tiêu chí của task 1.5: mỗi lớp chính có ≥ 100 node ở train và ≥ 30 ở val, test; tỉ lệ node train/val/test trong 70/15/15 ± 3 điểm %. Chọn **số khối ít nhất** đạt cả hai, chia theo **số node** (không theo số cửa sổ), gap = 1 cho mọi bộ:
+
+| Bộ | Cấu hình | Lý do |
+|---|---|---|
+| NF-ToN-IoT-v3 (chính) | `blocked`, 10 khối, theo node | Giữ nguyên D3; theo số cửa sổ thì tỉ lệ node lệch (73,2/12,1/14,7) |
+| NF-CSE-CIC-IDS2018-v3 | `blocked`, **20 khối**, theo node | 10 khối làm val và test không có node DoS_DDoS nào |
+| NF-ToN-IoT-v2 (phụ) | `blocked`, **200 khối**, theo node | Ít khối hơn thì val hoặc test thiếu Botnet_Backdoor (v2 chỉ có 16.809 flow backdoor) |
+
+Hạn chế phải ghi vào báo cáo: nhiều khối làm ranh giới train/val/test sát nhau hơn, nên điểm val và test của v2 (200 khối) có thể lạc quan hơn một chút. Việc chọn chỉ dựa trên đếm nhãn, không dùng kết quả mô hình. Bảng bên dưới là số liệu của cấu hình cũ (10 khối, theo số cửa sổ, gap 0), giữ lại làm bằng chứng cho lý do điều chỉnh.
+
 **Bằng chứng D3: số node mỗi lớp ở từng tập** (NF-ToN-IoT-v3, W = S = 5 s, gap = 0; dữ liệu trong [reports/tables/gd0_split_stats_nf_ton_iot_v3_w5.json](../../reports/tables/gd0_split_stats_nf_ton_iot_v3_w5.json), sinh bởi [notebooks/03_split_stats_nf_ton_iot_v3.ipynb](../../notebooks/03_split_stats_nf_ton_iot_v3.ipynb) trên Kaggle). Số liệu lấy với gap = 0; gap = 1 chỉ bỏ thêm vài cửa sổ ở ranh giới.
 
 | Cách chia | Tập | Cửa sổ | Node | Normal | DoS_DDoS | Botnet_Backdoor | Truy_cap_trai_phep | Khac |

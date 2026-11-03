@@ -1,0 +1,541 @@
+{
+ "dataset": "nf_ton_iot_v2",
+ "classes": [
+  "Normal",
+  "DoS_DDoS",
+  "Botnet_Backdoor",
+  "Truy_cap_trai_phep",
+  "Khac"
+ ],
+ "window": 1000,
+ "stride": 1000,
+ "gap": 1,
+ "configs": [
+  {
+   "mode": "chronological",
+   "blocks": 1,
+   "balance_nodes": false,
+   "ratio_pct": {
+    "train": 80.38716756902245,
+    "val": 6.633609043571879,
+    "test": 12.979223387405666
+   },
+   "missing_classes": [
+    "Botnet_Backdoor"
+   ],
+   "ok_classes": false,
+   "ok_ratio": false,
+   "counts": {
+    "train": {
+     "Normal": 129681,
+     "DoS_DDoS": 2655,
+     "Botnet_Backdoor": 0,
+     "Truy_cap_trai_phep": 255894,
+     "Khac": 36,
+     "n_nodes": 388266,
+     "n_windows": 11858
+    },
+    "val": {
+     "Normal": 22813,
+     "DoS_DDoS": 7205,
+     "Botnet_Backdoor": 0,
+     "Truy_cap_trai_phep": 2022,
+     "Khac": 0,
+     "n_nodes": 32040,
+     "n_windows": 2540
+    },
+    "test": {
+     "Normal": 48353,
+     "DoS_DDoS": 5864,
+     "Botnet_Backdoor": 278,
+     "Truy_cap_trai_phep": 7921,
+     "Khac": 273,
+     "n_nodes": 62689,
+     "n_windows": 2541
+    }
+   }
+  },
+  {
+   "mode": "chronological",
+   "blocks": 1,
+   "balance_nodes": true,
+   "ratio_pct": {
+    "train": 69.98570718369376,
+    "val": 15.00662855248985,
+    "test": 15.00766426381639
+   },
+   "missing_classes": [
+    "Botnet_Backdoor"
+   ],
+   "ok_classes": false,
+   "ok_ratio": true,
+   "counts": {
+    "train": {
+     "Normal": 94930,
+     "DoS_DDoS": 1712,
+     "Botnet_Backdoor": 0,
+     "Truy_cap_trai_phep": 241188,
+     "Khac": 33,
+     "n_nodes": 337863,
+     "n_windows": 9049
+    },
+    "val": {
+     "Normal": 51315,
+     "DoS_DDoS": 4766,
+     "Botnet_Backdoor": 0,
+     "Truy_cap_trai_phep": 16362,
+     "Khac": 3,
+     "n_nodes": 72446,
+     "n_windows": 4265
+    },
+    "test": {
+     "Normal": 54368,
+     "DoS_DDoS": 9240,
+     "Botnet_Backdoor": 278,
+     "Truy_cap_trai_phep": 8292,
+     "Khac": 273,
+     "n_nodes": 72451,
+     "n_windows": 3625
+    }
+   }
+  },
+  {
+   "mode": "blocked",
+   "blocks": 10,
+   "balance_nodes": false,
+   "ratio_pct": {
+    "train": 77.53789818756363,
+    "val": 8.87162824837905,
+    "test": 13.59047356405732
+   },
+   "missing_classes": [
+    "Botnet_Backdoor"
+   ],
+   "ok_classes": false,
+   "ok_ratio": false,
+   "counts": {
+    "train": {
+     "Normal": 144871,
+     "DoS_DDoS": 10132,
+     "Botnet_Backdoor": 264,
+     "Truy_cap_trai_phep": 218495,
+     "Khac": 187,
+     "n_nodes": 373949,
+     "n_windows": 11842
+    },
+    "val": {
+     "Normal": 26423,
+     "DoS_DDoS": 2622,
+     "Botnet_Backdoor": 0,
+     "Truy_cap_trai_phep": 13734,
+     "Khac": 7,
+     "n_nodes": 42786,
+     "n_windows": 2530
+    },
+    "test": {
+     "Normal": 29347,
+     "DoS_DDoS": 2957,
+     "Botnet_Backdoor": 14,
+     "Truy_cap_trai_phep": 33111,
+     "Khac": 115,
+     "n_nodes": 65544,
+     "n_windows": 2540
+    }
+   }
+  },
+  {
+   "mode": "blocked",
+   "blocks": 10,
+   "balance_nodes": true,
+   "ratio_pct": {
+    "train": 70.04874121506516,
+    "val": 14.9562283553938,
+    "test": 14.995030429541035
+   },
+   "missing_classes": [
+    "Botnet_Backdoor"
+   ],
+   "ok_classes": false,
+   "ok_ratio": true,
+   "counts": {
+    "train": {
+     "Normal": 132489,
+     "DoS_DDoS": 10031,
+     "Botnet_Backdoor": 264,
+     "Truy_cap_trai_phep": 194615,
+     "Khac": 189,
+     "n_nodes": 337588,
+     "n_windows": 10310
+    },
+    "val": {
+     "Normal": 32078,
+     "DoS_DDoS": 3393,
+     "Botnet_Backdoor": 0,
+     "Truy_cap_trai_phep": 36528,
+     "Khac": 80,
+     "n_nodes": 72079,
+     "n_windows": 2861
+    },
+    "test": {
+     "Normal": 35909,
+     "DoS_DDoS": 2260,
+     "Botnet_Backdoor": 14,
+     "Truy_cap_trai_phep": 34043,
+     "Khac": 40,
+     "n_nodes": 72266,
+     "n_windows": 3741
+    }
+   }
+  },
+  {
+   "mode": "blocked",
+   "blocks": 20,
+   "balance_nodes": false,
+   "ratio_pct": {
+    "train": 67.28801367157452,
+    "val": 16.809841205160936,
+    "test": 15.902145123264546
+   },
+   "missing_classes": [
+    "Botnet_Backdoor"
+   ],
+   "ok_classes": false,
+   "ok_ratio": true,
+   "counts": {
+    "train": {
+     "Normal": 138143,
+     "DoS_DDoS": 9800,
+     "Botnet_Backdoor": 264,
+     "Truy_cap_trai_phep": 175256,
+     "Khac": 191,
+     "n_nodes": 323654,
+     "n_windows": 11822
+    },
+    "val": {
+     "Normal": 31924,
+     "DoS_DDoS": 3301,
+     "Botnet_Backdoor": 0,
+     "Truy_cap_trai_phep": 45548,
+     "Khac": 82,
+     "n_nodes": 80855,
+     "n_windows": 2520
+    },
+    "test": {
+     "Normal": 29987,
+     "DoS_DDoS": 2570,
+     "Botnet_Backdoor": 14,
+     "Truy_cap_trai_phep": 43882,
+     "Khac": 36,
+     "n_nodes": 76489,
+     "n_windows": 2540
+    }
+   }
+  },
+  {
+   "mode": "blocked",
+   "blocks": 20,
+   "balance_nodes": true,
+   "ratio_pct": {
+    "train": 70.20370984114676,
+    "val": 14.803721096985727,
+    "test": 14.99256906186751
+   },
+   "missing_classes": [
+    "Botnet_Backdoor"
+   ],
+   "ok_classes": false,
+   "ok_ratio": true,
+   "counts": {
+    "train": {
+     "Normal": 137801,
+     "DoS_DDoS": 9692,
+     "Botnet_Backdoor": 264,
+     "Truy_cap_trai_phep": 188780,
+     "Khac": 266,
+     "n_nodes": 336803,
+     "n_windows": 11211
+    },
+    "val": {
+     "Normal": 25706,
+     "DoS_DDoS": 3165,
+     "Botnet_Backdoor": 14,
+     "Truy_cap_trai_phep": 42128,
+     "Khac": 8,
+     "n_nodes": 71021,
+     "n_windows": 2422
+    },
+    "test": {
+     "Normal": 36424,
+     "DoS_DDoS": 2804,
+     "Botnet_Backdoor": 0,
+     "Truy_cap_trai_phep": 32664,
+     "Khac": 35,
+     "n_nodes": 71927,
+     "n_windows": 3249
+    }
+   }
+  },
+  {
+   "mode": "blocked",
+   "blocks": 50,
+   "balance_nodes": false,
+   "ratio_pct": {
+    "train": 70.54539458028748,
+    "val": 15.547753336700998,
+    "test": 13.906852083011527
+   },
+   "missing_classes": [
+    "Botnet_Backdoor"
+   ],
+   "ok_classes": false,
+   "ok_ratio": true,
+   "counts": {
+    "train": {
+     "Normal": 126354,
+     "DoS_DDoS": 10736,
+     "Botnet_Backdoor": 227,
+     "Truy_cap_trai_phep": 200520,
+     "Khac": 122,
+     "n_nodes": 337959,
+     "n_windows": 11792
+    },
+    "val": {
+     "Normal": 36917,
+     "DoS_DDoS": 2320,
+     "Botnet_Backdoor": 14,
+     "Truy_cap_trai_phep": 35225,
+     "Khac": 8,
+     "n_nodes": 74484,
+     "n_windows": 2500
+    },
+    "test": {
+     "Normal": 35811,
+     "DoS_DDoS": 2531,
+     "Botnet_Backdoor": 33,
+     "Truy_cap_trai_phep": 28069,
+     "Khac": 179,
+     "n_nodes": 66623,
+     "n_windows": 2500
+    }
+   }
+  },
+  {
+   "mode": "blocked",
+   "blocks": 50,
+   "balance_nodes": true,
+   "ratio_pct": {
+    "train": 70.41250761762666,
+    "val": 14.681110387290646,
+    "test": 14.906381995082691
+   },
+   "missing_classes": [
+    "Botnet_Backdoor"
+   ],
+   "ok_classes": false,
+   "ok_ratio": true,
+   "counts": {
+    "train": {
+     "Normal": 133236,
+     "DoS_DDoS": 11256,
+     "Botnet_Backdoor": 241,
+     "Truy_cap_trai_phep": 190199,
+     "Khac": 140,
+     "n_nodes": 335072,
+     "n_windows": 11468
+    },
+    "val": {
+     "Normal": 26654,
+     "DoS_DDoS": 1728,
+     "Botnet_Backdoor": 0,
+     "Truy_cap_trai_phep": 41446,
+     "Khac": 35,
+     "n_nodes": 69863,
+     "n_windows": 2136
+    },
+    "test": {
+     "Normal": 37848,
+     "DoS_DDoS": 2604,
+     "Botnet_Backdoor": 31,
+     "Truy_cap_trai_phep": 30321,
+     "Khac": 131,
+     "n_nodes": 70935,
+     "n_windows": 3188
+    }
+   }
+  },
+  {
+   "mode": "blocked",
+   "blocks": 100,
+   "balance_nodes": false,
+   "ratio_pct": {
+    "train": 73.60932743280854,
+    "val": 12.01172245076697,
+    "test": 14.378950116424484
+   },
+   "missing_classes": [
+    "Botnet_Backdoor"
+   ],
+   "ok_classes": false,
+   "ok_ratio": false,
+   "counts": {
+    "train": {
+     "Normal": 140523,
+     "DoS_DDoS": 10671,
+     "Botnet_Backdoor": 241,
+     "Truy_cap_trai_phep": 198091,
+     "Khac": 108,
+     "n_nodes": 349634,
+     "n_windows": 11701
+    },
+    "val": {
+     "Normal": 27561,
+     "DoS_DDoS": 2302,
+     "Botnet_Backdoor": 0,
+     "Truy_cap_trai_phep": 27158,
+     "Khac": 33,
+     "n_nodes": 57054,
+     "n_windows": 2441
+    },
+    "test": {
+     "Normal": 29203,
+     "DoS_DDoS": 2442,
+     "Botnet_Backdoor": 33,
+     "Truy_cap_trai_phep": 36454,
+     "Khac": 166,
+     "n_nodes": 68298,
+     "n_windows": 2500
+    }
+   }
+  },
+  {
+   "mode": "blocked",
+   "blocks": 100,
+   "balance_nodes": true,
+   "ratio_pct": {
+    "train": 70.68444640707567,
+    "val": 14.464686437817262,
+    "test": 14.850867155107075
+   },
+   "missing_classes": [
+    "Botnet_Backdoor"
+   ],
+   "ok_classes": false,
+   "ok_ratio": true,
+   "counts": {
+    "train": {
+     "Normal": 136256,
+     "DoS_DDoS": 10541,
+     "Botnet_Backdoor": 215,
+     "Truy_cap_trai_phep": 185794,
+     "Khac": 134,
+     "n_nodes": 332940,
+     "n_windows": 11362
+    },
+    "val": {
+     "Normal": 27792,
+     "DoS_DDoS": 2082,
+     "Botnet_Backdoor": 26,
+     "Truy_cap_trai_phep": 38194,
+     "Khac": 38,
+     "n_nodes": 68132,
+     "n_windows": 2321
+    },
+    "test": {
+     "Normal": 31560,
+     "DoS_DDoS": 2828,
+     "Botnet_Backdoor": 27,
+     "Truy_cap_trai_phep": 35406,
+     "Khac": 130,
+     "n_nodes": 69951,
+     "n_windows": 2959
+    }
+   }
+  },
+  {
+   "mode": "blocked",
+   "blocks": 200,
+   "balance_nodes": false,
+   "ratio_pct": {
+    "train": 70.21026234567901,
+    "val": 14.743655692729767,
+    "test": 15.04608196159122
+   },
+   "missing_classes": [
+    "Botnet_Backdoor"
+   ],
+   "ok_classes": false,
+   "ok_ratio": true,
+   "counts": {
+    "train": {
+     "Normal": 137774,
+     "DoS_DDoS": 10868,
+     "Botnet_Backdoor": 152,
+     "Truy_cap_trai_phep": 178635,
+     "Khac": 144,
+     "n_nodes": 327573,
+     "n_windows": 11542
+    },
+    "val": {
+     "Normal": 28880,
+     "DoS_DDoS": 2190,
+     "Botnet_Backdoor": 20,
+     "Truy_cap_trai_phep": 37563,
+     "Khac": 135,
+     "n_nodes": 68788,
+     "n_windows": 2400
+    },
+    "test": {
+     "Normal": 27686,
+     "DoS_DDoS": 2118,
+     "Botnet_Backdoor": 97,
+     "Truy_cap_trai_phep": 40271,
+     "Khac": 27,
+     "n_nodes": 70199,
+     "n_windows": 2400
+    }
+   }
+  },
+  {
+   "mode": "blocked",
+   "blocks": 200,
+   "balance_nodes": true,
+   "ratio_pct": {
+    "train": 71.10140254156481,
+    "val": 14.135720601237843,
+    "test": 14.762876857197345
+   },
+   "missing_classes": [],
+   "ok_classes": true,
+   "ok_ratio": true,
+   "counts": {
+    "train": {
+     "Normal": 135926,
+     "DoS_DDoS": 10788,
+     "Botnet_Backdoor": 152,
+     "Truy_cap_trai_phep": 181060,
+     "Khac": 170,
+     "n_nodes": 328096,
+     "n_windows": 11255
+    },
+    "val": {
+     "Normal": 26475,
+     "DoS_DDoS": 2127,
+     "Botnet_Backdoor": 45,
+     "Truy_cap_trai_phep": 36575,
+     "Khac": 7,
+     "n_nodes": 65229,
+     "n_windows": 2341
+    },
+    "test": {
+     "Normal": 29207,
+     "DoS_DDoS": 2204,
+     "Botnet_Backdoor": 66,
+     "Truy_cap_trai_phep": 36517,
+     "Khac": 129,
+     "n_nodes": 68123,
+     "n_windows": 2746
+    }
+   }
+  }
+ ]
+}

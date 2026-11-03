@@ -20,6 +20,7 @@ import torch
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src import build_graph as bg  # noqa: E402
+from src.checks import check_graphs  # noqa: E402
 
 
 def main():
@@ -44,6 +45,17 @@ def main():
                                                 balance_nodes=balance)
     print(f"Dựng {len(graphs):,} đồ thị trong {time.time() - t0:.0f} s")
 
+    checks = check_graphs(graphs, split, scaler, classes, gap)
+    for cname, ok, detail in checks:
+        print(f"[{'ĐẠT' if ok else 'KHÔNG ĐẠT'}] {cname} ({detail})")
+    fp = bg.fingerprint(graphs)
+    graphs2, *_ = bg.build_dataset(flows, window, stride, mode=mode, blocks=blocks, gap=gap, balance_nodes=balance)
+    fp2 = bg.fingerprint(graphs2)
+    del graphs2
+    reproducible = fp == fp2
+    checks.append(("Tái lập: dựng lại lần 2 cho cùng hash", reproducible, f"{fp[:16]} / {fp2[:16]}"))
+    print(f"[{'ĐẠT' if reproducible else 'KHÔNG ĐẠT'}] Tái lập: hash lần 1 {fp[:16]}, lần 2 {fp2[:16]}")
+
     win_pos = {g.win: i for i, g in enumerate(graphs)}
     parts = {}
     for part, ws in split.items():
@@ -52,7 +64,6 @@ def main():
             parts[part]["t_start_utc"] = str(pd.to_datetime(ws[0] * stride, unit="s"))
             parts[part]["t_end_utc"] = str(pd.to_datetime(ws[-1] * stride + window, unit="s"))
 
-    fp = bg.fingerprint(graphs)
     graph_file = out / f"graphs_{tag}.pt"
     torch.save(graphs, graph_file)
     split_json = {
@@ -76,7 +87,14 @@ def main():
         y = torch.cat([g.y for g in gs]).numpy()
         rows[part] = {"n_graphs": len(gs), "n_nodes": int(len(y)),
                       **{c: int((y == i).sum()) for i, c in enumerate(classes)}}
+    n_nodes = np.array([g.num_nodes for g in graphs])
+    n_edges = np.array([g.num_edges for g in graphs])
+    stats = pd.DataFrame({"nodes_per_window": pd.Series(n_nodes).describe(percentiles=[.5, .95, .99]),
+                          "edges_per_window": pd.Series(n_edges).describe(percentiles=[.5, .95, .99])})
+    stats.to_csv(out / "graph_stats.csv")
     summary = {"dataset": name, "tag": tag, "n_graphs": len(graphs), "fingerprint_sha256": fp,
+               "checks": [{"name": n, "ok": ok, "detail": d} for n, ok, d in checks],
+               "options": {"mode": mode, "blocks": blocks, "balance_nodes": balance, "gap": gap},
                "clean_log": log.to_dict(orient="records"), "split_counts": rows,
                "files": {p.name: p.stat().st_size for p in out.iterdir()}}
     (out / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -84,7 +102,7 @@ def main():
     print("Hash:", fp)
     for n, s in summary["files"].items():
         print(f"{n:50s} {s / 2**20:8.1f} MB")
-    return 0
+    return 0 if all(ok for _, ok, _ in checks) else 3
 
 
 if __name__ == "__main__":
