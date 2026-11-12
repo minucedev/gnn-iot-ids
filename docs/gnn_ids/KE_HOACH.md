@@ -9,7 +9,7 @@ Danh sách task chi tiết: [TASKS.md](TASKS.md).
 >
 > Nhóm: Nguyễn Minh Phúc (nhóm trưởng), Lê Trung Phong, Văn Bá Phạm Tấn. **Phúc thực hiện toàn bộ task**; Phong đã làm phần Tuần 1 (khảo sát dataset, pipeline v1).
 >
-> **Cập nhật 12/11/2026:** thầy đưa yêu cầu mới (xem [mục 0](#0-yêu-cầu-bổ-sung-của-thầy-12112026)). Hạn nộp **tạm tính 19/11/2026** (Phúc: "cứ cho là 1 tuần nữa"; chưa có ngày chính thức). Lịch hiện hành là [mục 5c](#5c-lịch-12111911-theo-yêu-cầu-mới); mục 5b chỉ còn để tham khảo.
+> **Cập nhật 12/11/2026:** thầy đưa yêu cầu mới (xem [mục 0](#0-yêu-cầu-bổ-sung-của-thầy-12112026)). Hạn nộp **tạm tính 19/11/2026** (Phúc: "cứ cho là 1 tuần nữa"; chưa có ngày chính thức). **Lịch hiện hành là [LO_TRINH_KAGGLE.md](LO_TRINH_KAGGLE.md)**: mọi xử lý và huấn luyện chạy trên Kaggle, máy cá nhân chỉ sửa code và kéo kết quả về. Mục 5b và 5c chỉ còn để tham khảo.
 
 ## Mục lục
 
@@ -218,6 +218,8 @@ Làm sạch: 27.520.260 flow, bỏ 1.858.626 bản ghi trùng còn 25.661.634. R
 | D9 | Kiến trúc mô hình hybrid | **GAT + LightGBM** (phương án B là GAT + GRU, không chọn vì cần nhiều code mới). Chi tiết và cách chứng minh ở task 5.7, 5.8 |
 | D10 | AHP và mô phỏng thời gian thực | Vẫn làm, nhưng **sau** khi có kết quả hybrid và baseline |
 | D11 | Hạn nộp | **Tạm tính 19/11/2026** (Phúc: "cứ cho là 1 tuần nữa"). Cập nhật khi có ngày chính thức |
+| D12 | Chạy ở đâu | **Mọi xử lý dữ liệu, huấn luyện, đánh giá, tổng hợp số liệu chạy trên Kaggle.** Máy cá nhân chỉ sửa code, đẩy GitHub, điều khiển Kaggle qua API và tải về file kết quả nhỏ. Quy trình ở [LO_TRINH_KAGGLE.md](LO_TRINH_KAGGLE.md) |
+| D7 (điều chỉnh) | Máy đo độ trễ | Theo D12, đo trên **CPU của Kaggle giới hạn 1 luồng**, ghi loại CPU trong `run_info.json`. Không dùng laptop, không dùng Docker local |
 
 ## 8. Rủi ro và phương án dự phòng
 
