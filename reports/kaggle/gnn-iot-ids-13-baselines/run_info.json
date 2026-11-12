@@ -1,0 +1,47 @@
+{
+ "steps_s": {
+  "clone_va_cai_goi": 91.5,
+  "pytest": 58.6,
+  "run_baselines": 136.1
+ },
+ "device": "CPU",
+ "gpu": null,
+ "commit": "93c6625e527187a8d48c2117af67ac5cb2a4fd72",
+ "total_s": 293.0,
+ "peak_ram_gb": 0.85,
+ "cpu_count": 4,
+ "pytest": "42 passed, 213 warnings in 52.03s",
+ "classes": [
+  "Normal",
+  "DoS_DDoS",
+  "Truy_cap_trai_phep"
+ ],
+ "rows": 15,
+ "rows_by_model_seed": {
+  "lightgbm|42": 1,
+  "lightgbm|43": 1,
+  "lightgbm|44": 1,
+  "logreg|42": 1,
+  "logreg|43": 1,
+  "logreg|44": 1,
+  "mlp|42": 1,
+  "mlp|43": 1,
+  "mlp|44": 1,
+  "random_forest|42": 1,
+  "random_forest|43": 1,
+  "random_forest|44": 1,
+  "xgboost|42": 1,
+  "xgboost|43": 1,
+  "xgboost|44": 1
+ },
+ "config_tries": {
+  "logreg": 3,
+  "random_forest": 3,
+  "xgboost": 3,
+  "lightgbm": 3,
+  "mlp": 2
+ },
+ "complete_5x3": true,
+ "only_val": true,
+ "max_tries_ok": true
+}

@@ -429,6 +429,14 @@ LR, RF, XGBoost, LightGBM, MLP.
   - **NF-ToN-IoT-v3, `split=val`, `task=multiclass`: 15 dòng = logreg, random_forest, xgboost, lightgbm, mlp × seed 42, 43, 44 (đủ 5 baseline × 3 seed, không trùng dòng)**, đều từ notebook 05. Log tìm siêu tham số có 3/3/3/3/2 lần thử (≤ 30). `verify_nf_ton_iot_v3.json`: 10/10 kiểm tra đạt.
   - **Còn thiếu:** `task=binary` (tiêu chí 6); NF-BoT-IoT-v3 (chưa chạy; làm ở GĐ D). Test chưa chạy (đúng tiêu chí 5).
   - Phụ lục (D8): NF-ToN-IoT-v2 đủ 5 × 3 seed (notebook 10); NF-CICIDS2018-v3 đủ 5 × 3 seed khi ghép 05 (logreg, random_forest; xgboost chỉ 42, 43) và 09 (xgboost, lightgbm, mlp × 3 seed).
+  - **(12/11/2026, GĐ D) NF-BoT-IoT-v3** từ notebook [13_baselines](../../notebooks/13_baselines.ipynb) (Kaggle CPU, v1, commit `93c6625`, `complete`, 293 s, RAM đỉnh 0,85 GB; pytest 42 passed). Kéo về [reports/kaggle/gnn-iot-ids-13-baselines/](../../reports/kaggle/gnn-iot-ids-13-baselines/): `results_baselines_nf_bot_iot_v3.csv` (5302 B), `baseline_search_nf_bot_iot_v3.json` (1887 B), `run_info.json` (852 B). Chỉ đếm, chưa tính trung bình.
+    1. **Đạt.** Đọc `split.json` của `processed/nf_bot_iot_v3` (output notebook 11), `classes` = Normal, DoS_DDoS, Truy_cap_trai_phep; không chia lại. `run_baselines.py` không cần sửa: số lớp lấy từ `split.json`, F1-macro bỏ lớp không có trong nhãn thật (`MAIN4` có mã 3 nhưng bộ này chỉ có mã 0, 1, 2).
+    2. **Đạt.** `baseline_search_nf_bot_iot_v3.json`: 3/3/3/3/2 lần thử (logreg, random_forest, xgboost, lightgbm, mlp) ≤ 30, chọn trên val seed 42.
+    3. **Đạt.** 15 dòng = 5 mô hình × seed 42, 43, 44, mỗi (model, seed) đúng 1 dòng.
+    4. **Đạt.** Cột `n_params`, `size_kb`, `infer_ms_per_window` có ở cả 15 dòng.
+    5. **Đạt.** 15/15 dòng `split=val`, `task=multiclass`; không có dòng test.
+    6. **Chờ Phúc chốt.** `fpr`, `recall_attack`, `roc_auc` đã là chỉ số nhị phân suy ra từ dự đoán đa lớp (Normal là lớp âm, xem `src/evaluate.py`); chưa có dòng `task=binary` riêng. Đề xuất coi là đạt; chưa huấn luyện thêm.
+  - **Còn thiếu:** chỉ còn tiêu chí 6 (cả 2 bộ). Chưa đổi trạng thái sang Xong.
 
 ### 4.2 Baseline mức flow
 
