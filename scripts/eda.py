@@ -24,7 +24,6 @@ from pathlib import Path
 import matplotlib
 
 matplotlib.use("Agg")
-import matplotlib.dates as mdates  # noqa: E402
 import matplotlib.pyplot as plt  # noqa: E402
 import networkx as nx  # noqa: E402
 import numpy as np  # noqa: E402
@@ -267,8 +266,8 @@ def fig_labels(rec, ds_title, raw_counts):
 
 def fig_time(rec, ds_title, per_min, raw_counts):
     df = pd.DataFrame([(m, l, c) for (m, l), c in per_min.items()], columns=["m", "l", "c"])
-    span = int(df["m"].max() - df["m"].min() + 1)
-    w = next((w for w in (1, 5, 10, 30, 60, 180, 360, 720, 1440, 2880, 10080) if span / w <= 300), 10080)
+    # độ rộng ô: nhỏ nhất (phút) để số ô có flow ≤ 300
+    w = next((w for w in (1, 5, 10, 30, 60, 180, 360, 720, 1440, 2880, 10080) if (df["m"] // w).nunique() <= 300), 10080)
     df["b"] = df["m"] // w
     piv = df.pivot_table(index="b", columns="l", values="c", aggfunc="sum", fill_value=0)
     order = [l for l, _ in sorted(raw_counts.items(), key=lambda kv: -kv[1]) if l in piv.columns]
@@ -276,24 +275,41 @@ def fig_time(rec, ds_title, per_min, raw_counts):
     x = pd.to_datetime(piv.index.to_numpy() * w * 60, unit="s")
     rc = raw_colors(order)
     wl = f"{w} phút" if w < 60 else (f"{w // 60} giờ" if w < 1440 else f"{w // 1440} ngày")
+    # trục x chỉ gồm các ô có flow; khoảng trống > 2 giờ bị nén thành một vạch đứt để thấy được các đợt ngắn
+    bins = piv.index.to_numpy()
+    diff = np.diff(bins)
+    brk = np.r_[False, diff * w > 120]
+    step = np.where(brk[1:], 4, diff)
+    pos = np.r_[0, np.cumsum(step)]
     fig, axes = plt.subplots(2, 1, figsize=(13, 8), layout="constrained")
     bottom = np.zeros(len(piv))
     for lab in order[::-1]:
-        axes[0].bar(x, piv[lab].to_numpy(), width=w / 1440.0, bottom=bottom, color=rc[lab], align="edge", label=lab)
+        axes[0].bar(pos, piv[lab].to_numpy(), width=1.0, bottom=bottom, color=rc[lab], label=lab)
         bottom += piv[lab].to_numpy()
     axes[0].set_ylabel(f"Số flow mỗi {wl} (xếp chồng)")
     axes[0].set_title("(a) Xếp chồng theo nhãn gốc")
     for lab in order:
         v = piv[lab].to_numpy().astype(float)
-        axes[1].plot(x, np.where(v > 0, v, np.nan), ".-", ms=3, lw=0.7, color=rc[lab], label=lab)
+        full = np.full(int(pos[-1]) + 1, np.nan)
+        full[pos] = np.where(v > 0, v, np.nan)
+        axes[1].plot(np.arange(len(full)), full, ".-", ms=3, lw=0.7, color=rc[lab], label=lab)
     axes[1].set_yscale("log")
     axes[1].set_ylabel(f"Số flow mỗi {wl} (thang log)")
     axes[1].set_title("(b) Từng nhãn riêng, thang log")
+    seg_start = np.r_[0, np.flatnonzero(brk)]
+    cand = set(seg_start.tolist())
+    for a, b in zip(seg_start, np.r_[seg_start[1:], len(bins)]):
+        cand |= set(range(int(a), int(b), 60))
+    cand = sorted(cand)
+    if len(cand) > 14:
+        cand = [cand[i] for i in np.unique(np.linspace(0, len(cand) - 1, 14).round().astype(int))]
     for ax in axes:
-        loc = mdates.AutoDateLocator()
-        ax.xaxis.set_major_locator(loc)
-        ax.xaxis.set_major_formatter(mdates.ConciseDateFormatter(loc))
-        ax.set_xlabel("Thời điểm bắt đầu flow (UTC)")
+        for j in np.flatnonzero(brk):
+            ax.axvline(pos[j] - 2, color="#999999", ls="--", lw=0.8)
+        ax.set_xticks([pos[j] for j in cand], [f"{pd.Timestamp(int(bins[j]) * w * 60, unit='s'):%d/%m}\n{pd.Timestamp(int(bins[j]) * w * 60, unit='s'):%H:%M}" for j in cand],
+                      fontsize=8)
+        ax.set_xlabel("Thời điểm bắt đầu flow (UTC); vạch đứt = khoảng trống > 2 giờ đã bị nén")
+        ax.set_xlim(-2, pos[-1] + 2)
     handles, labels = axes[1].get_legend_handles_labels()
     fig.legend(handles, labels, loc="outside right upper", title="Nhãn gốc")
     t0, t1 = x[0], x[-1] + pd.Timedelta(minutes=w)
@@ -561,6 +577,8 @@ def fig_degree(rec, ds_title, A, classes):
             stats[key][classes[k]] = describe(d)
         ax.set_xscale("log")
         ax.set_yscale("log")
+        ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda v, _: f"{v:g}"))
+        ax.xaxis.set_minor_formatter(plt.NullFormatter())
         ax.set_xlabel(f"Bậc {name} k (thang log)")
         ax.set_ylabel("Tỉ lệ node có bậc ≥ k (thang log)")
         ax.set_title(f"({'a' if key == 'in' else 'b'}) Bậc {'vào' if key == 'in' else 'ra'} theo lớp")
@@ -710,13 +728,36 @@ def pick_windows(A, classes):
     return out
 
 
+def component_layout(G):
+    """Layout spring (seed cố định) cho từng thành phần liên thông; thành phần lớn nhất ở giữa, các thành phần còn lại
+    xếp quanh trên một vòng, nhỏ hơn theo √số node. Tránh để spring_layout đẩy các thành phần rời ra xa làm cụm chính co nhỏ."""
+    comps = sorted(nx.connected_components(G), key=lambda c: (-len(c), min(c)))
+    n = G.number_of_nodes()
+    pos = {}
+    scales = [max(np.sqrt(len(c) / n), 0.12) for c in comps]
+    ring = scales[0] + 0.4 + (max(scales[1:]) if len(comps) > 1 else 0.0)
+    for ci, comp in enumerate(comps):
+        sub = G.subgraph(sorted(comp))
+        p = nx.spring_layout(sub, seed=SEED, k=1.6 / np.sqrt(max(len(comp), 2)), iterations=200) if len(comp) > 1 \
+            else {next(iter(comp)): np.zeros(2)}
+        s = scales[ci]
+        if ci == 0:
+            center = np.zeros(2)
+        else:
+            ang = 2 * np.pi * (ci - 1) / max(len(comps) - 1, 1)
+            center = ring * np.array([np.cos(ang), np.sin(ang)])
+        for v, xy in p.items():
+            pos[v] = center + s * np.asarray(xy)
+    return pos
+
+
 def draw_window(ax, g, classes, hub_mode, title):
     n = g.num_nodes
     ei, y = g.edge_index.numpy(), g.y.numpy()
     G = nx.DiGraph()
     G.add_nodes_from(range(n))
     G.add_edges_from(zip(ei[0].tolist(), ei[1].tolist()))
-    pos = nx.spring_layout(G.to_undirected(), seed=SEED, k=1.6 / np.sqrt(max(n, 2)), iterations=200)
+    pos = component_layout(G.to_undirected())
     o, i = np.bincount(ei[0], minlength=n), np.bincount(ei[1], minlength=n)
     deg = o + i
     sizes = 45 + 60 * np.sqrt(deg)
@@ -739,7 +780,7 @@ def draw_window(ax, g, classes, hub_mode, title):
     # đặt chú thích ở góc xa node trung tâm nhất để mũi tên ngắn và không che đồ thị
     (x0, x1), (y0, y1) = ax.get_xlim(), ax.get_ylim()
     hx, hy = (pos[h][0] - x0) / (x1 - x0), (pos[h][1] - y0) / (y1 - y0)
-    corner = max(((0.02, 0.98), (0.98, 0.98), (0.02, 0.02), (0.98, 0.02)), key=lambda c: (c[0] - hx) ** 2 + (c[1] - hy) ** 2)
+    corner = min(((0.02, 0.98), (0.98, 0.98), (0.02, 0.02), (0.98, 0.02)), key=lambda c: (c[0] - hx) ** 2 + (c[1] - hy) ** 2)
     ax.annotate(note, xy=pos[h], xycoords="data", xytext=corner, textcoords="axes fraction",
                 va="top" if corner[1] > 0.5 else "bottom", ha="left" if corner[0] < 0.5 else "right",
                 fontsize=9, bbox=dict(boxstyle="round", fc="white", ec="#888888", alpha=0.95),
@@ -804,7 +845,7 @@ def fig_windows(rec, ds_title, A, classes):
         draw_window(ax, g, classes, mode, f"{KIND_TITLES[key]}: win {g.win}, {g.num_nodes} node, {g.num_edges} cạnh")
         present |= set(g.y.tolist())
     _legend(fig, classes, sorted(present))
-    parts = "; ".join(f"{KIND_TITLES[k]}: {v['n_nodes']} node, node trung tâm bậc {v['hub_degree']} (nối {pct(v['hub_reach'], 0)} node còn lại)"
+    parts = "; ".join(f"{KIND_TITLES[k][0].upper() + KIND_TITLES[k][1:]}: {v['n_nodes']} node, node trung tâm bậc {v['hub_degree']} (nối {pct(v['hub_reach'], 0)} node còn lại)"
                       for k, v in infos.items())
     rec.save(fig, "windows_overview", f"{ds_title}: so sánh các cửa sổ mẫu (cùng layout seed {SEED})", "graph_viz",
              {"windows": infos}, f"Cùng seed layout và cùng cách tô màu/kích thước cho mọi cửa sổ. {parts}.")
