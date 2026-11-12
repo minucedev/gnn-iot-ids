@@ -50,3 +50,20 @@ def test_split_search_script_runs(tmp_path):
     assert r.returncode == 0, r.stderr[-1500:]
     res = json.loads(out.read_text(encoding="utf-8"))
     assert 2 <= len(res["configs"]) <= 12 and {"ok_classes", "ok_ratio", "counts"} <= set(res["configs"][0])
+
+
+def test_split_search_records_absent_classes_and_ignores_them(tmp_path):
+    """NF-BoT-IoT-v3 không có Botnet_Backdoor: lớp này không bị coi là thiếu, và được ghi ở absent_classes."""
+    from tests.test_build_graph import _bot_v3_csv
+    csv = tmp_path / "bot_v3.csv"
+    _bot_v3_csv(csv)
+    out = tmp_path / "out.json"
+    r = subprocess.run([sys.executable, "-I", str(ROOT / "scripts" / "split_search.py"), "nf_bot_iot_v3", str(csv),
+                        "1", "1", str(out)], capture_output=True, text=True, encoding="utf-8", cwd=ROOT)
+    assert r.returncode == 0, r.stderr[-1500:]
+    res = json.loads(out.read_text(encoding="utf-8"))
+    assert res["classes"] == ["Normal", "DoS_DDoS", "Truy_cap_trai_phep"]
+    assert res["absent_classes"] == ["Botnet_Backdoor", "Khac"]
+    assert res["configs"] and all("Botnet_Backdoor" not in c["missing_classes"] for c in res["configs"])
+    # dữ liệu giả quá nhỏ nên các lớp có mặt vẫn không đủ 100/30/30: vẫn phải bị báo thiếu, không được bỏ qua
+    assert all(set(c["missing_classes"]) == set(res["classes"]) for c in res["configs"])

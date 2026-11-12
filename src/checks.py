@@ -9,6 +9,20 @@ import torch
 from src import build_graph as bg
 
 MAIN = ["Normal", "DoS_DDoS", "Botnet_Backdoor", "Truy_cap_trai_phep"]
+THRESHOLD = {"train": 100, "val": 30, "test": 30}      # số node tối thiểu mỗi lớp chính ở mỗi tập (task 1.5.1)
+
+
+def absent_classes(classes):
+    """Nhóm nhãn (theo GROUP_ORDER) không có mặt trong bộ dữ liệu, ví dụ Botnet_Backdoor ở NF-BoT-IoT-v3."""
+    return [c for c in bg.GROUP_ORDER if c not in classes]
+
+
+def classes_below_threshold(rows, classes):
+    """Lớp chính CÓ MẶT (thuộc `classes`) chưa đủ ngưỡng. rows = {tập: {tên lớp: số node}}.
+
+    Lớp vắng mặt trong bộ dữ liệu không bị xét: bộ không có lớp đó thì không có gì để chia.
+    """
+    return [c for c in classes if c in MAIN and not all(rows[p][c] >= n for p, n in THRESHOLD.items())]
 
 
 def check_graphs(graphs, split, scaler, classes, gap):
@@ -55,10 +69,10 @@ def check_graphs(graphs, split, scaler, classes, gap):
     for p, gs in part_graphs.items():
         y = torch.cat([g.y for g in gs]).numpy()
         counts[p] = np.bincount(y, minlength=len(classes))
-    missing = [c for i, c in enumerate(classes) if c in MAIN
-               and not (counts["train"][i] >= 100 and counts["val"][i] >= 30 and counts["test"][i] >= 30)]
+    missing = classes_below_threshold({p: {c: int(counts[p][i]) for i, c in enumerate(classes)} for p in counts}, classes)
+    absent = [c for c in absent_classes(classes) if c in MAIN]          # chỉ ghi chú thêm khi vắng một lớp chính
     add("Mỗi lớp chính có >= 100 node train, >= 30 node val và test", not missing,
-        f"thiếu: {missing}" if missing else "đủ")
+        (f"thiếu: {missing}" if missing else "đủ") + (f"; bộ dữ liệu không có lớp {absent}" if absent else ""))
     total = sum(int(c.sum()) for c in counts.values())
     ratio = {p: 100 * int(c.sum()) / total for p, c in counts.items()}
     ok_ratio = all(abs(ratio[p] - r) <= 3 for p, r in zip(("train", "val", "test"), (70, 15, 15)))

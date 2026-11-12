@@ -171,7 +171,7 @@ def load_nf_v3(path):
 
 ADAPTERS = {"bot_iot": load_bot_iot, "ton_iot": load_ton_iot, "nf_ton_iot_v2": load_nf_v2,
             "nf_bot_iot_v2": load_nf_v2, "nf_ton_iot_v3": load_nf_v3,
-            "nf_cicids2018_v3": load_nf_v3}
+            "nf_bot_iot_v3": load_nf_v3, "nf_cicids2018_v3": load_nf_v3}
 TS_IS_ORDER = {"nf_ton_iot_v2": True, "nf_bot_iot_v2": True}     # ts là số thứ tự dòng, không phải thời gian thật
 
 

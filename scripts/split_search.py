@@ -3,7 +3,8 @@
 Chạy:  python -I scripts/split_search.py <dataset> <csv> <window> <stride> <out.json>
 Dựng bảng node một lần, rồi thử: chronological, và blocked với blocks thuộc {10, 20, 50, 100, 200}, mỗi cái chia theo
 số cửa sổ hoặc theo số node. Với mỗi cấu hình ghi số node mỗi lớp mỗi tập, tỉ lệ node, và đạt hay không:
-  (a) mỗi lớp chính (Normal, DoS_DDoS, Botnet_Backdoor, Truy_cap_trai_phep) >= 100 node ở train, >= 30 ở val và test;
+  (a) mỗi lớp chính CÓ MẶT trong bộ dữ liệu (Normal, DoS_DDoS, Botnet_Backdoor, Truy_cap_trai_phep) >= 100 node ở train,
+      >= 30 ở val và test; lớp vắng mặt (ví dụ Botnet_Backdoor ở NF-BoT-IoT-v3) không bị xét, ghi ở "absent_classes";
   (b) tỉ lệ node train/val/test nằm trong 70/15/15 ± 3 điểm %.
 """
 
@@ -16,15 +17,9 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from src import build_graph as bg  # noqa: E402
+from src.checks import absent_classes, classes_below_threshold  # noqa: E402
 
-MAIN = ["Normal", "DoS_DDoS", "Botnet_Backdoor", "Truy_cap_trai_phep"]
 GAP = 1
-
-
-def class_ok(rows, classes):
-    """Trả về danh sách lớp chính không đạt ngưỡng 100/30/30."""
-    return [c for c in classes if c in MAIN
-            and not (rows["train"][c] >= 100 and rows["val"][c] >= 30 and rows["test"][c] >= 30)]
 
 
 def main():
@@ -58,15 +53,17 @@ def main():
             print(f"{mode:13s} blocks={blocks:3d} balance={int(bal)} | bỏ qua (số khối > số cửa sổ {len(wins)})")
             continue
         ratio = {k: 100 * r["n_nodes"] / total for k, r in rows.items()}
-        miss = class_ok(rows, classes)
+        miss = classes_below_threshold(rows, classes)
         ok_ratio = all(abs(ratio[k] - r) <= 3 for k, r in zip(("train", "val", "test"), (70, 15, 15)))
         results.append({"mode": mode, "blocks": blocks, "balance_nodes": bal, "ratio_pct": ratio,
                         "missing_classes": miss, "ok_classes": not miss, "ok_ratio": ok_ratio, "counts": rows})
         print(f"{mode:13s} blocks={blocks:3d} balance={int(bal)} | node {ratio['train']:.1f}/{ratio['val']:.1f}/"
               f"{ratio['test']:.1f} | lớp {'ĐẠT' if not miss else 'THIẾU ' + ','.join(miss)} | "
               f"tỉ lệ {'ĐẠT' if ok_ratio else 'lệch'}")
-    Path(out_path).write_text(json.dumps({"dataset": name, "classes": classes, "window": window, "stride": stride,
-                                          "gap": GAP, "configs": results}, ensure_ascii=False, indent=1),
+    absent = absent_classes(classes)
+    print(f"Lớp có mặt: {classes} | lớp vắng mặt (không xét ngưỡng): {absent}")
+    Path(out_path).write_text(json.dumps({"dataset": name, "classes": classes, "absent_classes": absent,
+                                          "window": window, "stride": stride, "gap": GAP, "configs": results}, ensure_ascii=False, indent=1),
                               encoding="utf-8")
     return 0
 

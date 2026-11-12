@@ -149,3 +149,23 @@ def test_cicids2018_label_mapping_covers_all_14_attack_classes():
     assert len(CIC_LABELS) == 15                       # 14 loại tấn công + Benign
     assert dict(zip(CIC_LABELS, bg.to_group(list(CIC_LABELS)))) == CIC_LABELS
     assert "nf_cicids2018_v3" in bg.ADAPTERS
+
+
+def test_nf_bot_iot_v3_adapter_and_label_mapping(tmp_path):
+    """NF-BoT-IoT-v3 dùng chung adapter load_nf_v3; nhãn gốc: Benign, DoS, DDoS, Reconnaissance, Theft."""
+    assert bg.ADAPTERS["nf_bot_iot_v3"] is bg.load_nf_v3
+    assert list(bg.to_group(["Benign", "DoS", "DDoS", "Reconnaissance", "Theft"])) == \
+        ["Normal", "DoS_DDoS", "DoS_DDoS", "Truy_cap_trai_phep", "Truy_cap_trai_phep"]
+    p = tmp_path / "bot_v3.csv"
+    _bot_v3_csv(p)
+    flows, classes, _ = bg.load_clean("nf_bot_iot_v3", p)
+    assert classes == ["Normal", "DoS_DDoS", "Truy_cap_trai_phep"]          # không có Botnet_Backdoor, không có Khac
+    assert set(flows["label"]) == set(classes)
+
+
+def _bot_v3_csv(path):
+    """Như _nf_csv nhưng nhãn kiểu NF-BoT-IoT-v3: Benign / DDoS / Reconnaissance (không có Backdoor)."""
+    _nf_csv(path, with_ts=True)
+    df = pd.read_csv(path)
+    df["Attack"] = df["Attack"].map({"Benign": "Benign", "ddos": "DDoS", "Backdoor": "Reconnaissance"})
+    df.to_csv(path, index=False)
