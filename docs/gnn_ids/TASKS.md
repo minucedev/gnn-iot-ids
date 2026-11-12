@@ -34,8 +34,8 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
 | [4.1](#41-baseline-ml-trên-đặc-trưng-node) | Baseline ML trên đặc trưng node | GĐ4 | Phúc | Tự kiểm | 4 | B | Chưa làm |
 | [4.2](#42-baseline-mức-flow) | Baseline mức flow | GĐ4 | Phúc | Tự kiểm | 4 | N | Chưa làm |
 | [5.1](#51-dataloader-pyg-và-vòng-huấn-luyện-chung) | Dataloader PyG, vòng huấn luyện | GĐ5 | Phúc | Tự kiểm | 4 | B | Chưa làm |
-| [5.2](#52-gnn-cơ-sở-gcn-và-graphsage) | GCN và GraphSAGE | GĐ5 | Phúc | Tự kiểm | 5 | B | Chưa làm |
-| [5.3](#53-mô-hình-chính-gat-nhẹ-multi-head) | GAT nhẹ multi-head | GĐ5 | Phúc | Tự kiểm | 5 | B | Chưa làm |
+| [5.2](#52-gnn-cơ-sở-gcn-và-graphsage) | GCN và GraphSAGE | GĐ5 | Phúc | Tự kiểm | 5 | B | Đang làm |
+| [5.3](#53-mô-hình-chính-gat-nhẹ-multi-head) | GAT nhẹ multi-head | GĐ5 | Phúc | Tự kiểm | 5 | B | Đang làm |
 | [5.4](#54-phiên-bản-cải-tiến-của-gat-nhẹ) | Bản cải tiến của GAT | GĐ5 | Phúc | Tự kiểm | 6 | B | Chưa làm |
 | [5.5](#55-ablation) | Ablation | GĐ5 | Phúc | Tự kiểm | 6 | B | Chưa làm |
 | [5.6](#56-các-bộ-còn-lại-và-tổng-quát-hóa-giữa-các-bộ) | Các bộ còn lại, tổng quát hóa | GĐ5 | Phúc | Tự kiểm | 6 | B | Chưa làm |
@@ -471,7 +471,7 @@ RF trên đặc trưng NetFlow gốc, để đối chiếu với các bài báo.
 
 2 lớp.
 
-- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 5 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** Đang làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 5 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** Mô hình, Thuật toán & đánh giá
 - **Đầu vào:** `train_gnn.py`
 - **Đầu ra:** `src/models/gcn.py`, `sage.py`; kết quả `split=val` trong `results.csv`
@@ -481,12 +481,13 @@ RF trên đặc trưng NetFlow gốc, để đối chiếu với các bài báo.
   3. Tinh chỉnh ≤ 20 lần thử trên val, có lưu log.
   4. Có đường loss và F1 trên val theo epoch.
 - **Phụ thuộc:** 5.1
+- **Kết quả:** (12/11/2026) gcn, sage × 3 seed, `split=val`: NF-ToN-IoT-v3 đủ 6 dòng (GĐ A), NF-BoT-IoT-v3 đủ 6 dòng (GĐ E); chi tiết số tham số, đường học và lưu ý ở dòng Kết quả của [5.3](#53-mô-hình-chính-gat-nhẹ-multi-head). Tiêu chí 1, 2 đạt cho cả hai bộ; tiêu chí 4 đạt cho NF-BoT-IoT-v3, chưa có cho NF-ToN-IoT-v3; tiêu chí 3 chưa làm (chưa tinh chỉnh, chưa có log).
 
 ### 5.3 Mô hình chính: GAT nhẹ multi-head
 
 Có đặc trưng cạnh.
 
-- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 5 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** Đang làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 5 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** Mô hình, Thuật toán & đánh giá
 - **Đầu vào:** `train_gnn.py`; kết quả 5.2 và 4.1
 - **Đầu ra:** `src/models/gat_lite.py` (GATv2Conv, `edge_dim=3`, 2 lớp, 4 head, hidden ≤ 32); checkpoint; bảng đếm tham số theo từng lớp
@@ -498,7 +499,14 @@ Có đặc trưng cạnh.
 - **Phụ thuộc:** 5.2
 - **Kết quả:** (12/11/2026, GĐ A, chưa đổi trạng thái vì còn NF-BoT-IoT-v3) Kéo về [reports/kaggle/gnn-iot-ids-07-train-gnn/](../../reports/kaggle/gnn-iot-ids-07-train-gnn/): `results_gnn_nf_ton_iot_v3.csv` (3870 B), `results_gnn_nf_cicids2018_v3.csv`, `results_gnn_nf_ton_iot_v2.csv`; không tải `ckpt/` (27 file `.pt`). Notebook `gnn-iot-ids-07-train-gnn` bản 2, GPU T4, clone commit `9d7761a` (có thật trong repo). Chi tiết ở [reports/kaggle/README.md](../../reports/kaggle/README.md). Chỉ đếm, chưa tính trung bình.
   - **NF-ToN-IoT-v3, `split=val`, `task=multiclass`: 9 dòng = gcn, sage, gat × seed 42, 43, 44 (đủ 3 GNN × 3 seed, không trùng dòng).** Phần này cũng là kết quả của 5.2 (gcn, sage).
-  - **Còn thiếu cho 5.3 / 5.2:** `task=binary`; NF-BoT-IoT-v3 (chưa chạy; làm ở GĐ E); log tìm siêu tham số GNN, đường loss/F1 theo epoch, bảng đếm tham số theo lớp, trọng số attention (output của 07 chỉ có 3 CSV và `ckpt/`). Chưa đối chiếu ngưỡng 91% / 4,08% / 95% vì việc đó thuộc tổng hợp trên Kaggle.
+  - **Còn thiếu cho 5.3 / 5.2 (cập nhật 12/11, GĐ E):** `task=binary`; log tìm siêu tham số GNN (cả hai bộ chạy cấu hình mặc định, chưa tinh chỉnh); bảng đếm tham số theo lớp; trọng số attention; đường loss/F1 theo epoch của NF-ToN-IoT-v3 (output của 07 chỉ có 3 CSV và `ckpt/`; NF-BoT-IoT-v3 đã có, xem dưới). Ngưỡng 91% / 4,08% / 95% đối chiếu ở mục NF-BoT-IoT-v3 dưới đây; NF-ToN-IoT-v3 chưa đối chiếu.
+  - **NF-BoT-IoT-v3 (12/11/2026, GĐ E, notebook `gnn-iot-ids-14-train-gnn-bot` bản 1, Kaggle CPU 4 lõi, clone commit `ac05c06`, pytest 47 passed):** `split=val`, `task=multiclass`: **9 dòng = gcn, sage, gat × seed 42, 43, 44, mỗi (model, seed) đúng 1 dòng**, không có split khác. Kéo về [reports/kaggle/gnn-iot-ids-14-train-gnn-bot/](../../reports/kaggle/gnn-iot-ids-14-train-gnn-bot/): `results_gnn_nf_bot_iot_v3.csv` (3219 B), `curves_nf_bot_iot_v3.csv` (19,9 KB: loss train, loss val, F1-macro val theo epoch, 9 lần chạy × 19–40 epoch, cột `is_best`), `run_info.json`; 9 file `ckpt/nf_bot_iot_v3_<model>_s<seed>.pt` ở lại trên Kaggle cho GĐ F. Chạy CPU 276,6 s huấn luyện (tổng notebook 424,5 s), RAM đỉnh 0,66 GB, 0 giờ GPU.
+    - Số tham số: gcn 5.571, sage 10.819, **gat 11.587** (≤ 100.000), file gat 50,1 KB (≤ 1 MB); dữ liệu 3 lớp nên nhỏ hơn mức 11.700 ước tính cho 5 lớp.
+    - Std accuracy giữa 3 seed (ddof = 1, chỉ để đối chiếu ngưỡng): gcn 0,405 điểm %, sage 0,052, gat 0,054, **đều ≤ 1,5**.
+    - **Không đạt ngưỡng FPR của 5.3:** FPR trên val của cả 9 dòng nằm trong 20,6–22,3% (ngưỡng ≤ 4,08%); accuracy 91,4–93,2% và recall tấn công 96,6–98,5% thì đạt. F1 lớp Normal của gat s42 là 0,847 (DoS_DDoS 0,964, Truy_cap_trai_phep 0,945). Theo tiêu chí 2 của 5.3 cần có phân tích trước khi sang 5.4; chưa làm. F1-macro trung bình đúng 3 lớp có mặt (mã 0, 1, 2).
+    - Lưu ý: gcn seed 42 và 44 chạy hết 40 epoch (không dừng sớm vì patience), có thể chưa hội tụ; các mô hình khác dừng ở epoch 19–26.
+    - Đổi tên `MAIN4` → `MACRO_CODES`, `val_f1_macro4` → `val_f1_macro` ([src/train.py](../../src/train.py)), cách tính không đổi; `run_gnn.py` sửa lỗi không nhận `models=gcn,sage,gat`. Test mới [tests/test_train.py](../../tests/test_train.py).
+    - **Trạng thái 5.2, 5.3 để `Đang làm`, chưa `Xong`:** đã đủ 9 dòng cho cả hai bộ nhưng còn thiếu tiêu chí (5.2: log tinh chỉnh ≤ 20 lần thử; 5.3: FPR, bảng tham số theo lớp, trọng số attention).
   - CIC và NF-ToN-IoT-v2 đủ gcn, sage, gat × 3 seed, chỉ làm phụ lục (D8).
 
 ### 5.4 Phiên bản cải tiến của GAT nhẹ

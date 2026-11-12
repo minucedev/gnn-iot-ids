@@ -1,0 +1,71 @@
+{
+ "steps_s": {
+  "clone_va_cai_goi": 89.6,
+  "pytest": 53.4,
+  "train_gnn": 276.6
+ },
+ "device": "CPU",
+ "gpu": null,
+ "commit": "ac05c06fd5d73549e09769977f5ea8783efac19a",
+ "total_s": 424.5,
+ "peak_ram_gb": 0.66,
+ "cpu_count": 4,
+ "pytest": "47 passed, 265 warnings in 48.53s",
+ "rows_per_model_seed": {
+  "gcn_s42": 1,
+  "gcn_s43": 1,
+  "gcn_s44": 1,
+  "sage_s42": 1,
+  "sage_s43": 1,
+  "sage_s44": 1,
+  "gat_s42": 1,
+  "gat_s43": 1,
+  "gat_s44": 1
+ },
+ "epochs_per_model_seed": {
+  "gcn_s42": 40,
+  "gcn_s43": 26,
+  "gcn_s44": 40,
+  "sage_s42": 19,
+  "sage_s43": 22,
+  "sage_s44": 26,
+  "gat_s42": 19,
+  "gat_s43": 21,
+  "gat_s44": 21
+ },
+ "n_params": {
+  "gcn": 5571,
+  "sage": 10819,
+  "gat": 11587
+ },
+ "gat_n_params": 11587,
+ "gat_size_kb_max": 50.1,
+ "std_accuracy_pp": {
+  "gcn": 0.405,
+  "sage": 0.052,
+  "gat": 0.054
+ },
+ "criteria": {
+  "du_3_gnn_x_3_seed_moi_cap_1_dong": true,
+  "chi_split_val": true,
+  "gat_params_le_100000": true,
+  "gat_file_le_1MB": true,
+  "co_duong_hoc_moi_lan_chay": true,
+  "std_accuracy_le_1.5pp": {
+   "gcn": true,
+   "sage": true,
+   "gat": true
+  }
+ },
+ "ckpt_files": [
+  "nf_bot_iot_v3_gat_s42.pt",
+  "nf_bot_iot_v3_gat_s43.pt",
+  "nf_bot_iot_v3_gat_s44.pt",
+  "nf_bot_iot_v3_gcn_s42.pt",
+  "nf_bot_iot_v3_gcn_s43.pt",
+  "nf_bot_iot_v3_gcn_s44.pt",
+  "nf_bot_iot_v3_sage_s42.pt",
+  "nf_bot_iot_v3_sage_s43.pt",
+  "nf_bot_iot_v3_sage_s44.pt"
+ ]
+}

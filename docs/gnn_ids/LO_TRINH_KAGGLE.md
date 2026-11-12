@@ -70,7 +70,7 @@ Cập nhật sau mỗi lần chạy. Giờ GPU lấy từ `run_info.json`.
 | B | 11-build-graphs-bot | v2 (v1 lỗi test import) | `47dccee` | Xong (12/11) | 0 (CPU, 726 s, RAM đỉnh 12,25 GB) | `summary.json`, `graph_stats.csv`, `split_search_nf_bot_iot_v3.json`, `verify_nf_bot_iot_v3.json`, `run_info.json`, `data_check_nf_bot_iot_v3.json`; `processed/nf_bot_iot_v3/` ở lại trên Kaggle |
 | C | 12-eda | | | Chưa làm | 0 | |
 | D | 13-baselines | v1 | `93c6625` | Chạy xong (12/11), chờ Phúc chốt tiêu chí 6 (nhị phân) | 0 (CPU, 293 s, RAM đỉnh 0,85 GB) | `results_baselines_nf_bot_iot_v3.csv`, `baseline_search_nf_bot_iot_v3.json`, `run_info.json` |
-| E | 14-train-gnn-bot | | | Chưa làm | | |
+| E | 14-train-gnn-bot | v1 | `ac05c06` | Chạy xong (12/11); 5.2, 5.3 để `Đang làm`: FPR val 20,6–22,3% > 4,08%, chưa có log tinh chỉnh, bảng tham số theo lớp, trọng số attention | 0 (CPU 4 lõi, 424,5 s tổng, 276,6 s huấn luyện, RAM đỉnh 0,66 GB; không dùng GPU) | `results_gnn_nf_bot_iot_v3.csv`, `curves_nf_bot_iot_v3.csv`, `run_info.json` trong `reports/kaggle/gnn-iot-ids-14-train-gnn-bot/`; 9 `ckpt/*.pt` ở lại trên Kaggle cho GĐ F |
 | F | 15-hybrid | | | Chưa làm | | |
 | G | 16-ablation | | | Chưa làm | | |
 | H | 17-final-test, 18-aggregate | | | Chưa làm | | |
