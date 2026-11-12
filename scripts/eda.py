@@ -58,7 +58,7 @@ UNITS = {"IN_BYTES": "byte", "OUT_BYTES": "byte", "IN_PKTS": "gói", "OUT_PKTS":
          "SRC_TO_DST_IAT_AVG": "ms", "SRC_TO_DST_IAT_MIN": "ms", "SRC_TO_DST_IAT_MAX": "ms",
          "SRC_TO_DST_IAT_STDDEV": "ms", "DST_TO_SRC_IAT_AVG": "ms", "DST_TO_SRC_IAT_MIN": "ms",
          "DST_TO_SRC_IAT_MAX": "ms", "DST_TO_SRC_IAT_STDDEV": "ms",
-         "L4_SRC_PORT": "số cổng", "L4_DST_PORT": "số cổng", "MIN_TTL": "hop", "MAX_TTL": "hop",
+         "L4_SRC_PORT": "số hiệu cổng", "L4_DST_PORT": "số hiệu cổng", "MIN_TTL": "hop", "MAX_TTL": "hop",
          "LONGEST_FLOW_PKT": "byte", "SHORTEST_FLOW_PKT": "byte", "MIN_IP_PKT_LEN": "byte", "MAX_IP_PKT_LEN": "byte",
          "TCP_WIN_MAX_IN": "byte", "TCP_WIN_MAX_OUT": "byte"}
 
@@ -258,7 +258,7 @@ def fig_labels(rec, ds_title, raw_counts):
           f"nhãn nhỏ nhất {small[0]} chỉ {vn(small[1])} flow (lệch {vn(big[1] / small[1])} lần).")
     c2 = (f"Theo 5 lớp thì Normal chiếm {pct(grp['Normal'] / total)}" +
           (f"; lớp vắng mặt: {', '.join(absent)}." if absent else "; đủ cả 5 lớp.") +
-          " Dữ liệu mất cân bằng mạnh nên phải dùng macro-F1 và trọng số lớp.")
+          (" Mất cân bằng mạnh nên cần macro-F1 và trọng số lớp." if big[1] / small[1] >= 10 else ""))
     rec.save(fig, "label_dist", f"{ds_title}: phân bố nhãn (số flow, thang log)", "flow",
              {"total_flows": total, "raw_counts": raw_counts, "group_counts": grp,
               "imbalance_max_over_min": big[1] / small[1], "absent_classes": absent}, f"{c1} {c2}")
@@ -306,11 +306,13 @@ def fig_time(rec, ds_title, per_min, raw_counts):
     active = {l: float((piv[l] > 0).mean()) for l in attack}
     rare = min(active, key=active.get) if active else None
     peak_lab = max(attack, key=lambda l: piv[l].max()) if attack else None
-    c1 = (f"Dữ liệu trải từ {t0:%d/%m/%Y %H:%M} đến {t1:%d/%m/%Y %H:%M} UTC ({vn(span_h, 1)} giờ, {n_days} ngày lịch có flow), "
-          f"chỉ {pct(coverage, 0)} số ô {wl} có flow nên có nhiều khoảng trống.")
-    c2 = (f"Flow tấn công chiếm {pct(att_share)}; nhãn {peak_lab} có đỉnh {vn(piv[peak_lab].max())} flow mỗi {wl}, "
-          f"nhãn {rare} chỉ có mặt trong {pct(active[rare], 0)} số ô có flow, tức đến theo từng đợt xen kẽ lưu lượng bình thường."
-          if rare else "")
+    c1 = (f"Dữ liệu trải từ {t0:%d/%m/%Y %H:%M} đến {t1:%d/%m/%Y %H:%M} UTC ({vn(span_h, 1)} giờ, {n_days} ngày lịch có flow); "
+          f"{pct(coverage, 0)} số ô {wl} trong khoảng này có flow" + (", phần còn lại là khoảng trống." if coverage < 0.95 else "."))
+    c2 = ""
+    if rare:
+        c2 = (f"Flow tấn công chiếm {pct(att_share)}; nhãn {peak_lab} có đỉnh {vn(piv[peak_lab].max())} flow mỗi {wl}, "
+              f"nhãn {rare} có mặt trong {pct(active[rare], 0)} số ô có flow" +
+              (", tức đến theo từng đợt xen kẽ lưu lượng khác." if active[rare] < 0.5 else ", tức xuất hiện gần như suốt thời gian."))
     rec.save(fig, "flows_over_time", f"{ds_title}: số flow theo thời gian, tô màu theo loại tấn công", "flow",
              {"t_start_utc": str(t0), "t_end_utc": str(t1), "span_hours": span_h, "bin_minutes": w, "n_bins_active": len(piv),
               "coverage": coverage, "n_calendar_days": n_days, "attack_share": att_share,
@@ -349,7 +351,7 @@ def fig_box(rec, ds_title, B, feats):
     c1 = (f"Đặc trưng {top} tách các lớp rõ nhất: median là {vn(np.expm1(med[top][hi]), 1)} {UNITS.get(top, '')} ở lớp {hi} "
           f"so với {vn(np.expm1(med[top][lo]), 1)} {UNITS.get(top, '')} ở lớp {lo}.")
     c2 = (f"{n_sep}/{len(boxf)} đặc trưng có median giữa các lớp lệch hơn 1 đơn vị log (khoảng 2,7 lần), "
-          f"nên các thống kê thô này đã mang tín hiệu phân biệt lớp. (Mẫu cân bằng theo nhãn gốc, tối đa {vn(BALANCED_CAP)} flow mỗi nhãn.)")
+          f"nên các thống kê thô đã mang tín hiệu phân biệt lớp (mẫu cân bằng theo nhãn gốc).")
     rec.save(fig, "boxplot_log_features", f"{ds_title}: log(1 + x) của các đặc trưng chính theo lớp", "flow",
              {"features": boxf, "classes": groups, "median_log1p_by_class": med, "spread_of_medians": spread,
               "sample_rows": int(len(B)), "sample_per_group": {g: int((B['group'] == g).sum()) for g in groups}},
@@ -417,9 +419,10 @@ def fig_mi(rec, ds_title, B, feats):
     ax.set_ylabel("Đặc trưng (25 đặc trưng mạnh nhất; 3 cột cam = mạnh nhất)")
     top3 = [{"feature": f, "mi": float(s[f])} for f in s.index[:3]]
     weak = int((s < 0.01).sum())
-    c1 = ("Ba đặc trưng mạnh nhất: " + ", ".join(f"{t['feature']} (MI = {vn(t['mi'], 3)})" for t in top3) + ".")
-    c2 = (f"{weak}/{len(s)} đặc trưng có MI < 0,01 nat, gần như không phân biệt được lớp; "
-          f"MI tính trên mẫu cân bằng {vn(len(sub))} flow ({vn(MI_CAP)} flow mỗi nhãn gốc), bằng ước lượng k-láng giềng (k = 3).")
+    id_like = [t["feature"] for t in top3 if "PORT" in t["feature"] or "PROTO" in t["feature"]]
+    c1 = "Ba đặc trưng mạnh nhất: " + ", ".join(f"{t['feature']} (MI = {vn(t['mi'], 3)} nat)" for t in top3) + "."
+    c2 = (f"{weak}/{len(s)} đặc trưng có MI < 0,01 nat" +
+          (f"; {', '.join(id_like)} mã hóa dịch vụ bị nhắm tới nên có thể phản ánh cấu hình testbed hơn là hành vi." if id_like else "."))
     rec.save(fig, "mutual_information", f"{ds_title}: mutual information của đặc trưng flow với nhãn", "flow",
              {"top3": top3, "mi_all": {k: float(v) for k, v in s.items()}, "n_weak_below_0.01": weak,
               "sample_rows": int(len(sub)), "classes": groups}, f"{c1} {c2}")
@@ -561,7 +564,10 @@ def fig_degree(rec, ds_title, A, classes):
         ax.set_xlabel(f"Bậc {name} k (thang log)")
         ax.set_ylabel("Tỉ lệ node có bậc ≥ k (thang log)")
         ax.set_title(f"({'a' if key == 'in' else 'b'}) Bậc {'vào' if key == 'in' else 'ra'} theo lớp")
-        ax.legend(title="Lớp của node", loc="lower left")
+        stats[key + "_share_ge5"] = stats.get(key + "_share_ge5", {})
+        stats[key + "_share_ge5"].update({classes[k]: float((deg[y == k] >= 5).mean()) for k in present})
+    handles, labels = axes[1].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="outside lower center", ncol=3, title="Lớp của node")
 
     def cmp(key, att):
         if att not in stats[key] or "Normal" not in stats[key]:
@@ -573,19 +579,21 @@ def fig_degree(rec, ds_title, A, classes):
 
     fan_in, fan_out = cmp("in", "DoS_DDoS"), cmp("out", "Truy_cap_trai_phep")
 
-    def sentence(c, att, what, label):
+    def sentence(c, att, what, label, key):
         if c is None:
             return f"Không có lớp {att} để so với Normal."
         r = c["ratio_mean"]
+        s5 = stats[key + "_share_ge5"]
         verdict = (f"cao gấp {vn(r, 1)} lần, có dấu hiệu {label}" if r >= 1.5 else
                    f"chỉ bằng {vn(r, 2)} lần, không có dấu hiệu {label} ở mức node" if r <= 0.67 else
                    f"xấp xỉ nhau (gấp {vn(r, 2)} lần), bậc này không phân biệt được lớp")
-        return (f"Bậc {what} trung bình của {att} là {vn(c['mean_attack'], 2)} (p99 = {vn(c['p99_attack'])}, lớn nhất "
-                f"{vn(c['max_attack'])}) so với {vn(c['mean_normal'], 2)} của Normal (p99 = {vn(c['p99_normal'])}): {verdict}.")
+        return (f"Bậc {what} trung bình của {att} là {vn(c['mean_attack'], 2)} (lớn nhất {vn(c['max_attack'])}; "
+                f"{pct(s5[att], 2)} node có bậc ≥ 5) so với {vn(c['mean_normal'], 2)} của Normal ({pct(s5['Normal'], 2)} node có bậc ≥ 5): {verdict}.")
 
-    comment = f"{sentence(fan_in, 'DoS_DDoS', 'vào', 'fan-in')} {sentence(fan_out, 'Truy_cap_trai_phep', 'ra', 'fan-out')}"
+    comment = (f"{sentence(fan_in, 'DoS_DDoS', 'vào', 'fan-in', 'in')} {sentence(fan_out, 'Truy_cap_trai_phep', 'ra', 'fan-out', 'out')}")
     rec.save(fig, "degree_by_class", f"{ds_title}: bậc vào và bậc ra của node theo lớp", "graph",
              {"in_degree_by_class": stats["in"], "out_degree_by_class": stats["out"],
+              "share_in_degree_ge5": stats["in_share_ge5"], "share_out_degree_ge5": stats["out_share_ge5"],
               "fan_in_ddos_vs_normal": fan_in, "fan_out_scan_vs_normal": fan_out,
               "degree_definition": "số cạnh (cặp src→dst) trong cửa sổ 5 s, mỗi cặp tính một lần"}, comment)
 
@@ -632,10 +640,11 @@ def fig_homophily(rec, ds_title, A, classes):
                  f"class-insensitive = {vn(h['class_insensitive_homophily'], 3)}; adjusted = {vn(h['adjusted_homophily'], 3)}")
     ax.legend(loc="upper center", fontsize=8, ncol=1)
     he, hci, hr = h["edge_homophily"], h["class_insensitive_homophily"], h["random_edge_homophily"]
-    level = "cao" if hci >= 0.5 else "trung bình" if hci >= 0.2 else "thấp"
+    level = "cao" if hci >= 0.7 else "khá cao" if hci >= 0.5 else "trung bình" if hci >= 0.2 else "thấp"
     if hci >= 0.5:
-        meaning = ("Cạnh chủ yếu nối các node cùng lớp, nên gom thông điệp từ láng giềng giúp GNN làm mượt nhãn và có lợi thế "
-                   "hơn mô hình chỉ nhìn từng node riêng lẻ.")
+        meaning = (f"Phần lớn cạnh nối các node cùng lớp (cao hơn rõ rệt mức ngẫu nhiên), nên gom thông điệp từ láng giềng "
+                   f"có thể giúp GNN làm mượt nhãn; tuy vậy {pct(1 - he)} cạnh vẫn nối hai lớp khác nhau (chủ yếu tấn công ↔ Normal), "
+                   f"nên láng giềng không thay thế được đặc trưng riêng của từng node.")
     elif hci >= 0.2:
         meaning = ("Một phần đáng kể cạnh nối hai lớp khác nhau, nên gom láng giềng chỉ giúp vừa phải; GNN cần attention và "
                    "đặc trưng cạnh để lọc láng giềng, và có thể chỉ hơn baseline một chút.")
@@ -674,9 +683,9 @@ def pick_windows(A, classes):
 
     pure = small & (cnt[:, 0] == n)
     if pure.any():
-        target = np.percentile(n[pure], 90)
+        target = np.percentile(n[pure], 50)
         i = best(pure, -np.abs(n - target), A["n_edges"])
-        out.append(("normal", i, f"cửa sổ chỉ có node Normal, kích thước gần phân vị 90 ({vn(target)} node) của các cửa sổ Normal", "total", None))
+        out.append(("normal", i, f"cửa sổ chỉ có node Normal, kích thước gần median ({vn(target)} node) của các cửa sổ Normal", "total", None))
     for key, cname, sc_arr, mode, text in (
             ("ddos", "DoS_DDoS", "max_in", "in", "bậc vào lớn nhất của node DoS_DDoS"),
             ("scan", "Truy_cap_trai_phep", "max_out", "out", "bậc ra lớn nhất của node Truy_cap_trai_phep")):
@@ -727,7 +736,12 @@ def draw_window(ax, g, classes, hub_mode, title):
     else:
         h = int(np.argmax(deg))
         note = f"node bậc lớn nhất: {int(deg[h])}"
-    ax.annotate(note, xy=pos[h], xycoords="data", xytext=(0.02, 0.98), textcoords="axes fraction", va="top", ha="left",
+    # đặt chú thích ở góc xa node trung tâm nhất để mũi tên ngắn và không che đồ thị
+    (x0, x1), (y0, y1) = ax.get_xlim(), ax.get_ylim()
+    hx, hy = (pos[h][0] - x0) / (x1 - x0), (pos[h][1] - y0) / (y1 - y0)
+    corner = max(((0.02, 0.98), (0.98, 0.98), (0.02, 0.02), (0.98, 0.02)), key=lambda c: (c[0] - hx) ** 2 + (c[1] - hy) ** 2)
+    ax.annotate(note, xy=pos[h], xycoords="data", xytext=corner, textcoords="axes fraction",
+                va="top" if corner[1] > 0.5 else "bottom", ha="left" if corner[0] < 0.5 else "right",
                 fontsize=9, bbox=dict(boxstyle="round", fc="white", ec="#888888", alpha=0.95),
                 arrowprops=dict(arrowstyle="->", color="#222222", lw=1.3, shrinkA=0, shrinkB=4))
     return {"hub_node": h, "note": note, "in_degree_hub": int(i[h]), "out_degree_hub": int(o[h])}
@@ -767,28 +781,33 @@ def fig_windows(rec, ds_title, A, classes):
             hub_deg, mean_other = int(o[y == classes.index("Truy_cap_trai_phep")].max()), float(np.mean(o))
         else:
             hub_deg, mean_other = int((o + i).max()), float(np.mean(o + i))
-        info.update({"hub_degree": hub_deg, "mean_degree_in_window": mean_other})
+        reach = min(1.0, hub_deg / max(g.num_nodes - 1, 1))      # tỉ lệ node còn lại mà node trung tâm nối tới
+        info.update({"hub_degree": hub_deg, "mean_degree_in_window": mean_other, "hub_reach": reach})
         if hub:
             ctext = (f"Cửa sổ {KIND_TITLES[key]} ({g.num_nodes} node, {g.num_edges} cạnh) có một node {hub[0]} với {hub[1]} {hub_deg}, "
                      f"trong khi bậc trung bình toàn cửa sổ chỉ {vn(mean_other, 2)}"
                      + (f"; node này nằm trên mức cao hơn {pct(rank, 1)} cửa sổ cùng loại trong train." if rank is not None else "."))
         else:
-            ctext = (f"Cửa sổ {KIND_TITLES[key]} gồm {g.num_nodes} node và {g.num_edges} cạnh, node bậc lớn nhất có bậc {hub_deg} "
-                     f"so với bậc trung bình {vn(mean_other, 2)}: " +
-                     ("không có node trung tâm nổi bật." if hub_deg < 3 * max(mean_other, 1e-9) else "có một node trung tâm."))
+            ctext = (f"Cửa sổ {KIND_TITLES[key]} gồm {g.num_nodes} node và {g.num_edges} cạnh; node bậc lớn nhất có bậc {hub_deg} "
+                     f"(nối tới {pct(reach, 0)} số node còn lại) so với bậc trung bình {vn(mean_other, 2)} của cửa sổ.")
         infos[key] = info
         rec.save(fig, f"window_{key}", ttl, "graph_viz", info, ctext)
     # hình tổng hợp: cùng layout seed, cạnh nhau để so sánh
-    fig, axes = plt.subplots(1, len(pos_ok), figsize=(6.4 * len(pos_ok), 7), layout="constrained")
+    ncol = len(pos_ok) if len(pos_ok) <= 3 else 2
+    nrow = int(np.ceil(len(pos_ok) / ncol))
+    fig, axes = plt.subplots(nrow, ncol, figsize=(6.6 * ncol, 6.8 * nrow + 0.5), layout="constrained")
     present = set()
+    for ax in np.ravel(axes)[len(pos_ok):]:
+        ax.set_axis_off()
     for ax, (key, gi, why, mode, rank) in zip(np.ravel(axes), pos_ok):
         g = A["graphs"][gi]
         draw_window(ax, g, classes, mode, f"{KIND_TITLES[key]}: win {g.win}, {g.num_nodes} node, {g.num_edges} cạnh")
         present |= set(g.y.tolist())
     _legend(fig, classes, sorted(present))
-    parts = "; ".join(f"{KIND_TITLES[k]} {v['n_nodes']} node, hub bậc {v['hub_degree']}" for k, v in infos.items())
+    parts = "; ".join(f"{KIND_TITLES[k]}: {v['n_nodes']} node, node trung tâm bậc {v['hub_degree']} (nối {pct(v['hub_reach'], 0)} node còn lại)"
+                      for k, v in infos.items())
     rec.save(fig, "windows_overview", f"{ds_title}: so sánh các cửa sổ mẫu (cùng layout seed {SEED})", "graph_viz",
-             {"windows": infos}, f"Các cửa sổ mẫu ({parts}) cùng thang vẽ và cùng seed layout; cấu trúc nào lệch khỏi cửa sổ bình thường nằm ở node trung tâm có bậc cao.")
+             {"windows": infos}, f"Cùng seed layout và cùng cách tô màu/kích thước cho mọi cửa sổ. {parts}.")
 
 
 def run_graph(ds, graph_dir, rec):
