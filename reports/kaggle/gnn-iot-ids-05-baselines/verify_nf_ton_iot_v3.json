@@ -1,0 +1,52 @@
+[
+ {
+  "name": "Không cửa sổ trùng giữa các tập",
+  "ok": true,
+  "detail": "0 cửa sổ trùng"
+ },
+ {
+  "name": "Gap >= 1 cửa sổ ở mọi ranh giới giữa các tập",
+  "ok": true,
+  "detail": "0 ranh giới vi phạm"
+ },
+ {
+  "name": "Không có NaN hoặc inf trong x và edge_attr",
+  "ok": true,
+  "detail": "0 đồ thị lỗi"
+ },
+ {
+  "name": "x có 18 đặc trưng, edge_attr có 3",
+  "ok": true,
+  "detail": "0 đồ thị sai hình dạng"
+ },
+ {
+  "name": "Chỉ số cạnh nằm trong số node",
+  "ok": true,
+  "detail": "0 đồ thị lỗi"
+ },
+ {
+  "name": "IP và cổng không nằm trong đặc trưng",
+  "ok": true,
+  "detail": "đặc trưng: 18 cột thống kê"
+ },
+ {
+  "name": "Scaler chỉ fit trên train (số mẫu = số node train)",
+  "ok": true,
+  "detail": "scaler 568465.0 / train 568465"
+ },
+ {
+  "name": "Đặc trưng train sau chuẩn hóa có trung bình ~0",
+  "ok": true,
+  "detail": "|mean| lớn nhất 1.76e-08"
+ },
+ {
+  "name": "Mỗi lớp chính có >= 100 node train, >= 30 node val và test",
+  "ok": true,
+  "detail": "đủ"
+ },
+ {
+  "name": "Tỉ lệ node train/val/test trong 70/15/15 ± 3 điểm %",
+  "ok": true,
+  "detail": "70.0/15.0/15.0"
+ }
+]

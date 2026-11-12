@@ -417,6 +417,10 @@ LR, RF, XGBoost, LightGBM, MLP.
   5. Chưa chạy trên test, test để dành cho 6.1.
   6. Làm cả đa lớp và nhị phân.
 - **Phụ thuộc:** 0.5, 1.6
+- **Kết quả:** (12/11/2026, GĐ A, chưa đổi trạng thái vì còn NF-BoT-IoT-v3) Kéo về [reports/kaggle/](../../reports/kaggle/README.md): từ notebook 05 (bị dừng giữa chừng, bản 2, commit `9d7761a`): `results_baselines_nf_ton_iot_v3.csv` (6412 B), `baseline_search_nf_ton_iot_v3.json`, `results_baselines_nf_cicids2018_v3.csv`, `verify_nf_ton_iot_v3.json`, `verify_nf_cicids2018_v3.json`; từ 09 (bản 1, commit `4d98421`): `results_baselines_nf_cicids2018_v3.csv`, `baseline_search_nf_cicids2018_v3.json`; từ 10 (bản 1, commit `4d98421`): `results_baselines_nf_ton_iot_v2.csv`, `baseline_search_nf_ton_iot_v2.json`. Cả 12 file khớp kích thước Kaggle báo; cả hai commit có thật trong repo. Chỉ đếm, chưa tính trung bình.
+  - **NF-ToN-IoT-v3, `split=val`, `task=multiclass`: 15 dòng = logreg, random_forest, xgboost, lightgbm, mlp × seed 42, 43, 44 (đủ 5 baseline × 3 seed, không trùng dòng)**, đều từ notebook 05. Log tìm siêu tham số có 3/3/3/3/2 lần thử (≤ 30). `verify_nf_ton_iot_v3.json`: 10/10 kiểm tra đạt.
+  - **Còn thiếu:** `task=binary` (tiêu chí 6); NF-BoT-IoT-v3 (chưa chạy; làm ở GĐ D). Test chưa chạy (đúng tiêu chí 5).
+  - Phụ lục (D8): NF-ToN-IoT-v2 đủ 5 × 3 seed (notebook 10); NF-CICIDS2018-v3 đủ 5 × 3 seed khi ghép 05 (logreg, random_forest; xgboost chỉ 42, 43) và 09 (xgboost, lightgbm, mlp × 3 seed).
 
 ### 4.2 Baseline mức flow
 
@@ -476,6 +480,10 @@ Có đặc trưng cạnh.
   3. 3 seed, std accuracy ≤ 1,5 điểm %.
   4. Lưu được trọng số attention để giải thích ở 6.3.
 - **Phụ thuộc:** 5.2
+- **Kết quả:** (12/11/2026, GĐ A, chưa đổi trạng thái vì còn NF-BoT-IoT-v3) Kéo về [reports/kaggle/gnn-iot-ids-07-train-gnn/](../../reports/kaggle/gnn-iot-ids-07-train-gnn/): `results_gnn_nf_ton_iot_v3.csv` (3870 B), `results_gnn_nf_cicids2018_v3.csv`, `results_gnn_nf_ton_iot_v2.csv`; không tải `ckpt/` (27 file `.pt`). Notebook `gnn-iot-ids-07-train-gnn` bản 2, GPU T4, clone commit `9d7761a` (có thật trong repo). Chi tiết ở [reports/kaggle/README.md](../../reports/kaggle/README.md). Chỉ đếm, chưa tính trung bình.
+  - **NF-ToN-IoT-v3, `split=val`, `task=multiclass`: 9 dòng = gcn, sage, gat × seed 42, 43, 44 (đủ 3 GNN × 3 seed, không trùng dòng).** Phần này cũng là kết quả của 5.2 (gcn, sage).
+  - **Còn thiếu cho 5.3 / 5.2:** `task=binary`; NF-BoT-IoT-v3 (chưa chạy; làm ở GĐ E); log tìm siêu tham số GNN, đường loss/F1 theo epoch, bảng đếm tham số theo lớp, trọng số attention (output của 07 chỉ có 3 CSV và `ckpt/`). Chưa đối chiếu ngưỡng 91% / 4,08% / 95% vì việc đó thuộc tổng hợp trên Kaggle.
+  - CIC và NF-ToN-IoT-v2 đủ gcn, sage, gat × 3 seed, chỉ làm phụ lục (D8).
 
 ### 5.4 Phiên bản cải tiến của GAT nhẹ
 
