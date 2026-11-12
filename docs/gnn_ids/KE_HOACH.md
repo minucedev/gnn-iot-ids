@@ -8,9 +8,12 @@ Danh sách task chi tiết: [TASKS.md](TASKS.md).
 > **Hạn nộp thật: 15/11/2026** (Phúc xác nhận 03/11/2026; lúc đầu ghi nhầm 8/11, đã sửa trong ngày). Lịch 9 tuần và cột "Tuần" trong [TASKS.md](TASKS.md) không còn dùng được; dùng [lịch ở mục 5b](#5b-lịch-đến-hạn-nộp-15112026). **Không cắt phạm vi** so với mục 2 và 3.
 >
 > Nhóm: Nguyễn Minh Phúc (nhóm trưởng), Lê Trung Phong, Văn Bá Phạm Tấn. **Phúc thực hiện toàn bộ task**; Phong đã làm phần Tuần 1 (khảo sát dataset, pipeline v1).
+>
+> **Cập nhật 12/11/2026:** thầy đưa yêu cầu mới (xem [mục 0](#0-yêu-cầu-bổ-sung-của-thầy-12112026)). Hạn nộp **tạm tính 19/11/2026** (Phúc: "cứ cho là 1 tuần nữa"; chưa có ngày chính thức). Lịch hiện hành là [mục 5c](#5c-lịch-12111911-theo-yêu-cầu-mới); mục 5b chỉ còn để tham khảo.
 
 ## Mục lục
 
+0. [Yêu cầu bổ sung của thầy (12/11/2026)](#0-yêu-cầu-bổ-sung-của-thầy-12112026)
 1. [Đề bài toán](#1-đề-bài-toán)
 2. [Kết quả cuối cùng phải nộp](#2-kết-quả-cuối-cùng-phải-nộp)
 3. [Chỉ tiêu nghiệm thu](#3-chỉ-tiêu-nghiệm-thu)
@@ -19,6 +22,18 @@ Danh sách task chi tiết: [TASKS.md](TASKS.md).
 6. [Quy ước bắt buộc](#6-quy-ước-bắt-buộc)
 7. [Log quyết định](#7-log-quyết-định)
 8. [Rủi ro và phương án dự phòng](#8-rủi-ro-và-phương-án-dự-phòng)
+
+## 0. Yêu cầu bổ sung của thầy (12/11/2026)
+
+Thầy gửi danh sách sau. Cột giữa là cách nhóm đáp ứng, Phúc chốt qua chat ngày 12/11/2026 (quyết định D8–D11 ở mục 7).
+
+| Thầy yêu cầu | Nhóm đáp ứng | Task |
+|---|---|---|
+| Dataset: NF-ToN, chọn ít nhất 2 bộ dữ liệu | **NF-ToN-IoT-v3** (bộ chính) + **NF-BoT-IoT-v3** (bộ thứ 2, dữ liệu IoT; Tấn đã làm notebook tiền xử lý trên Kaggle `phamta/dss-cky-bot`). NF-CSE-CIC-IDS2018-v3 và NF-ToN-IoT-v2 không còn bắt buộc | 1.8, 5.6 |
+| Mô hình hybrid? Lý do chọn mô hình | **Hybrid GAT + LightGBM**: GAT học embedding ngữ cảnh hàng xóm của mỗi node, ghép với 18 đặc trưng gốc, LightGBM phân loại. Lý do: số liệu sơ bộ cho thấy mô hình cây mạnh trên đặc trưng dạng bảng (accuracy khoảng 93%) còn GNN nắm cấu trúc nhưng FPR cao (6–11%); ghép để mỗi bên bù điểm yếu bên kia | 5.7, 3.2 |
+| Môi trường: Kaggle, hỗ trợ 30 giờ + T4 | Mọi huấn luyện chạy trên Kaggle T4; ghi thời gian chạy từng notebook để tổng không vượt 30 giờ GPU mỗi tuần | 0.6 |
+| Xử lý EDA | EDA mức flow và mức đồ thị cho cả 2 bộ; dùng lại phần EDA của Tấn cho NF-BoT-IoT-v3 | 2.1–2.3 |
+| Minh chứng hybrid cao hơn các baseline (ML, DL, …) | Cùng cách chia tập, 3 seed, mean ± std; baseline ML (LR, RF, XGBoost, LightGBM), DL (MLP), GNN đơn (GCN, GraphSAGE, GAT); kiểm định McNemar; ablation tháo từng phần của hybrid | 4.1, 5.2, 5.3, 5.8, 6.1–6.3 |
 
 ## 1. Đề bài toán
 
@@ -46,8 +61,8 @@ Danh sách task chi tiết: [TASKS.md](TASKS.md).
 ## 2. Kết quả cuối cùng phải nộp
 
 1. **Repo GitHub** chạy lại được: `src/build_graph.py`, `src/stream_features.py`, `src/models/`, `src/evaluate.py`, `src/ahp.py` và các notebook chạy "Run All" trên Kaggle.
-2. **Mô hình GAT nhẹ multi-head** (mô hình chính) và ≥ 1 phiên bản cải tiến, đã huấn luyện, có số tham số và kích thước file.
-3. **Bảng so sánh**: ≥ 4 baseline ML + ≥ 3 biến thể GNN trên ≥ 3 bộ dữ liệu, mỗi số là trung bình ± độ lệch chuẩn của 3 seed.
+2. **Mô hình hybrid GAT + LightGBM** (mô hình chính từ 12/11/2026), gồm phần GAT nhẹ multi-head và phiên bản cải tiến của GAT, đã huấn luyện, có số tham số và kích thước file.
+3. **Bảng so sánh**: hybrid với ≥ 4 baseline ML, MLP và ≥ 3 biến thể GNN trên 2 bộ dữ liệu (NF-ToN-IoT-v3, NF-BoT-IoT-v3), mỗi số là trung bình ± độ lệch chuẩn của 3 seed; kèm bảng ablation của hybrid.
 4. **Bộ hình**: EDA, trực quan hóa đồ thị, confusion matrix, ROC/PR, đường huấn luyện, F1 theo lớp, F1 theo tham số, F1 theo độ trễ.
 5. **Báo cáo AHP**: cây phân cấp, ma trận so sánh cặp (CR < 0,1), xếp hạng, phân tích độ nhạy, mô hình được gợi ý.
 6. **Demo mô phỏng thời gian thực** (script dòng lệnh): phát lại flow, xuất cảnh báo theo cửa sổ, kèm báo cáo độ trễ.
@@ -67,8 +82,8 @@ Danh sách task chi tiết: [TASKS.md](TASKS.md).
 | Tổng tham số | ≤ 100.000 | `sum(p.numel() for p in model.parameters())` |
 | Kích thước file mô hình | ≤ 1 MB | `state_dict` lưu bằng `torch.save` |
 | Độ trễ end-to-end | p95 ≤ 1 s mỗi cửa sổ | CPU 1 luồng, ≥ 1.000 cửa sổ, ghi rõ cấu hình máy |
-| So với baseline | GNN chính ≥ baseline tốt nhất về F1-macro, **hoặc** có phân tích nguyên nhân | Kèm kiểm định McNemar (p-value) |
-| Số bộ dữ liệu | ≥ 3 (1 NetFlow chính + ≥ 2 bộ khác) | Theo yêu cầu của thầy |
+| So với baseline | **Hybrid** > baseline tốt nhất (ML, DL, GNN đơn) về F1-macro, chênh lệch > 2 lần std của 3 seed; nếu không đạt thì báo cáo trung thực kèm phân tích nguyên nhân | Kèm kiểm định McNemar (p-value < 0,05) trên tập test |
+| Số bộ dữ liệu | ≥ 2: NF-ToN-IoT-v3 và NF-BoT-IoT-v3 | Yêu cầu của thầy ngày 12/11/2026 (trước đó là ≥ 3) |
 | Tái lập | Chạy lại trên Kaggle lệch ≤ 0,5 điểm % | So với `results.csv` |
 
 Chỉ tiêu 91% và 4,08% lấy từ mô tả đề tài. Đây là **ngưỡng tối thiểu**. Các ngưỡng còn lại (100K tham số, F1-macro 0,80, recall 95%) đề xuất ban đầu, **Phúc chốt ngày 03/11/2026 (task 0.1)**: giữ nguyên các ngưỡng trong bảng; tham số ≤ 100.000 là ngưỡng nghiệm thu, < 50.000 (mục tiêu của kế hoạch gốc) chỉ là mong muốn, không ràng buộc. Có làm AHP (D6). Không gửi thầy và không gửi Phong, Tấn để xác nhận lại.
@@ -118,6 +133,24 @@ Còn 12 ngày kể từ 03/11. Giữ nguyên phạm vi ở mục 2 và 3 (≥ 3 
 - Ngày 11/11 là mốc cứng: sau khi đóng băng mô hình không được chỉnh theo kết quả test (quy ước 6.2). Ablation và cải tiến phải xong trước đó.
 - Báo cáo (9.2) viết dồn vào 2 ngày cuối là rủi ro lớn nhất; phần không phụ thuộc kết quả (lý thuyết, dữ liệu, phương pháp) nên viết từ 05/11.
 - Chưa có xác nhận của thầy về D6 (AHP dùng để chọn mô hình triển khai).
+
+## 5c. Lịch 12/11–19/11 theo yêu cầu mới
+
+Lập ngày 12/11/2026, hạn tạm tính 19/11. Thứ tự ưu tiên theo danh sách của thầy: dữ liệu và EDA → baseline → hybrid và minh chứng → AHP và thời gian thực → báo cáo. Kết quả cũ trong `reports/tables/prelim_split_v1/` không dùng cho báo cáo; mọi mô hình chạy lại trên cách chia đã chốt ở D3.
+
+| Ngày | Việc | Task |
+|---|---|---|
+| 12–13/11 | Dựng đồ thị NF-BoT-IoT-v3 (tích hợp notebook của Tấn); EDA 2 bộ; chạy baseline ML và MLP trên NF-ToN-IoT-v3 và NF-BoT-IoT-v3 (chỉ val) | 1.8, 2.1–2.3, 4.1 |
+| 14/11 | GCN, GraphSAGE, GAT trên 2 bộ; viết `src/hybrid.py` và chạy hybrid trên val | 5.2, 5.3, 5.7 |
+| 15/11 | Ablation hybrid, hiệu chỉnh ngưỡng quyết định để giảm FPR; ablation GAT (head, lớp, độ rộng, đặc trưng cạnh, cửa sổ) | 5.8, 5.4, 5.5 |
+| 16/11 | **Đóng băng mô hình bằng commit hash**, chạy test một lần 3 seed; bảng, hình, McNemar; thử chéo giữa 2 bộ | 6.1–6.3, 5.6 |
+| 17/11 | AHP; `stream_features.py`, `detector.py`, đo độ trễ | 7.1, 7.2, 8.1–8.3 |
+| 18/11 | Đánh giá triển khai; lý thuyết; viết báo cáo, slide | 8.4, 3.1–3.4, 9.1–9.3 |
+| 19/11 | Chạy lại từ repo sạch, kiểm tra README, nộp | — |
+
+**Ngân sách Kaggle (30 giờ GPU T4 mỗi tuần):** ghi thời gian chạy của từng notebook vào dòng **Kết quả** của task. Baseline cây chạy trên CPU của Kaggle, không tính vào giờ GPU. Nếu tổng giờ GPU dự kiến vượt 25 giờ thì báo Phúc trước khi chạy tiếp.
+
+**Điểm nghẽn:** từ 03/11 đến 12/11 chưa có kết quả nào trên cách chia tập mới, nên 12–13/11 phải chạy được baseline. Mốc cứng là 16/11 (đóng băng mô hình trước khi xem tập test).
 
 ## 6. Quy ước bắt buộc
 
@@ -177,6 +210,15 @@ Hạn chế phải ghi vào báo cáo: nhiều khối làm ranh giới train/val
 
 Làm sạch: 27.520.260 flow, bỏ 1.858.626 bản ghi trùng còn 25.661.634. RAM đỉnh 18,9 GB trên Kaggle.
 
+**Quyết định mới ngày 12/11/2026** (theo yêu cầu bổ sung của thầy ở [mục 0](#0-yêu-cầu-bổ-sung-của-thầy-12112026); Claude đề xuất, Phúc chọn qua chat):
+
+| Mã | Câu hỏi | Đã chốt |
+|---|---|---|
+| D8 | Bộ dữ liệu thứ 2 | **NF-BoT-IoT-v3** (dữ liệu IoT; dựng đồ thị bằng `src/build_graph.py`, tận dụng EDA trong notebook của Tấn). Bỏ NF-CSE-CIC-IDS2018-v3 khỏi phạm vi bắt buộc vì không phải IoT và tốn giờ Kaggle (baseline từng vượt 4 giờ). NF-ToN-IoT-v2 chỉ dùng nếu còn thời gian. Hạn chế đã biết của NF-BoT-IoT-v3: không có lớp Botnet_Backdoor riêng, 20 IP nguồn, Benign 0,3% số flow |
+| D9 | Kiến trúc mô hình hybrid | **GAT + LightGBM** (phương án B là GAT + GRU, không chọn vì cần nhiều code mới). Chi tiết và cách chứng minh ở task 5.7, 5.8 |
+| D10 | AHP và mô phỏng thời gian thực | Vẫn làm, nhưng **sau** khi có kết quả hybrid và baseline |
+| D11 | Hạn nộp | **Tạm tính 19/11/2026** (Phúc: "cứ cho là 1 tuần nữa"). Cập nhật khi có ngày chính thức |
+
 ## 8. Rủi ro và phương án dự phòng
 
 | Rủi ro | Dấu hiệu | Phương án |
@@ -187,3 +229,7 @@ Làm sạch: 27.520.260 flow, bỏ 1.858.626 bản ghi trùng còn 25.661.634. R
 | Dữ liệu quá dễ (≈ 99%) | Mọi mô hình > 99% | Báo cáo F1-macro, lớp hiếm, thử tổng quát hóa giữa các bộ |
 | Tràn RAM trên Kaggle/Colab | Kernel chết | Dùng file parquet, đọc theo cột, lấy mẫu theo cửa sổ |
 | Không kịp hạn nộp (kế hoạch gốc kết thúc 8/11) | Cuối Tuần 2 chưa xong GĐ1 | Cắt các task "Nên có" và "Tùy chọn", giảm còn 1 bộ phụ, bỏ ablation W |
+| Hybrid không hơn baseline | Trên val, F1-macro của hybrid không vượt LightGBM quá 2 lần std | Không chỉnh theo tập test. Thử thêm embedding out-of-fold (task 5.7) và hiệu chỉnh ngưỡng trên val; nếu vẫn không đạt thì báo cáo trung thực bảng ablation |
+| Embedding của tập train "quá sạch" | Hybrid gần 100% trên train nhưng tụt mạnh trên val | GAT đã thấy nhãn của node train nên embedding train có thể làm LightGBM học vẹt; dùng embedding out-of-fold theo khối thời gian (task 5.7) |
+| NF-BoT-IoT-v3 quá dễ hoặc quá ít Normal | Mọi mô hình ≈ 99,9%, FPR đo trên rất ít node Normal | Báo cáo số node Normal ở tập test cạnh FPR; dùng NF-ToN-IoT-v3 làm bộ chính để kết luận |
+| Vượt 30 giờ GPU Kaggle mỗi tuần | Tổng giờ GPU ghi trong TASKS.md > 25 giờ | Chạy baseline cây trên CPU; giảm số lần thử siêu tham số; báo Phúc trước khi chạy tiếp |

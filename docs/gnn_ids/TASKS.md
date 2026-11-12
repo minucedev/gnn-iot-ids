@@ -19,10 +19,11 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
 | [1.1](#11-tuần-1-khảo-sát-4-bộ-dữ-liệu) | [Tuần 1] Khảo sát 4 bộ dữ liệu | GĐ1 | Phúc | Tự kiểm | 1 | B | **Xong** |
 | [1.2](#12-xác-minh-và-tải-netflow-v3) | Xác minh và tải NetFlow v3 | GĐ1 | Phúc | Tự kiểm | 2 | B | **Xong** |
 | [1.3](#13-tải-ton-iot-có-ts-và-kiểm-chứng-giả-định-thứ-tự-dòng) | ToN-IoT có `ts`, kiểm chứng thứ tự dòng | GĐ1 | Phúc | Tự kiểm | 2 | B | **Bỏ** |
-| [1.4](#14-chốt-danh-sách--3-bộ-dữ-liệu) | Chốt ≥ 3 bộ dữ liệu | GĐ1 | Phúc | Tự kiểm | 3 | B | Chưa làm |
+| [1.4](#14-chốt-danh-sách--3-bộ-dữ-liệu) | Chốt bộ dữ liệu (≥ 2 từ 12/11) | GĐ1 | Phúc | Tự kiểm | 3 | B | Chưa làm |
 | [1.5](#15-sửa-chiến-lược-chia-tập) | Sửa chiến lược chia tập | GĐ1 | Phúc | Tự kiểm | 3 | B | Chưa làm |
 | [1.6](#16-dựng-lại-đồ-thị-cho-mọi-bộ-đã-chốt) | Dựng lại đồ thị mọi bộ | GĐ1 | Phúc | Tự kiểm | 3 | B | Chưa làm |
 | [1.7](#17-từ-điển-dữ-liệu) | Từ điển dữ liệu | GĐ1 | Phúc | Tự kiểm | 3 | B | Chưa làm |
+| [1.8](#18-dựng-đồ-thị-nf-bot-iot-v3-bộ-thứ-2) | Dựng đồ thị NF-BoT-IoT-v3 (bộ thứ 2) | GĐ1 | Phúc | Tự kiểm | 12–13/11 | B | Chưa làm |
 | [2.1](#21-eda-mức-flow) | EDA mức flow | GĐ2 | Phúc | Tự kiểm | 3 | B | Chưa làm |
 | [2.2](#22-eda-mức-đồ-thị) | EDA mức đồ thị, homophily | GĐ2 | Phúc | Tự kiểm | 3 | B | Chưa làm |
 | [2.3](#23-trực-quan-hóa-đồ-thị-các-cửa-sổ-mẫu) | Trực quan hóa đồ thị | GĐ2 | Phúc | Tự kiểm | 3 | B | Chưa làm |
@@ -38,6 +39,8 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
 | [5.4](#54-phiên-bản-cải-tiến-của-gat-nhẹ) | Bản cải tiến của GAT | GĐ5 | Phúc | Tự kiểm | 6 | B | Chưa làm |
 | [5.5](#55-ablation) | Ablation | GĐ5 | Phúc | Tự kiểm | 6 | B | Chưa làm |
 | [5.6](#56-các-bộ-còn-lại-và-tổng-quát-hóa-giữa-các-bộ) | Các bộ còn lại, tổng quát hóa | GĐ5 | Phúc | Tự kiểm | 6 | B | Chưa làm |
+| [5.7](#57-mô-hình-hybrid-gat--lightgbm) | **Hybrid GAT + LightGBM** | GĐ5 | Phúc | Tự kiểm | 14/11 | B | Chưa làm |
+| [5.8](#58-ablation-hybrid-và-minh-chứng-hơn-baseline) | Ablation hybrid, minh chứng hơn baseline | GĐ5 | Phúc | Tự kiểm | 15/11 | B | Chưa làm |
 | [6.1](#61-đóng-băng-mô-hình-và-chạy-test-một-lần) | Đóng băng, chạy test 1 lần | GĐ6 | Phúc | Tự kiểm | 7 | B | Chưa làm |
 | [6.2](#62-bảng-so-sánh-tổng-hợp-và-bộ-biểu-đồ) | Bảng tổng hợp, biểu đồ | GĐ6 | Phúc | Tự kiểm | 7 | B | Chưa làm |
 | [6.3](#63-kiểm-định-thống-kê-và-phân-tích-lỗi) | Kiểm định, phân tích lỗi | GĐ6 | Phúc | Tự kiểm | 7 | B | Chưa làm |
@@ -225,6 +228,8 @@ Bản `Processed_Network_dataset`.
 
 Kèm bảng "Phân tích lựa chọn bộ dữ liệu".
 
+> **Cập nhật 12/11/2026:** thầy yêu cầu NF-ToN cùng **ít nhất 2 bộ**; nhóm chốt NF-ToN-IoT-v3 + NF-BoT-IoT-v3 (D8). Tiêu chí 1 bên dưới đổi thành "1 bộ NF-ToN chính và ≥ 1 bộ khác". Bảng lựa chọn vẫn liệt kê đủ các bộ đã khảo sát, ghi rõ lý do bỏ CIC (không phải IoT, tốn giờ Kaggle).
+
 - **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 3 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** Bộ dữ liệu, Báo cáo
 - **Đầu vào:** Phiếu của 1.1, 1.2
@@ -280,6 +285,22 @@ Cửa sổ theo giây nếu bộ có `ts`.
   2. Người review tự tính lại 3 đặc trưng trên 1 cửa sổ và ra kết quả khớp code.
   3. Ánh xạ nhãn gốc sang 5 nhóm được ghi đầy đủ cho từng bộ.
 - **Phụ thuộc:** 1.6
+
+### 1.8 Dựng đồ thị NF-BoT-IoT-v3 (bộ thứ 2)
+
+Thêm ngày 12/11/2026 theo yêu cầu "NF-ToN, ít nhất 2 bộ" của thầy (quyết định D8). Tấn đã có notebook tiền xử lý bộ này trên Kaggle (`phamta/dss-cky-bot`, dữ liệu `seyhed/nf-bot-iot-v3`). Notebook đó gắn nhãn cho cạnh, dùng cửa sổ 10 giây, lấy mẫu ngẫu nhiên 300.000 flow mỗi lớp và chia thời gian liên tục, nên **không dùng trực tiếp đầu ra của nó**; chỉ dùng lại phần đọc file theo đoạn và phần EDA.
+
+- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 12–13/11 · **Ưu tiên:** Bắt buộc
+- **Mục đề tài:** Bộ dữ liệu, EDA & tiền xử lý
+- **Đầu vào:** NF-BoT-IoT-v3 trên Kaggle (`athena21/netflow-v3-datasets` như bộ chính, hoặc `seyhed/nf-bot-iot-v3` sau khi đối chiếu số dòng); adapter `load_nf_v3` trong `src/build_graph.py`; notebook của Tấn
+- **Đầu ra:** `reports/tables/graphs_v2/nf_bot_iot_v3/` (summary.json, graph_stats.csv); đồ thị `.pt`, `split.json`, `scaler.pkl` trên Kaggle Dataset; cấu hình chia tập ghi vào KE_HOACH.md mục 7 (bảng điều chỉnh D3)
+- **Tiêu chí kiểm tra:**
+  1. Số dòng và số flow từng nhãn khớp số liệu UQ công bố (16.933.808 flow; Benign 51.989; trang UQ ghi nhầm tổng là 16.993.808, xem `docs/dataset_cards/netflow_v3_others.md`).
+  2. Ánh xạ nhãn: DoS, DDoS → DoS_DDoS; Reconnaissance, Theft → Truy_cap_trai_phep; Benign → Normal. Ghi rõ bộ này **không có lớp Botnet_Backdoor**, nên F1-macro tính trên các lớp có mặt.
+  3. Cửa sổ 5 giây, chia theo khối (blocked, cân theo số node, gap 1); số khối chọn bằng `scripts/split_search.py` như các bộ khác. Mỗi lớp có mặt có ≥ 100 node ở train và ≥ 30 ở val, test; nếu Normal không đạt thì ghi rõ số node.
+  4. Không lấy mẫu flow ngẫu nhiên (quy ước 6.4). Nếu thiếu RAM thì lấy mẫu theo cửa sổ và ghi lại tỉ lệ.
+  5. Kiểm tra rò rỉ, NaN và tái lập (`scripts/verify_graphs.py`) đều đạt.
+- **Phụ thuộc:** 0.4, 1.5
 
 ## GĐ2 EDA & trực quan hóa
 
@@ -496,6 +517,48 @@ Số head, số lớp, hidden, đặc trưng cạnh, kích thước cửa sổ.
   2. Phần chéo giữa các bộ chỉ tính trên các lớp có ở cả hai bộ, có ghi rõ.
   3. Kết quả ghi vào `results.csv` với cột `dataset` dạng "A→B".
 - **Phụ thuộc:** 5.3
+
+### 5.7 Mô hình hybrid GAT + LightGBM
+
+Thêm ngày 12/11/2026 theo yêu cầu "mô hình hybrid, lý do chọn" của thầy (quyết định D9). Đây là **mô hình chính** từ ngày này.
+
+**Kiến trúc.** (1) Huấn luyện GAT nhẹ (cấu hình của task 5.3) để phân loại node. (2) Cố định GAT, lấy vector ẩn của lớp GAT cuối (64 chiều) làm embedding của mỗi node. (3) Ghép embedding với 18 đặc trưng gốc (đã chuẩn hóa) thành 82 cột. (4) LightGBM phân loại 82 cột đó.
+
+**Lý do chọn** (ghi vào báo cáo): số liệu sơ bộ cho thấy mô hình cây mạnh trên đặc trưng dạng bảng nhưng không thấy hàng xóm; GNN thấy cấu trúc mạng nhưng FPR cao. Embedding GAT mang thông tin cấu trúc mà 18 đặc trưng không có; LightGBM tận dụng tốt đặc trưng dạng bảng và cho xác suất dễ hiệu chỉnh ngưỡng.
+
+- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 14/11 · **Ưu tiên:** Bắt buộc
+- **Mục đề tài:** Mô hình, Thuật toán & đánh giá
+- **Đầu vào:** GAT đã huấn luyện (5.3) cho mỗi bộ và mỗi seed; đồ thị và `split.json` (1.6, 1.8); `src/evaluate.py`
+- **Đầu ra:** `src/hybrid.py` (trích embedding, ghép đặc trưng, huấn luyện LightGBM); `scripts/run_hybrid.py`; notebook Kaggle; dòng kết quả `model=hybrid_gat_lgbm` (split=val) trong `results.csv`; `tests/test_hybrid.py`
+- **Tiêu chí kiểm tra:**
+  1. **Không rò rỉ:** GAT và LightGBM chỉ học trên train; tinh chỉnh chỉ trên val; scaler dùng lại của task 1.6.
+  2. **Embedding out-of-fold cho tập train:** GAT đã thấy nhãn của node train, nên embedding train có thể "quá sạch". Chia train thành K = 5 nhóm khối thời gian; với mỗi nhóm, GAT huấn luyện trên 4 nhóm còn lại rồi sinh embedding cho nhóm đó. Val và test dùng embedding của GAT huấn luyện trên toàn bộ train. Báo cáo cả bản không dùng out-of-fold để so sánh.
+  3. Test với dữ liệu giả nhỏ: số cột đầu vào LightGBM = 18 + kích thước embedding; thứ tự node giữ nguyên sau khi ghép; chạy 2 lần cùng seed cho cùng dự đoán.
+  4. Đếm "kích thước" của hybrid: số tham số GAT + số lá của LightGBM, kèm kích thước file; độ trễ mỗi cửa sổ gồm cả bước GAT và bước LightGBM.
+  5. 3 seed (42, 43, 44) trên cả 2 bộ; ghi thời gian chạy GPU vào dòng Kết quả.
+- **Phụ thuộc:** 5.3, 1.8
+
+### 5.8 Ablation hybrid và minh chứng hơn baseline
+
+Thêm ngày 12/11/2026 theo yêu cầu "cần minh chứng hybrid cao hơn các mô hình baseline (ML, DL, …)" của thầy.
+
+- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 15/11 · **Ưu tiên:** Bắt buộc
+- **Mục đề tài:** Thuật toán & đánh giá, Baseline
+- **Đầu vào:** Kết quả 4.1 (LR, RF, XGBoost, LightGBM, MLP), 5.2–5.3 (GCN, GraphSAGE, GAT), 5.7 (hybrid)
+- **Đầu ra:** Bảng ablation 5 dòng trên val của cả 2 bộ:
+  - (a) LightGBM chỉ 18 đặc trưng;
+  - (b) GAT đơn;
+  - (c) LightGBM + đặc trưng hàng xóm tính tay (trung bình 18 đặc trưng của các node kề, không học), để chứng minh embedding học được có ích hơn tổng hợp thủ công;
+  - (d) LightGBM chỉ embedding;
+  - (e) Hybrid đầy đủ.
+
+  Kèm ngưỡng quyết định đã hiệu chỉnh trên val để FPR ≤ 4,08%, và bảng so sánh hybrid với mọi baseline ML, DL, GNN đơn.
+- **Tiêu chí kiểm tra:**
+  1. Mọi mô hình dùng cùng `split.json`, cùng 3 seed, cùng `evaluate.py`.
+  2. Ngưỡng quyết định (xác suất "tấn công" tối thiểu) chỉ chọn trên val, rồi giữ nguyên khi chạy test ở 6.1.
+  3. Hybrid được coi là "cao hơn" khi F1-macro vượt baseline tốt nhất **hơn 2 lần std** trên val; ở 6.1 kèm McNemar p < 0,05 trên test. Không đạt thì ghi rõ ở dòng Kết quả và trong báo cáo, không chỉnh theo tập test.
+  4. Có biểu đồ cột F1-macro và FPR cho mọi mô hình, có thanh sai số, và vạch ngưỡng 4,08%.
+- **Phụ thuộc:** 4.1, 5.2, 5.3, 5.7
 
 ## GĐ6 Đánh giá tổng hợp
 
