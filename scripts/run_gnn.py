@@ -4,8 +4,12 @@ Chạy:  python -I scripts/run_gnn.py <data_dir> <dataset_name> <results.csv> <o
 Mỗi mô hình chạy 3 seed 42, 43, 44; lưu trọng số tốt nhất vào <out_dir>/<dataset>_<model>_s<seed>.pt.
 Độ trễ (`infer_ms_per_window`) là p95 của 1 lượt forward trên CPU 1 luồng cho 1 cửa sổ có số node trung vị.
 Chỉ ghi split=val (test chỉ chạy 1 lần ở GĐ6).
+Đường học (loss train, loss val, F1-macro val theo epoch) ghi vào curves_<dataset>.csv cạnh results.csv, mỗi
+(mô hình, seed) một khối dòng, cột `is_best` đánh dấu epoch được chọn. Tham số 5 chấp nhận cả `gcn,sage,gat`
+lẫn `models=gcn,sage,gat`.
 """
 
+import csv
 import json
 import sys
 from pathlib import Path
@@ -20,16 +24,32 @@ from src import models as M  # noqa: E402
 from src import train as T  # noqa: E402
 
 SEEDS = (42, 43, 44)
+CURVE_COLUMNS = ["dataset", "model", "seed", "epoch", "train_loss", "val_loss", "val_f1_macro", "is_best"]
+
+
+def write_curves(path, dataset, model, seed, history):
+    """Nối đường học của một lần chạy vào CSV (tạo header nếu chưa có). Epoch tốt nhất = F1 val cao nhất, lấy epoch
+    đầu tiên khi bằng nhau (khớp điều kiện `f1 > best` trong T.fit)."""
+    best = max(range(len(history)), key=lambda i: (history[i]["val_f1_macro"], -i))
+    path = Path(path)
+    new = not path.exists() or path.stat().st_size == 0
+    with open(path, "a", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=CURVE_COLUMNS)
+        if new:
+            w.writeheader()
+        for i, h in enumerate(history):
+            w.writerow({"dataset": dataset, "model": model, "seed": seed, **h, "is_best": int(i == best)})
 
 
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
     data_dir, dataset, results_csv, out_dir = sys.argv[1:5]
-    kinds = sys.argv[5].split(",") if len(sys.argv) > 5 else list(M.KINDS)
+    kinds = sys.argv[5].removeprefix("models=").split(",") if len(sys.argv) > 5 else list(M.KINDS)
     hp = json.loads(sys.argv[6]) if len(sys.argv) > 6 else {}
     model_hp = {k: hp[k] for k in ("hidden", "heads", "layers", "dropout", "bidirectional") if k in hp}
     train_hp = {k: hp[k] for k in ("lr", "weight_decay", "epochs", "patience", "batch_size") if k in hp}
     tag = hp.get("tag", "")
+    curves_csv = Path(results_csv).with_name(f"curves_{dataset}.csv")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     graphs, meta = D.load_split(data_dir)
@@ -47,7 +67,8 @@ def main():
             model, history, train_s = T.fit(model, train, val, classes, device, seed, **train_hp)
 
             y, proba = T.predict(model, val, device)
-            metrics = ev.compute_metrics(y, proba.argmax(1), proba, class_names=classes, macro_labels=T.MAIN4)
+            metrics = ev.compute_metrics(y, proba.argmax(1), proba, class_names=classes, macro_labels=T.MACRO_CODES)
+            write_curves(curves_csv, dataset, f"{kind}{tag}", seed, history)
 
             cpu = model.to("cpu").eval()
             torch.set_num_threads(1)
@@ -58,7 +79,7 @@ def main():
                 n_params=ev.count_params(cpu), size_kb=round(ev.model_size_kb(cpu), 1),
                 train_time_s=round(train_s, 1), infer_ms_per_window=round(lat["p95_ms"], 3), path=results_csv)
             torch.save(cpu.state_dict(), Path(out_dir) / f"{dataset}_{kind}{tag}_s{seed}.pt")
-            print(f"[{kind}{tag} seed {seed}] acc {metrics['accuracy']:.4f} F1-macro4 {metrics['f1_macro']:.4f} "
+            print(f"[{kind}{tag} seed {seed}] acc {metrics['accuracy']:.4f} F1-macro {metrics['f1_macro']:.4f} "
                   f"FPR {metrics['fpr']:.4f} recall_tc {metrics['recall_attack']:.4f} AUC {metrics['roc_auc']:.4f} "
                   f"p95 {lat['p95_ms']:.2f} ms, {len(history)} epoch ({row['commit']})")
     return 0

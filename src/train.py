@@ -1,7 +1,10 @@
 """Vòng huấn luyện và dự đoán chung cho các mô hình GNN (task 5.1).
 
 - Mất mát: cross-entropy có trọng số lớp cân bằng (lớp vắng mặt trong train có trọng số 0).
-- Chọn epoch tốt nhất theo F1-macro 4 lớp chính trên val (dừng sớm), không bao giờ nhìn vào test.
+- Chọn epoch tốt nhất theo F1-macro trên val (dừng sớm), không bao giờ nhìn vào test. F1-macro lấy trung bình
+  các lớp có mã trong `MACRO_CODES` (0-3, bỏ Khac mã 4 theo D5) và có mặt trong val: NF-ToN-IoT-v3 là 4 lớp,
+  NF-BoT-IoT-v3 chỉ 3 lớp (không có Botnet_Backdoor, mã 3 tự bị bỏ).
+- Mỗi epoch ghi loss train, loss val và F1-macro val vào lịch sử (task 5.2, 5.3: đường học).
 - Mỗi mini-batch là một lô đồ thị (PyG DataLoader); thông tin `ips`, `win` bị bỏ khỏi Data để ghép lô nhanh.
 """
 
@@ -18,7 +21,9 @@ from torch_geometric.loader import DataLoader
 from src import data as D
 from src import evaluate as ev
 
-MAIN4 = [0, 1, 2, 3]
+# Các MÃ lớp được xét cho F1-macro (không phải số lớp): 0 Normal, 1 DoS_DDoS, 2 Botnet_Backdoor, 3 Truy_cap_trai_phep.
+# compute_metrics bỏ mã không có mẫu thật trong val, nên bộ ít lớp hơn (NF-BoT-IoT-v3: mã 0, 1, 2) vẫn đúng.
+MACRO_CODES = [0, 1, 2, 3]
 
 
 def set_seed(seed):
@@ -45,9 +50,19 @@ def predict(model, graphs, device, batch_size=256):
     return torch.cat(ys).numpy(), torch.cat(ps).numpy()
 
 
+def val_scores(model, graphs, device, class_names, class_weights):
+    """(F1-macro, loss) trên một tập đồ thị bằng một lượt dự đoán. Loss là cross-entropy trung bình có trọng số
+    `class_weights` (cùng công thức `F.cross_entropy(weight=...)`), để so được với loss train."""
+    y, p = predict(model, graphs, device)
+    f1 = ev.compute_metrics(y, p.argmax(1), p, class_names=class_names, macro_labels=MACRO_CODES)["f1_macro"]
+    w = np.asarray(class_weights, dtype=np.float64)[y]
+    nll = -np.log(np.clip(p[np.arange(len(y)), y], 1e-12, None))
+    return f1, float((w * nll).sum() / w.sum())
+
+
 def val_f1(model, graphs, device, class_names):
     y, p = predict(model, graphs, device)
-    return ev.compute_metrics(y, p.argmax(1), p, class_names=class_names, macro_labels=MAIN4)["f1_macro"]
+    return ev.compute_metrics(y, p.argmax(1), p, class_names=class_names, macro_labels=MACRO_CODES)["f1_macro"]
 
 
 def fit(model, train_graphs, val_graphs, class_names, device, seed, lr=5e-3, weight_decay=1e-4,
@@ -56,7 +71,8 @@ def fit(model, train_graphs, val_graphs, class_names, device, seed, lr=5e-3, wei
     set_seed(seed)
     model = model.to(device)
     y_train = torch.cat([g.y for g in train_graphs]).numpy()
-    w = torch.tensor(D.class_weights(y_train, len(class_names)), dtype=torch.float32, device=device)
+    cw = D.class_weights(y_train, len(class_names))
+    w = torch.tensor(cw, dtype=torch.float32, device=device)
     opt = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
     gen = torch.Generator().manual_seed(seed)
     loader = DataLoader(train_graphs, batch_size=batch_size, shuffle=True, generator=gen)
@@ -73,10 +89,10 @@ def fit(model, train_graphs, val_graphs, class_names, device, seed, lr=5e-3, wei
             loss.backward()
             opt.step()
             total += loss.item() * b.num_nodes
-        f1 = val_f1(model, val_graphs, device, class_names)
-        history.append({"epoch": epoch, "train_loss": total / len(y_train), "val_f1_macro4": f1})
+        f1, val_loss = val_scores(model, val_graphs, device, class_names, cw)
+        history.append({"epoch": epoch, "train_loss": total / len(y_train), "val_loss": val_loss, "val_f1_macro": f1})
         if verbose:
-            print(f"  epoch {epoch:2d} loss {total / len(y_train):.4f} val F1-macro(4) {f1:.4f}")
+            print(f"  epoch {epoch:2d} loss {total / len(y_train):.4f} val loss {val_loss:.4f} val F1-macro {f1:.4f}")
         if f1 > best:
             best, best_state, bad = f1, copy.deepcopy(model.state_dict()), 0
         else:
