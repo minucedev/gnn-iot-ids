@@ -1,0 +1,453 @@
+{
+ "dataset": "nf_bot_iot_v3",
+ "classes": [
+  "Normal",
+  "DoS_DDoS",
+  "Truy_cap_trai_phep"
+ ],
+ "absent_classes": [
+  "Botnet_Backdoor",
+  "Khac"
+ ],
+ "window": 5,
+ "stride": 5,
+ "gap": 1,
+ "configs": [
+  {
+   "mode": "chronological",
+   "blocks": 1,
+   "balance_nodes": false,
+   "ratio_pct": {
+    "train": 70.67467613580541,
+    "val": 13.93563418433943,
+    "test": 15.389689679855156
+   },
+   "missing_classes": [
+    "DoS_DDoS"
+   ],
+   "ok_classes": false,
+   "ok_ratio": true,
+   "counts": {
+    "train": {
+     "Normal": 13920,
+     "DoS_DDoS": 0,
+     "Truy_cap_trai_phep": 36435,
+     "n_nodes": 50355,
+     "n_windows": 9776
+    },
+    "val": {
+     "Normal": 3096,
+     "DoS_DDoS": 0,
+     "Truy_cap_trai_phep": 6833,
+     "n_nodes": 9929,
+     "n_windows": 2094
+    },
+    "test": {
+     "Normal": 4293,
+     "DoS_DDoS": 4772,
+     "Truy_cap_trai_phep": 1900,
+     "n_nodes": 10965,
+     "n_windows": 2094
+    }
+   }
+  },
+  {
+   "mode": "chronological",
+   "blocks": 1,
+   "balance_nodes": true,
+   "ratio_pct": {
+    "train": 70.01066636725987,
+    "val": 14.996070285746365,
+    "test": 14.993263346993768
+   },
+   "missing_classes": [
+    "DoS_DDoS"
+   ],
+   "ok_classes": false,
+   "ok_ratio": true,
+   "counts": {
+    "train": {
+     "Normal": 13883,
+     "DoS_DDoS": 0,
+     "Truy_cap_trai_phep": 36001,
+     "n_nodes": 49884,
+     "n_windows": 9666
+    },
+    "val": {
+     "Normal": 3231,
+     "DoS_DDoS": 0,
+     "Truy_cap_trai_phep": 7454,
+     "n_nodes": 10685,
+     "n_windows": 2251
+    },
+    "test": {
+     "Normal": 4198,
+     "DoS_DDoS": 4772,
+     "Truy_cap_trai_phep": 1713,
+     "n_nodes": 10683,
+     "n_windows": 2047
+    }
+   }
+  },
+  {
+   "mode": "blocked",
+   "blocks": 10,
+   "balance_nodes": false,
+   "ratio_pct": {
+    "train": 70.2896512935883,
+    "val": 14.37992125984252,
+    "test": 15.330427446569178
+   },
+   "missing_classes": [],
+   "ok_classes": true,
+   "ok_ratio": true,
+   "counts": {
+    "train": {
+     "Normal": 15773,
+     "DoS_DDoS": 3287,
+     "Truy_cap_trai_phep": 30930,
+     "n_nodes": 49990,
+     "n_windows": 9761
+    },
+    "val": {
+     "Normal": 2825,
+     "DoS_DDoS": 353,
+     "Truy_cap_trai_phep": 7049,
+     "n_nodes": 10227,
+     "n_windows": 2086
+    },
+    "test": {
+     "Normal": 2694,
+     "DoS_DDoS": 1115,
+     "Truy_cap_trai_phep": 7094,
+     "n_nodes": 10903,
+     "n_windows": 2090
+    }
+   }
+  },
+  {
+   "mode": "blocked",
+   "blocks": 10,
+   "balance_nodes": true,
+   "ratio_pct": {
+    "train": 70.05948446794449,
+    "val": 14.942835848181012,
+    "test": 14.997679683874505
+   },
+   "missing_classes": [],
+   "ok_classes": true,
+   "ok_ratio": true,
+   "counts": {
+    "train": {
+     "Normal": 15578,
+     "DoS_DDoS": 2855,
+     "Truy_cap_trai_phep": 31387,
+     "n_nodes": 49820,
+     "n_windows": 9720
+    },
+    "val": {
+     "Normal": 2918,
+     "DoS_DDoS": 996,
+     "Truy_cap_trai_phep": 6712,
+     "n_nodes": 10626,
+     "n_windows": 2145
+    },
+    "test": {
+     "Normal": 2784,
+     "DoS_DDoS": 910,
+     "Truy_cap_trai_phep": 6971,
+     "n_nodes": 10665,
+     "n_windows": 2072
+    }
+   }
+  },
+  {
+   "mode": "blocked",
+   "blocks": 20,
+   "balance_nodes": false,
+   "ratio_pct": {
+    "train": 69.634526208967,
+    "val": 15.13481514890978,
+    "test": 15.230658642123215
+   },
+   "missing_classes": [],
+   "ok_classes": true,
+   "ok_ratio": true,
+   "counts": {
+    "train": {
+     "Normal": 15653,
+     "DoS_DDoS": 2872,
+     "Truy_cap_trai_phep": 30880,
+     "n_nodes": 49405,
+     "n_windows": 9747
+    },
+    "val": {
+     "Normal": 3343,
+     "DoS_DDoS": 905,
+     "Truy_cap_trai_phep": 6490,
+     "n_nodes": 10738,
+     "n_windows": 2080
+    },
+    "test": {
+     "Normal": 2229,
+     "DoS_DDoS": 971,
+     "Truy_cap_trai_phep": 7606,
+     "n_nodes": 10806,
+     "n_windows": 2080
+    }
+   }
+  },
+  {
+   "mode": "blocked",
+   "blocks": 20,
+   "balance_nodes": true,
+   "ratio_pct": {
+    "train": 70.12311207005965,
+    "val": 14.880625008813865,
+    "test": 14.996262921126483
+   },
+   "missing_classes": [],
+   "ok_classes": true,
+   "ok_ratio": true,
+   "counts": {
+    "train": {
+     "Normal": 15757,
+     "DoS_DDoS": 3100,
+     "Truy_cap_trai_phep": 30868,
+     "n_nodes": 49725,
+     "n_windows": 9781
+    },
+    "val": {
+     "Normal": 3277,
+     "DoS_DDoS": 815,
+     "Truy_cap_trai_phep": 6460,
+     "n_nodes": 10552,
+     "n_windows": 2056
+    },
+    "test": {
+     "Normal": 2148,
+     "DoS_DDoS": 829,
+     "Truy_cap_trai_phep": 7657,
+     "n_nodes": 10634,
+     "n_windows": 2070
+    }
+   }
+  },
+  {
+   "mode": "blocked",
+   "blocks": 50,
+   "balance_nodes": false,
+   "ratio_pct": {
+    "train": 70.66630744579783,
+    "val": 14.647703586064122,
+    "test": 14.685988968138055
+   },
+   "missing_classes": [],
+   "ok_classes": true,
+   "ok_ratio": true,
+   "counts": {
+    "train": {
+     "Normal": 14478,
+     "DoS_DDoS": 3379,
+     "Truy_cap_trai_phep": 31979,
+     "n_nodes": 49836,
+     "n_windows": 9717
+    },
+    "val": {
+     "Normal": 3238,
+     "DoS_DDoS": 663,
+     "Truy_cap_trai_phep": 6429,
+     "n_nodes": 10330,
+     "n_windows": 2050
+    },
+    "test": {
+     "Normal": 3368,
+     "DoS_DDoS": 682,
+     "Truy_cap_trai_phep": 6307,
+     "n_nodes": 10357,
+     "n_windows": 2050
+    }
+   }
+  },
+  {
+   "mode": "blocked",
+   "blocks": 50,
+   "balance_nodes": true,
+   "ratio_pct": {
+    "train": 70.24974088850396,
+    "val": 14.767225590277285,
+    "test": 14.983033521218747
+   },
+   "missing_classes": [],
+   "ok_classes": true,
+   "ok_ratio": true,
+   "counts": {
+    "train": {
+     "Normal": 14348,
+     "DoS_DDoS": 3293,
+     "Truy_cap_trai_phep": 31838,
+     "n_nodes": 49479,
+     "n_windows": 9633
+    },
+    "val": {
+     "Normal": 3174,
+     "DoS_DDoS": 717,
+     "Truy_cap_trai_phep": 6510,
+     "n_nodes": 10401,
+     "n_windows": 2057
+    },
+    "test": {
+     "Normal": 3499,
+     "DoS_DDoS": 702,
+     "Truy_cap_trai_phep": 6352,
+     "n_nodes": 10553,
+     "n_windows": 2127
+    }
+   }
+  },
+  {
+   "mode": "blocked",
+   "blocks": 100,
+   "balance_nodes": false,
+   "ratio_pct": {
+    "train": 70.82550383705085,
+    "val": 14.686939682995051,
+    "test": 14.4875564799541
+   },
+   "missing_classes": [],
+   "ok_classes": true,
+   "ok_ratio": true,
+   "counts": {
+    "train": {
+     "Normal": 14826,
+     "DoS_DDoS": 3223,
+     "Truy_cap_trai_phep": 31327,
+     "n_nodes": 49376,
+     "n_windows": 9667
+    },
+    "val": {
+     "Normal": 3174,
+     "DoS_DDoS": 753,
+     "Truy_cap_trai_phep": 6312,
+     "n_nodes": 10239,
+     "n_windows": 2000
+    },
+    "test": {
+     "Normal": 2849,
+     "DoS_DDoS": 672,
+     "Truy_cap_trai_phep": 6579,
+     "n_nodes": 10100,
+     "n_windows": 2000
+    }
+   }
+  },
+  {
+   "mode": "blocked",
+   "blocks": 100,
+   "balance_nodes": true,
+   "ratio_pct": {
+    "train": 70.55107256698159,
+    "val": 14.460270510869252,
+    "test": 14.988656922149154
+   },
+   "missing_classes": [],
+   "ok_classes": true,
+   "ok_ratio": true,
+   "counts": {
+    "train": {
+     "Normal": 14678,
+     "DoS_DDoS": 3208,
+     "Truy_cap_trai_phep": 31250,
+     "n_nodes": 49136,
+     "n_windows": 9612
+    },
+    "val": {
+     "Normal": 3167,
+     "DoS_DDoS": 702,
+     "Truy_cap_trai_phep": 6202,
+     "n_nodes": 10071,
+     "n_windows": 1982
+    },
+    "test": {
+     "Normal": 2944,
+     "DoS_DDoS": 739,
+     "Truy_cap_trai_phep": 6756,
+     "n_nodes": 10439,
+     "n_windows": 2073
+    }
+   }
+  },
+  {
+   "mode": "blocked",
+   "blocks": 200,
+   "balance_nodes": false,
+   "ratio_pct": {
+    "train": 71.98299244923393,
+    "val": 13.347995015028223,
+    "test": 14.66901253573785
+   },
+   "missing_classes": [],
+   "ok_classes": true,
+   "ok_ratio": true,
+   "counts": {
+    "train": {
+     "Normal": 14966,
+     "DoS_DDoS": 3256,
+     "Truy_cap_trai_phep": 30874,
+     "n_nodes": 49096,
+     "n_windows": 9567
+    },
+    "val": {
+     "Normal": 2620,
+     "DoS_DDoS": 576,
+     "Truy_cap_trai_phep": 5908,
+     "n_nodes": 9104,
+     "n_windows": 1800
+    },
+    "test": {
+     "Normal": 2830,
+     "DoS_DDoS": 735,
+     "Truy_cap_trai_phep": 6440,
+     "n_nodes": 10005,
+     "n_windows": 2000
+    }
+   }
+  },
+  {
+   "mode": "blocked",
+   "blocks": 200,
+   "balance_nodes": true,
+   "ratio_pct": {
+    "train": 71.03382352941176,
+    "val": 14.1,
+    "test": 14.866176470588234
+   },
+   "missing_classes": [],
+   "ok_classes": true,
+   "ok_ratio": true,
+   "counts": {
+    "train": {
+     "Normal": 14676,
+     "DoS_DDoS": 3216,
+     "Truy_cap_trai_phep": 30411,
+     "n_nodes": 48303,
+     "n_windows": 9433
+    },
+    "val": {
+     "Normal": 2737,
+     "DoS_DDoS": 595,
+     "Truy_cap_trai_phep": 6256,
+     "n_nodes": 9588,
+     "n_windows": 1865
+    },
+    "test": {
+     "Normal": 2842,
+     "DoS_DDoS": 742,
+     "Truy_cap_trai_phep": 6525,
+     "n_nodes": 10109,
+     "n_windows": 2069
+    }
+   }
+  }
+ ]
+}

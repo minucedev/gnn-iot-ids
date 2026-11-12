@@ -67,7 +67,7 @@ Cập nhật sau mỗi lần chạy. Giờ GPU lấy từ `run_info.json`.
 | GĐ | Notebook | Phiên bản | Commit repo | Trạng thái | Giờ GPU | File đã kéo về |
 |---|---|---|---|---|---|---|
 | A | 05, 07, 09, 10 | 05: v2 (bị dừng), 07: v2, 09: v1, 10: v1 | 05, 07: `9d7761a`; 09, 10: `4d98421` | Xong (12/11) | 0 | 12 file `.csv`/`.json` trong `reports/kaggle/<slug>/`, không tải `ckpt/`; chi tiết ở [reports/kaggle/README.md](../../reports/kaggle/README.md) |
-| B | 11-build-graphs-bot | | | Chưa làm | 0 | |
+| B | 11-build-graphs-bot | v2 (v1 lỗi test import) | `47dccee` | Xong (12/11) | 0 (CPU, 726 s, RAM đỉnh 12,25 GB) | `summary.json`, `graph_stats.csv`, `split_search_nf_bot_iot_v3.json`, `verify_nf_bot_iot_v3.json`, `run_info.json`, `data_check_nf_bot_iot_v3.json`; `processed/nf_bot_iot_v3/` ở lại trên Kaggle |
 | C | 12-eda | | | Chưa làm | 0 | |
 | D | 13-baselines | | | Chưa làm | 0 | |
 | E | 14-train-gnn-bot | | | Chưa làm | | |

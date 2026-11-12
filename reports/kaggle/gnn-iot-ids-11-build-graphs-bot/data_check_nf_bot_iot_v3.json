@@ -1,0 +1,32 @@
+{
+ "expected": {
+  "size": 3817527532,
+  "sha256": "8bde1f6f1c8bc59dcb49828fb5b9d65c0b63e06d92b2b9f15b37159e923009ea",
+  "rows": 16933808,
+  "labels": {
+   "DoS": 8034190,
+   "DDoS": 7150882,
+   "Reconnaissance": 1695132,
+   "Theft": 1615,
+   "Benign": 51989
+  }
+ },
+ "got": {
+  "size": 3817527532,
+  "sha256": "8bde1f6f1c8bc59dcb49828fb5b9d65c0b63e06d92b2b9f15b37159e923009ea",
+  "rows": 16933808,
+  "labels": {
+   "DoS": 8034190,
+   "DDoS": 7150882,
+   "Reconnaissance": 1695132,
+   "Benign": 51989,
+   "Theft": 1615
+  }
+ },
+ "match": {
+  "size": true,
+  "sha256": true,
+  "rows": true,
+  "labels": true
+ }
+}

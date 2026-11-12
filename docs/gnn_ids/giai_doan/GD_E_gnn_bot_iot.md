@@ -21,6 +21,8 @@ Có kết quả GCN, GraphSAGE, GAT nhẹ trên NF-BoT-IoT-v3, để (1) làm ba
 2. Kiểm tra F1-macro chỉ tính trên các lớp có mặt (bộ này không có Botnet_Backdoor). Nếu `MAIN4` trong `src/train.py` gây lỗi hoặc làm điểm sai thì sửa ở local, đẩy lên GitHub rồi chạy lại.
 3. Ghi `run_info.json`, kèm số giờ GPU đã dùng.
 
+**Ghi chú từ GĐ B (đọc `src/train.py`, `src/evaluate.py`, `scripts/run_gnn.py`, chưa chạy):** mã lớp của bộ này là 0 = Normal, 1 = DoS_DDoS, 2 = Truy_cap_trai_phep (không có mã 3), vì `encode_labels` chỉ đánh mã cho các nhóm có mặt. `MAIN4 = [0, 1, 2, 3]` là mã chứ không phải tên lớp; `compute_metrics` lọc `macro` theo các mã có trong `y_true` (commit 8780f84) nên mã 3 tự bị bỏ, F1-macro vẫn là trung bình 3 lớp. Số lớp của mô hình và trọng số lấy từ `len(classes)` nên không gãy. Chỉ còn tên gọi gây hiểu nhầm: khóa `val_f1_macro4` và chữ "4 lớp chính" trong docstring, thực tế là 3 lớp ở bộ này. Truy_cap_trai_phep ở bộ này mang mã 2 chứ không phải 3, nên không tra tên lớp bằng `ev.CLASSES[mã]` mà dùng `split.json["classes"]`.
+
 ## Đầu ra
 
 - **Trên Kaggle**, làm đầu vào cho GĐ F, G, H: `ckpt/nf_bot_iot_v3_<model>_s<seed>.pt`.

@@ -194,6 +194,7 @@ Chốt trong GĐ0. Muốn đổi quyết định đã chốt thì thêm dòng m�
 | NF-ToN-IoT-v3 (chính) | `blocked`, 10 khối, theo node | Giữ nguyên D3; theo số cửa sổ thì tỉ lệ node lệch (73,2/12,1/14,7) |
 | NF-CSE-CIC-IDS2018-v3 | `blocked`, **20 khối**, theo node | 10 khối làm val và test không có node DoS_DDoS nào |
 | NF-ToN-IoT-v2 (phụ) | `blocked`, **200 khối**, theo node | Ít khối hơn thì val hoặc test thiếu Botnet_Backdoor (v2 chỉ có 16.809 flow backdoor) |
+| NF-BoT-IoT-v3 (bộ 2, IoT; thêm 12/11) | `blocked`, **10 khối**, theo node | Số khối nhỏ nhất đạt cả hai tiêu chí; `chronological` thiếu DoS_DDoS. Bộ không có Botnet_Backdoor nên ngưỡng chỉ xét Normal, DoS_DDoS, Truy_cap_trai_phep: train 15.578 / 2.855 / 31.387 node, val 2.918 / 996 / 6.712, test 2.784 / 910 / 6.971 (tỉ lệ node 70,1 / 14,9 / 15,0) |
 
 Hạn chế phải ghi vào báo cáo: nhiều khối làm ranh giới train/val/test sát nhau hơn, nên điểm val và test của v2 (200 khối) có thể lạc quan hơn một chút. Việc chọn chỉ dựa trên đếm nhãn, không dùng kết quả mô hình. Bảng bên dưới là số liệu của cấu hình cũ (10 khối, theo số cửa sổ, gap 0), giữ lại làm bằng chứng cho lý do điều chỉnh.
 

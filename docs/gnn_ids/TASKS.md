@@ -23,7 +23,7 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
 | [1.5](#15-sửa-chiến-lược-chia-tập) | Sửa chiến lược chia tập | GĐ1 | Phúc | Tự kiểm | 3 | B | Chưa làm |
 | [1.6](#16-dựng-lại-đồ-thị-cho-mọi-bộ-đã-chốt) | Dựng lại đồ thị mọi bộ | GĐ1 | Phúc | Tự kiểm | 3 | B | Chưa làm |
 | [1.7](#17-từ-điển-dữ-liệu) | Từ điển dữ liệu | GĐ1 | Phúc | Tự kiểm | 3 | B | Chưa làm |
-| [1.8](#18-dựng-đồ-thị-nf-bot-iot-v3-bộ-thứ-2) | Dựng đồ thị NF-BoT-IoT-v3 (bộ thứ 2) | GĐ1 | Phúc | Tự kiểm | 12–13/11 | B | Chưa làm |
+| [1.8](#18-dựng-đồ-thị-nf-bot-iot-v3-bộ-thứ-2) | Dựng đồ thị NF-BoT-IoT-v3 (bộ thứ 2) | GĐ1 | Phúc | Tự kiểm | 12–13/11 | B | **Xong** |
 | [2.1](#21-eda-mức-flow) | EDA mức flow | GĐ2 | Phúc | Tự kiểm | 3 | B | Chưa làm |
 | [2.2](#22-eda-mức-đồ-thị) | EDA mức đồ thị, homophily | GĐ2 | Phúc | Tự kiểm | 3 | B | Chưa làm |
 | [2.3](#23-trực-quan-hóa-đồ-thị-các-cửa-sổ-mẫu) | Trực quan hóa đồ thị | GĐ2 | Phúc | Tự kiểm | 3 | B | Chưa làm |
@@ -290,7 +290,7 @@ Cửa sổ theo giây nếu bộ có `ts`.
 
 Thêm ngày 12/11/2026 theo yêu cầu "NF-ToN, ít nhất 2 bộ" của thầy (quyết định D8). Tấn đã có notebook tiền xử lý bộ này trên Kaggle (`phamta/dss-cky-bot`, dữ liệu `seyhed/nf-bot-iot-v3`). Notebook đó gắn nhãn cho cạnh, dùng cửa sổ 10 giây, lấy mẫu ngẫu nhiên 300.000 flow mỗi lớp và chia thời gian liên tục, nên **không dùng trực tiếp đầu ra của nó**; chỉ dùng lại phần đọc file theo đoạn và phần EDA.
 
-- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 12–13/11 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** Xong · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 12–13/11 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** Bộ dữ liệu, EDA & tiền xử lý
 - **Đầu vào:** NF-BoT-IoT-v3 trên Kaggle (`athena21/netflow-v3-datasets` như bộ chính, hoặc `seyhed/nf-bot-iot-v3` sau khi đối chiếu số dòng); adapter `load_nf_v3` trong `src/build_graph.py`; notebook của Tấn
 - **Đầu ra:** `reports/tables/graphs_v2/nf_bot_iot_v3/` (summary.json, graph_stats.csv); đồ thị `.pt`, `split.json`, `scaler.pkl` trên Kaggle Dataset; cấu hình chia tập ghi vào KE_HOACH.md mục 7 (bảng điều chỉnh D3)
@@ -301,6 +301,14 @@ Thêm ngày 12/11/2026 theo yêu cầu "NF-ToN, ít nhất 2 bộ" của thầy 
   4. Không lấy mẫu flow ngẫu nhiên (quy ước 6.4). Nếu thiếu RAM thì lấy mẫu theo cửa sổ và ghi lại tỉ lệ.
   5. Kiểm tra rò rỉ, NaN và tái lập (`scripts/verify_graphs.py`) đều đạt.
 - **Phụ thuộc:** 0.4, 1.5
+- **Kết quả:** (12/11/2026) Notebook `gnn-iot-ids-11-build-graphs-bot` (Kaggle CPU 4 nhân, bản 2, clone `main` tại `47dccee`), chạy 726 s, RAM đỉnh 12,25 GB. Bản 1 dừng ở bước pytest vì `test_split.py` import `tests.test_build_graph` bị gói `tests` khác của Kaggle che mất (test cũ `test_split_search_script_runs` cũng lỗi như vậy); đã sửa ở `47dccee`. Cấu hình chọn: `blocked`, **10 khối**, theo node, gap 1, W = S = 5 s. File kéo về: [reports/tables/graphs_v2/nf_bot_iot_v3/](../../reports/tables/graphs_v2/nf_bot_iot_v3/), [split_search_nf_bot_iot_v3.json](../../reports/tables/split_search/split_search_nf_bot_iot_v3.json), [reports/kaggle/gnn-iot-ids-11-build-graphs-bot/](../../reports/kaggle/gnn-iot-ids-11-build-graphs-bot/). `.pt`, `split.json`, `scaler.pkl` ở lại trong output notebook trên Kaggle.
+  1. **Đạt.** [data_check_nf_bot_iot_v3.json](../../reports/kaggle/gnn-iot-ids-11-build-graphs-bot/data_check_nf_bot_iot_v3.json): sha256 `8bde1f6f…9ea` và 3.817.527.532 byte khớp; 16.933.808 dòng; DoS 8.034.190, DDoS 7.150.882, Reconnaissance 1.695.132, Theft 1.615, Benign 51.989 đều khớp.
+  2. **Đạt.** Lớp có mặt: Normal, DoS_DDoS, Truy_cap_trai_phep; `absent_classes` = Botnet_Backdoor, Khac (ghi trong `split_search_nf_bot_iot_v3.json` và trong chi tiết kiểm tra của `summary.json`). Số node (train/val/test): Normal 15.578 / 2.918 / 2.784; DoS_DDoS 2.855 / 996 / 910; Truy_cap_trai_phep 31.387 / 6.712 / 6.971; tổng 49.820 / 10.626 / 10.665 (70,1 / 14,9 / 15,0 %), 9.720 / 2.145 / 2.072 đồ thị.
+  3. **Đạt.** Mọi lớp có mặt vượt 100 / 30 / 30; Normal có 15.578 / 2.918 / 2.784 node, không phải hạ ngưỡng. 10 khối là số nhỏ nhất đạt (split_search thử 10, 20, 50, 100, 200; cả 5 đều đạt). Chia `chronological` thì DoS_DDoS bị thiếu (mục `chronological` trong JSON), đây là lý do phải dùng `blocked`.
+  4. **Đạt.** Không lấy mẫu flow. Nhật ký làm sạch: 16.933.808 → 16.933.807 dòng (chỉ bỏ 1 bản ghi trùng). 13.937 đồ thị, trung bình 5,1 node và 4,2 cạnh mỗi cửa sổ.
+  5. **Đạt.** `build_dataset_cli.py` và `verify_graphs.py` thoát mã 0, 10/10 kiểm tra đạt (không trùng cửa sổ, gap ≥ 1, không NaN/inf, hình dạng, scaler chỉ fit trên train, tỉ lệ node). Hash lần 1 = lần 2 = `3aa51017b6ec0089` (đầy đủ `3aa51017b6ec00899458a7564fc2dbab16ae04c51c50cfcf7ac0b648fa968bab`).
+  6. **Đạt (Kaggle).** `pytest -q`: 42 passed (gồm test mới trong `test_checks.py`, `test_build_graph.py`, `test_split.py`).
+  Ghi chú: hành vi "chỉ xét lớp có mặt" thực ra đã có sẵn vì `encode_labels` chỉ đánh mã cho nhóm có mặt; thay đổi ở `src/checks.py` và `scripts/split_search.py` chỉ gom logic ngưỡng vào một chỗ, ghi `absent_classes` và khóa hành vi bằng test.
 
 ## GĐ2 EDA & trực quan hóa
 
