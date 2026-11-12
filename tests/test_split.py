@@ -41,7 +41,7 @@ def test_more_blocks_put_short_episode_into_val_and_test():
 
 
 def test_split_search_script_runs(tmp_path):
-    from tests.test_build_graph import _nf_csv
+    from test_build_graph import _nf_csv        # cùng thư mục tests/ (không dùng `tests.` vì Kaggle có gói `tests` khác che mất)
     csv = tmp_path / "v3.csv"
     _nf_csv(csv, with_ts=True)
     out = tmp_path / "out.json"
@@ -54,7 +54,7 @@ def test_split_search_script_runs(tmp_path):
 
 def test_split_search_records_absent_classes_and_ignores_them(tmp_path):
     """NF-BoT-IoT-v3 không có Botnet_Backdoor: lớp này không bị coi là thiếu, và được ghi ở absent_classes."""
-    from tests.test_build_graph import _bot_v3_csv
+    from test_build_graph import _bot_v3_csv
     csv = tmp_path / "bot_v3.csv"
     _bot_v3_csv(csv)
     out = tmp_path / "out.json"
