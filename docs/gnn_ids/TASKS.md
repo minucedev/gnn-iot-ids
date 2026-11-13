@@ -24,9 +24,9 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
 | [1.6](#16-dựng-lại-đồ-thị-cho-mọi-bộ-đã-chốt) | Dựng lại đồ thị mọi bộ | GĐ1 | Phúc | Tự kiểm | 3 | B | Chưa làm |
 | [1.7](#17-từ-điển-dữ-liệu) | Từ điển dữ liệu | GĐ1 | Phúc | Tự kiểm | 3 | B | Chưa làm |
 | [1.8](#18-dựng-đồ-thị-nf-bot-iot-v3-bộ-thứ-2) | Dựng đồ thị NF-BoT-IoT-v3 (bộ thứ 2) | GĐ1 | Phúc | Tự kiểm | 12–13/11 | B | **Xong** |
-| [2.1](#21-eda-mức-flow) | EDA mức flow | GĐ2 | Phúc | Tự kiểm | 3 | B | Chưa làm |
-| [2.2](#22-eda-mức-đồ-thị) | EDA mức đồ thị, homophily | GĐ2 | Phúc | Tự kiểm | 3 | B | Chưa làm |
-| [2.3](#23-trực-quan-hóa-đồ-thị-các-cửa-sổ-mẫu) | Trực quan hóa đồ thị | GĐ2 | Phúc | Tự kiểm | 3 | B | Chưa làm |
+| [2.1](#21-eda-mức-flow) | EDA mức flow | GĐ2 | Phúc | Tự kiểm | 3 | B | **Xong** |
+| [2.2](#22-eda-mức-đồ-thị) | EDA mức đồ thị, homophily | GĐ2 | Phúc | Tự kiểm | 3 | B | **Xong, có ghi chú** (bậc không chứng minh fan-in ở mức node) |
+| [2.3](#23-trực-quan-hóa-đồ-thị-các-cửa-sổ-mẫu) | Trực quan hóa đồ thị | GĐ2 | Phúc | Tự kiểm | 3 | B | **Xong, có ghi chú** (scan BoT fan-out yếu) |
 | [3.1](#31-lý-thuyết-ids-cho-iot-các-loại-tấn-công-netflow) | Lý thuyết IDS, tấn công, NetFlow | GĐ3 | Phúc | Tự kiểm | 3 | B | Chưa làm |
 | [3.2](#32-lý-thuyết-gnn-tại-sao-chọn-và-còn-mô-hình-nào-khác) | Lý thuyết GNN | GĐ3 | Phúc | Tự kiểm | 3 | B | Chưa làm |
 | [3.3](#33-lý-thuyết-baseline-ml-chỉ-số-đánh-giá-và-ahp) | Lý thuyết baseline, chỉ số, AHP | GĐ3 | Phúc | Tự kiểm | 4 | B | Chưa làm |
@@ -316,7 +316,7 @@ Thêm ngày 12/11/2026 theo yêu cầu "NF-ToN, ít nhất 2 bộ" của thầy 
 
 Làm cho từng bộ dữ liệu.
 
-- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 3 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** Xong · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 3 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** EDA & tiền xử lý
 - **Đầu vào:** `clean_<bộ>.parquet`
 - **Đầu ra:** `notebooks/02_eda_flow.ipynb`; ≥ 6 hình mỗi bộ: phân bố lớp, boxplot log đặc trưng theo lớp, heatmap tương quan, mutual information, phân bố theo thời gian, giao thức và cổng
@@ -326,12 +326,18 @@ Làm cho từng bộ dữ liệu.
   3. Chỉ ra ≥ 3 đặc trưng phân biệt lớp tốt nhất kèm số liệu MI.
   4. Run All trên Kaggle.
 - **Phụ thuộc:** 1.6
+- **Kết quả:** (13/11/2026) Notebook `gnn-iot-ids-12-eda` (Kaggle CPU 4 nhân, bản 4, clone `main` tại `d2e4d1a`), chạy 575 s, RAM đỉnh 4,23 GB, `pytest tests/test_eda.py` 5 passed. Bản 1 là chạy thử (`--smoke`); bản 2 và 3 chạy đủ rồi sửa hình sau khi mở xem (trục thời gian BoT, layout cửa sổ, nhãn trục đè nhau). Code: [scripts/eda.py](../../scripts/eda.py). Hình: `reports/figures/gd2_<bộ>_*.png`. Số liệu và nhận xét: [reports/kaggle/gnn-iot-ids-12-eda/](../../reports/kaggle/gnn-iot-ids-12-eda/) (`eda_summary.json`, `run_info.json`, `gd2_<bộ>_flow_stats.csv`). Mỗi bộ có 5 hình mức flow (phân bố nhãn gốc và 5 lớp, số flow theo thời gian, boxplot log(1 + x) của 8 đặc trưng theo lớp, heatmap Spearman, mutual information) và 1 bảng thống kê. CSV gốc được đọc theo khối bằng pyarrow hai lượt: số nhãn, số flow theo phút, min, max, % thiếu tính trên toàn bộ file (27.520.260 và 16.933.808 flow); median và tương quan lấy từ mẫu đều 2 %; boxplot và MI lấy từ mẫu cân bằng theo nhãn gốc (tối đa 30.000 và 5.000 flow mỗi nhãn). EDA chỉ mô tả, không dùng để chọn cấu hình mô hình.
+  1. **Đạt, có ghi chú.** 26 hình đều dpi 160, có tiêu đề, nhãn trục kèm đơn vị (script tự kiểm: `axis_label_problems` rỗng cho mọi hình). Đã mở xem 13 hình của cả hai bộ cùng sơ đồ quy trình để kiểm chữ có đè không (ba vòng sửa, bản 4 không còn đè); các hình còn lại chưa mở. Nhận xét 1–2 câu nằm trong trường `comment` của `eda_summary.json` (sinh từ chính số liệu), không in dưới hình.
+  2. **Đạt.** [gd2_nf_ton_iot_v3_flow_stats.csv](../../reports/kaggle/gnn-iot-ids-12-eda/gd2_nf_ton_iot_v3_flow_stats.csv) và [gd2_nf_bot_iot_v3_flow_stats.csv](../../reports/kaggle/gnn-iot-ids-12-eda/gd2_nf_bot_iot_v3_flow_stats.csv): 49 đặc trưng số mỗi bộ, có min, median, max, % thiếu. ToN không thiếu giá trị nào; BoT có 2 đặc trưng thiếu 6,213 % (`SRC_TO_DST_SECOND_BYTES`, `DST_TO_SRC_SECOND_BYTES`); không đặc trưng nào có giá trị âm.
+  3. **Đạt.** MI với nhãn 5 lớp. NF-ToN-IoT-v3: `IN_BYTES` 1,106, `SRC_TO_DST_AVG_THROUGHPUT` 0,972, `OUT_BYTES` 0,954 nat. NF-BoT-IoT-v3: `IN_BYTES` 0,914, `SRC_TO_DST_AVG_THROUGHPUT` 0,892, `LONGEST_FLOW_PKT` 0,846 nat.
+  4. **Đạt (Kaggle).** Notebook chạy hết; ô kiểm tra cuối (≥ 12 hình, dpi ≥ 150, < 5 MB, đủ nhận xét, đủ nhãn trục) báo `problems` rỗng.
+  Ghi chú: mục "Đầu ra" ghi ≥ 6 hình mỗi bộ gồm cả hình giao thức và cổng. Theo yêu cầu GĐ C chỉ làm 5 hình mức flow cộng bảng thống kê, nên **không có hình riêng cho giao thức và cổng** (`L4_DST_PORT` có trong boxplot và MI). Cần hình này thì thêm một hàm vào `scripts/eda.py`. Đầu vào là CSV gốc `athena21/netflow-v3-datasets`, không phải `clean_<bộ>.parquet`, nên số flow lớn hơn số sau làm sạch (ToN 27,5 triệu so với 25,7 triệu).
 
 ### 2.2 EDA mức đồ thị
 
 Kích thước, bậc, homophily.
 
-- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 3 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** Xong · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 3 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** EDA & tiền xử lý
 - **Đầu vào:** `graphs_<bộ>.pt`
 - **Đầu ra:** `notebooks/02_eda_graph.ipynb`; hình phân bố số node và cạnh mỗi cửa sổ, bậc vào/ra theo lớp; bảng homophily
@@ -340,10 +346,14 @@ Kích thước, bậc, homophily.
   2. Có nhận xét homophily cao hay thấp nghĩa là gì cho GNN (dùng làm luận cứ ở chương lý thuyết và phân tích lỗi).
   3. Có so sánh bậc vào/ra của lớp DDoS với Normal để chứng minh dấu hiệu fan-in và fan-out.
 - **Phụ thuộc:** 1.6
+- **Kết quả:** (13/11/2026) Cùng notebook `gnn-iot-ids-12-eda` bản 4 (commit `d2e4d1a`) như task 2.1. Hình: `gd2_<bộ>_graph_size.png`, `gd2_<bộ>_degree_by_class.png`, `gd2_<bộ>_homophily.png`; bảng: [gd2_homophily.csv](../../reports/kaggle/gnn-iot-ids-12-eda/gd2_homophily.csv) và mục `homophily` trong `eda_summary.json` (có cả số theo train, val, test và ma trận trộn lớp). Tính trên toàn bộ đồ thị đã dựng (ToN 66.693, BoT 13.937 cửa sổ). Kích thước: ToN median 11 node và 11 cạnh mỗi cửa sổ, p99 68 và 79, lớn nhất 269 node; BoT median 5 và 4, p99 11 và 11, lớn nhất 39 node.
+  1. **Đạt.** NF-ToN-IoT-v3: edge homophily **0,671** (mức ngẫu nhiên 0,474), class-insensitive **0,555**, adjusted 0,427. NF-BoT-IoT-v3: edge **0,861** (ngẫu nhiên 0,496), class-insensitive **0,750**, adjusted 0,726. Ba tập train, val, test lệch nhau không quá 0,07 (ToN class-insensitive 0,593 / 0,522 / 0,593; BoT 0,733 / 0,791 / 0,771).
+  2. **Đạt.** Ý nghĩa với GNN (câu ghi trong `eda_summary.json`): phần lớn cạnh nối node cùng lớp, cao hơn rõ rệt mức ngẫu nhiên, nên gom thông điệp láng giềng có thể giúp GNN làm mượt nhãn; nhưng 32,9 % cạnh ở ToN và 13,9 % ở BoT vẫn nối hai lớp khác nhau (chủ yếu tấn công ↔ Normal), nên láng giềng không thay được đặc trưng riêng của từng node. Đây là luận cứ cho hybrid giữ đặc trưng node, và để đọc kết quả GNN so với baseline ở GĐ F–G. Lớp Botnet_Backdoor ở ToN có h_k thấp nhất (0,476, dưới cả mức Normal 0,725).
+  3. **Đã so sánh, nhưng kết quả không chứng minh fan-in/fan-out ở mức node.** Bậc là số cặp src→dst trong cửa sổ. NF-ToN-IoT-v3: bậc vào trung bình DoS_DDoS 1,52 so với Normal 1,08 (gấp 1,40 lần; 1,34 % so với 1,12 % node có bậc ≥ 5); bậc ra trung bình Truy_cap_trai_phep 1,24 so với 1,13 (gấp 1,09 lần; 8,33 % so với 2,77 % node có bậc ≥ 5, lớn nhất 229). NF-BoT-IoT-v3: bậc vào DoS_DDoS 0,62 so với Normal 1,02 (chỉ bằng 0,61 lần); bậc ra Truy_cap_trai_phep 0,87 so với 0,76 (1,14 lần). Tức fan-in và fan-out chỉ xuất hiện ở một số ít cửa sổ, nhìn thấy ở hình cửa sổ mẫu (task 2.3), chứ không làm lệch phân bố bậc của cả lớp. Bậc không nên được coi là đặc trưng tách lớp mạnh. Cần nói đúng như vậy trong báo cáo.
 
 ### 2.3 Trực quan hóa đồ thị các cửa sổ mẫu
 
-- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 3 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** Xong · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 3 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** EDA & tiền xử lý, Báo cáo
 - **Đầu vào:** `graphs_<bộ>.pt`
 - **Đầu ra:** ≥ 3 hình đồ thị (networkx hoặc pyvis): cửa sổ bình thường, DDoS, scan hoặc backdoor; node tô màu theo nhãn, kích thước theo bậc
@@ -353,6 +363,11 @@ Kích thước, bậc, homophily.
   3. Nhìn thấy rõ cấu trúc đặc trưng: hình sao fan-in của DDoS, fan-out của scan; có chú thích chỉ vào các cấu trúc này.
   4. Có thêm 1 hình biểu diễn quy trình flow → cửa sổ → đồ thị để đưa vào báo cáo.
 - **Phụ thuộc:** 1.6
+- **Kết quả:** (13/11/2026) Cùng notebook `gnn-iot-ids-12-eda` bản 4 (commit `d2e4d1a`). Hình: `gd2_<bộ>_window_<loại>.png` (ToN: normal, ddos, scan, backdoor; BoT: normal, ddos, scan), `gd2_<bộ>_windows_overview.png` (các cửa sổ cạnh nhau) và `gd2_chung_quy_trinh.png`. Cửa sổ lấy từ tập train, chọn bằng quy tắc cố định ghi trong `eda_summary.json` (trường `criterion`): Normal gần median kích thước; DDoS và scan là cửa sổ ≤ 300 node có hub lớn nhất (ghi thứ hạng so với các cửa sổ cùng loại).
+  1. **Đạt.** Lớn nhất 237 node (ToN, cửa sổ scan); chú thích màu theo lớp ở chân hình.
+  2. **Đạt.** Mọi hình dùng seed 42 (`spring_layout` theo từng thành phần liên thông, thành phần lớn ở giữa), cùng bảng màu, cùng công thức kích thước node ∝ √(bậc vào + bậc ra).
+  3. **Đạt một phần.** Có chú thích mũi tên chỉ vào node trung tâm. ToN: fan-in rõ (DDoS: 13 IP cùng gửi tới 1 IP, 39 node) và fan-out rất rõ (scan: 1 IP gửi tới 229 IP, 237 node). BoT: fan-in DDoS rõ (8 IP → 1 IP, 10 node) nhưng fan-out của scan yếu (1 IP → 5 IP, 10 node). Lưu ý: cửa sổ Normal cũng có hình sao (một node nối tới 100 % node còn lại, ở cả hai bộ), nên hình dạng một mình không phân biệt được; khác biệt nằm ở màu lớp và quy mô. Cửa sổ DDoS và scan là các ví dụ cực đoan (hub lớn nhất), không phải cửa sổ điển hình.
+  4. **Đạt.** `gd2_chung_quy_trinh.png` (flow → cửa sổ 5 s → đồ thị), có số liệu thật của hai bộ ở chân hình (ví dụ flow trong hình là minh họa).
 
 ## GĐ3 Lý thuyết
 

@@ -1,0 +1,2695 @@
+{
+ "description": "EDA mức flow, mức đồ thị và đồ thị mẫu cho NF-ToN-IoT-v3 và NF-BoT-IoT-v3 (task 2.1–2.3)",
+ "sampling": {
+  "uniform_fraction": 0.02,
+  "balanced_cap_per_raw_label": 30000,
+  "mi_cap_per_raw_label": 5000,
+  "corr_rows": 100000,
+  "seed": 42
+ },
+ "n_figures": 26,
+ "n_figures_per_dataset": {
+  "nf_ton_iot_v3": 13,
+  "nf_bot_iot_v3": 12
+ },
+ "figures": [
+  {
+   "id": "nf_ton_iot_v3/label_dist",
+   "dataset": "nf_ton_iot_v3",
+   "level": "flow",
+   "file": "gd2_nf_ton_iot_v3_label_dist.png",
+   "title": "NF-ToN-IoT-v3: phân bố nhãn (số flow, thang log)",
+   "dpi": 160,
+   "axes": [
+    {
+     "x": "Số flow (thang log)",
+     "y": "Nhãn gốc (cột Attack)"
+    },
+    {
+     "x": "Số flow (thang log)",
+     "y": "Lớp"
+    }
+   ],
+   "axis_label_problems": [],
+   "numbers": {
+    "total_flows": 27520260,
+    "raw_counts": {
+     "Benign": 16792214,
+     "scanning": 1358977,
+     "dos": 203456,
+     "injection": 381777,
+     "ddos": 4141256,
+     "password": 1594777,
+     "xss": 2834435,
+     "Backdoor": 203384,
+     "ransomware": 3971,
+     "mitm": 6013
+    },
+    "group_counts": {
+     "Normal": 16792214,
+     "DoS_DDoS": 4344712,
+     "Botnet_Backdoor": 203384,
+     "Truy_cap_trai_phep": 6169966,
+     "Khac": 9984
+    },
+    "imbalance_max_over_min": 4228.711659531604,
+    "absent_classes": []
+   },
+   "comment": "NF-ToN-IoT-v3 có 27.520.260 flow thuộc 10 nhãn gốc: nhãn lớn nhất Benign chiếm 61,0 %, nhãn nhỏ nhất ransomware chỉ 3.971 flow (lệch 4.229 lần). Theo 5 lớp thì Normal chiếm 61,0 %; đủ cả 5 lớp. Mất cân bằng mạnh nên cần macro-F1 và trọng số lớp."
+  },
+  {
+   "id": "nf_ton_iot_v3/flows_over_time",
+   "dataset": "nf_ton_iot_v3",
+   "level": "flow",
+   "file": "gd2_nf_ton_iot_v3_flows_over_time.png",
+   "title": "NF-ToN-IoT-v3: số flow theo thời gian, tô màu theo loại tấn công",
+   "dpi": 160,
+   "axes": [
+    {
+     "x": "Thời điểm bắt đầu flow (UTC); vạch đứt = khoảng trống > 2 giờ đã bị nén",
+     "y": "Số flow mỗi 30 phút (xếp chồng)"
+    },
+    {
+     "x": "Thời điểm bắt đầu flow (UTC); vạch đứt = khoảng trống > 2 giờ đã bị nén",
+     "y": "Số flow mỗi 30 phút (thang log)"
+    }
+   ],
+   "axis_label_problems": [],
+   "numbers": {
+    "t_start_utc": "2019-04-23 14:00:00",
+    "t_end_utc": "2019-04-29 15:00:00",
+    "span_hours": 145.0,
+    "bin_minutes": 30,
+    "n_bins_active": 205,
+    "coverage": 0.7068965517241379,
+    "n_calendar_days": 7,
+    "attack_share": 0.3898235699808069,
+    "active_share_per_attack_label": {
+     "ddos": 0.14146341463414633,
+     "xss": 0.08292682926829269,
+     "password": 0.14146341463414633,
+     "scanning": 0.16585365853658537,
+     "injection": 0.04878048780487805,
+     "dos": 0.08780487804878048,
+     "Backdoor": 0.2634146341463415,
+     "mitm": 0.02926829268292683,
+     "ransomware": 0.02926829268292683
+    },
+    "peak_flows_per_bin": {
+     "Benign": 1868613,
+     "ddos": 207675,
+     "xss": 198526,
+     "password": 83515,
+     "scanning": 337273,
+     "injection": 76117,
+     "dos": 12527,
+     "Backdoor": 4838,
+     "mitm": 2717,
+     "ransomware": 1511
+    }
+   },
+   "comment": "Dữ liệu trải từ 23/04/2019 14:00 đến 29/04/2019 15:00 UTC (145,0 giờ, 7 ngày lịch có flow); 71 % số ô 30 phút trong khoảng này có flow, phần còn lại là khoảng trống. Flow tấn công chiếm 39,0 %; nhãn scanning có đỉnh 337.273 flow mỗi 30 phút, nhãn mitm có mặt trong 3 % số ô có flow, tức đến theo từng đợt xen kẽ lưu lượng khác."
+  },
+  {
+   "id": "nf_ton_iot_v3/boxplot_log_features",
+   "dataset": "nf_ton_iot_v3",
+   "level": "flow",
+   "file": "gd2_nf_ton_iot_v3_boxplot_log_features.png",
+   "title": "NF-ToN-IoT-v3: log(1 + x) của các đặc trưng chính theo lớp",
+   "dpi": 160,
+   "axes": [
+    {
+     "x": "Lớp (màu theo chú thích)",
+     "y": "log(1 + x), x tính bằng byte"
+    },
+    {
+     "x": "Lớp (màu theo chú thích)",
+     "y": "log(1 + x), x tính bằng byte"
+    },
+    {
+     "x": "Lớp (màu theo chú thích)",
+     "y": "log(1 + x), x tính bằng gói"
+    },
+    {
+     "x": "Lớp (màu theo chú thích)",
+     "y": "log(1 + x), x tính bằng gói"
+    },
+    {
+     "x": "Lớp (màu theo chú thích)",
+     "y": "log(1 + x), x tính bằng ms"
+    },
+    {
+     "x": "Lớp (màu theo chú thích)",
+     "y": "log(1 + x), x tính bằng bit/s"
+    },
+    {
+     "x": "Lớp (màu theo chú thích)",
+     "y": "log(1 + x), x tính bằng ms"
+    },
+    {
+     "x": "Lớp (màu theo chú thích)",
+     "y": "log(1 + x), x tính bằng số hiệu cổng"
+    }
+   ],
+   "axis_label_problems": [],
+   "numbers": {
+    "features": [
+     "IN_BYTES",
+     "OUT_BYTES",
+     "IN_PKTS",
+     "OUT_PKTS",
+     "FLOW_DURATION_MILLISECONDS",
+     "SRC_TO_DST_AVG_THROUGHPUT",
+     "SRC_TO_DST_IAT_AVG",
+     "L4_DST_PORT"
+    ],
+    "classes": [
+     "Normal",
+     "DoS_DDoS",
+     "Botnet_Backdoor",
+     "Truy_cap_trai_phep",
+     "Khac"
+    ],
+    "median_log1p_by_class": {
+     "IN_BYTES": {
+      "Normal": 3.970291913552122,
+      "DoS_DDoS": 4.727387818712341,
+      "Botnet_Backdoor": 5.666426688112432,
+      "Truy_cap_trai_phep": 5.908082938168931,
+      "Khac": 5.472270673671475
+     },
+     "OUT_BYTES": {
+      "Normal": 0.0,
+      "DoS_DDoS": 4.110873864173311,
+      "Botnet_Backdoor": 5.484796933490655,
+      "Truy_cap_trai_phep": 6.289715570908998,
+      "Khac": 5.459585514144159
+     },
+     "IN_PKTS": {
+      "Normal": 0.6931471805599453,
+      "DoS_DDoS": 1.0986122886681096,
+      "Botnet_Backdoor": 1.9459101490553132,
+      "Truy_cap_trai_phep": 1.6094379124341003,
+      "Khac": 1.0986122886681096
+     },
+     "OUT_PKTS": {
+      "Normal": 0.0,
+      "DoS_DDoS": 0.6931471805599453,
+      "Botnet_Backdoor": 1.9459101490553132,
+      "Truy_cap_trai_phep": 1.6094379124341003,
+      "Khac": 0.6931471805599453
+     },
+     "FLOW_DURATION_MILLISECONDS": {
+      "Normal": 0.6931471805599453,
+      "DoS_DDoS": 1.0986122886681096,
+      "Botnet_Backdoor": 7.313886831633462,
+      "Truy_cap_trai_phep": 2.833213344056216,
+      "Khac": 3.5553480614894135
+     },
+     "SRC_TO_DST_AVG_THROUGHPUT": {
+      "Normal": 12.85840043573314,
+      "DoS_DDoS": 12.319405795112926,
+      "Botnet_Backdoor": 7.325807502595773,
+      "Truy_cap_trai_phep": 11.615211258510978,
+      "Khac": 11.038479985296988
+     },
+     "SRC_TO_DST_IAT_AVG": {
+      "Normal": 0.0,
+      "DoS_DDoS": 0.0,
+      "Botnet_Backdoor": 5.723585101952381,
+      "Truy_cap_trai_phep": 1.3862943611198906,
+      "Khac": 2.302585092994046
+     },
+     "L4_DST_PORT": {
+      "Normal": 10.450539024706163,
+      "DoS_DDoS": 6.095824562432225,
+      "Botnet_Backdoor": 8.997270906233448,
+      "Truy_cap_trai_phep": 4.394449154672439,
+      "Khac": 4.394449154672439
+     }
+    },
+    "spread_of_medians": {
+     "IN_BYTES": 1.9377910246168093,
+     "OUT_BYTES": 6.289715570908998,
+     "IN_PKTS": 1.252762968495368,
+     "OUT_PKTS": 1.9459101490553132,
+     "FLOW_DURATION_MILLISECONDS": 6.620739651073516,
+     "SRC_TO_DST_AVG_THROUGHPUT": 5.532592933137367,
+     "SRC_TO_DST_IAT_AVG": 5.723585101952381,
+     "L4_DST_PORT": 6.056089870033724
+    },
+    "sample_rows": 250301,
+    "sample_per_group": {
+     "Normal": 30109,
+     "DoS_DDoS": 59853,
+     "Botnet_Backdoor": 30039,
+     "Truy_cap_trai_phep": 120316,
+     "Khac": 9984
+    }
+   },
+   "comment": "Đặc trưng FLOW_DURATION_MILLISECONDS tách các lớp rõ nhất: median là 1.500,0 ms ở lớp Botnet_Backdoor so với 1,0 ms ở lớp Normal. 8/8 đặc trưng có median giữa các lớp lệch hơn 1 đơn vị log (khoảng 2,7 lần), nên các thống kê thô đã mang tín hiệu phân biệt lớp (mẫu cân bằng theo nhãn gốc)."
+  },
+  {
+   "id": "nf_ton_iot_v3/corr_heatmap",
+   "dataset": "nf_ton_iot_v3",
+   "level": "flow",
+   "file": "gd2_nf_ton_iot_v3_corr_heatmap.png",
+   "title": "NF-ToN-IoT-v3: tương quan Spearman giữa các đặc trưng số (log(1 + x))",
+   "dpi": 160,
+   "axes": [
+    {
+     "x": "Đặc trưng (xếp theo cụm tương quan)",
+     "y": "Đặc trưng (xếp theo cụm tương quan)"
+    }
+   ],
+   "axis_label_problems": [],
+   "numbers": {
+    "n_features": 49,
+    "sample_rows": 100000,
+    "constant_features_dropped": [],
+    "pairs_abs_rho_ge_0.95": 18,
+    "n_pairs": 1176,
+    "top_pairs": [
+     {
+      "a": "LONGEST_FLOW_PKT",
+      "b": "MAX_IP_PKT_LEN",
+      "rho": 1.0
+     },
+     {
+      "a": "ICMP_TYPE",
+      "b": "ICMP_IPV4_TYPE",
+      "rho": 0.9999999999698441
+     },
+     {
+      "a": "MIN_TTL",
+      "b": "MAX_TTL",
+      "rho": 0.9999998087112004
+     },
+     {
+      "a": "RETRANSMITTED_OUT_BYTES",
+      "b": "RETRANSMITTED_OUT_PKTS",
+      "rho": 0.9999905647282595
+     },
+     {
+      "a": "RETRANSMITTED_IN_BYTES",
+      "b": "RETRANSMITTED_IN_PKTS",
+      "rho": 0.9999295215361018
+     }
+    ],
+    "mean_abs_rho": 0.3234533746416581
+   },
+   "comment": "18/1176 cặp đặc trưng có |ρ| ≥ 0,95 (cao nhất: LONGEST_FLOW_PKT và MAX_IP_PKT_LEN, ρ = 1,000). Trung bình |ρ| = 0,32, nhiều đặc trưng trùng thông tin nên có thể gộp bớt."
+  },
+  {
+   "id": "nf_ton_iot_v3/mutual_information",
+   "dataset": "nf_ton_iot_v3",
+   "level": "flow",
+   "file": "gd2_nf_ton_iot_v3_mutual_information.png",
+   "title": "NF-ToN-IoT-v3: mutual information của đặc trưng flow với nhãn",
+   "dpi": 160,
+   "axes": [
+    {
+     "x": "Mutual information với nhãn 5 lớp (nat)",
+     "y": "Đặc trưng (25 đặc trưng mạnh nhất; 3 cột cam = mạnh nhất)"
+    }
+   ],
+   "axis_label_problems": [],
+   "numbers": {
+    "top3": [
+     {
+      "feature": "IN_BYTES",
+      "mi": 1.1058027614314252
+     },
+     {
+      "feature": "SRC_TO_DST_AVG_THROUGHPUT",
+      "mi": 0.9716894529524855
+     },
+     {
+      "feature": "OUT_BYTES",
+      "mi": 0.9541442283710322
+     }
+    ],
+    "mi_all": {
+     "IN_BYTES": 1.1058027614314252,
+     "SRC_TO_DST_AVG_THROUGHPUT": 0.9716894529524855,
+     "OUT_BYTES": 0.9541442283710322,
+     "LONGEST_FLOW_PKT": 0.8788692805933414,
+     "MAX_IP_PKT_LEN": 0.878860247869987,
+     "DST_TO_SRC_AVG_THROUGHPUT": 0.831700515350712,
+     "L4_DST_PORT": 0.6962724332615071,
+     "TCP_WIN_MAX_IN": 0.6706771758853127,
+     "NUM_PKTS_UP_TO_128_BYTES": 0.638809169761408,
+     "TCP_FLAGS": 0.6371585668709385,
+     "SERVER_TCP_FLAGS": 0.5797245436438525,
+     "SRC_TO_DST_IAT_MAX": 0.559417738967595,
+     "L4_SRC_PORT": 0.5581093639529455,
+     "DST_TO_SRC_IAT_MAX": 0.5305304365041732,
+     "FLOW_DURATION_MILLISECONDS": 0.5237257750413473,
+     "DURATION_IN": 0.5038185064599447,
+     "SRC_TO_DST_IAT_AVG": 0.49970196478374906,
+     "DST_TO_SRC_IAT_AVG": 0.47698736665286945,
+     "CLIENT_TCP_FLAGS": 0.4706341718985323,
+     "MAX_TTL": 0.4568468042673175,
+     "MIN_TTL": 0.4567219710656767,
+     "DURATION_OUT": 0.4538606912549503,
+     "L7_PROTO": 0.4526432766610631,
+     "SRC_TO_DST_IAT_STDDEV": 0.45241633180964924,
+     "DST_TO_SRC_IAT_STDDEV": 0.4457539620080244,
+     "SHORTEST_FLOW_PKT": 0.4442540743155008,
+     "IN_PKTS": 0.4313115023805987,
+     "TCP_WIN_MAX_OUT": 0.4118373560350008,
+     "MIN_IP_PKT_LEN": 0.39178688316670507,
+     "DST_TO_SRC_SECOND_BYTES": 0.3850769809141026,
+     "OUT_PKTS": 0.37440862406874453,
+     "ICMP_IPV4_TYPE": 0.3106376836978506,
+     "ICMP_TYPE": 0.3101703115540264,
+     "RETRANSMITTED_IN_BYTES": 0.3058251138879893,
+     "SRC_TO_DST_SECOND_BYTES": 0.28007182961691957,
+     "RETRANSMITTED_IN_PKTS": 0.2732070125000381,
+     "NUM_PKTS_128_TO_256_BYTES": 0.21778161322041045,
+     "NUM_PKTS_1024_TO_1514_BYTES": 0.16027778851844543,
+     "DNS_QUERY_ID": 0.15773240728861637,
+     "NUM_PKTS_256_TO_512_BYTES": 0.14036138417015787,
+     "NUM_PKTS_512_TO_1024_BYTES": 0.12105408647665694,
+     "DNS_TTL_ANSWER": 0.1185700884681733,
+     "SRC_TO_DST_IAT_MIN": 0.10099266318909539,
+     "DNS_QUERY_TYPE": 0.07992686010712013,
+     "DST_TO_SRC_IAT_MIN": 0.07536116208454491,
+     "PROTOCOL": 0.06438808785291128,
+     "RETRANSMITTED_OUT_PKTS": 0.014760567447575479,
+     "RETRANSMITTED_OUT_BYTES": 0.010752182437625102,
+     "FTP_COMMAND_RET_CODE": 0.003484407675374168
+    },
+    "n_weak_below_0.01": 1,
+    "sample_rows": 48971,
+    "classes": [
+     "Normal",
+     "DoS_DDoS",
+     "Botnet_Backdoor",
+     "Truy_cap_trai_phep",
+     "Khac"
+    ]
+   },
+   "comment": "Ba đặc trưng mạnh nhất: IN_BYTES (MI = 1,106 nat), SRC_TO_DST_AVG_THROUGHPUT (MI = 0,972 nat), OUT_BYTES (MI = 0,954 nat). 1/49 đặc trưng có MI < 0,01 nat."
+  },
+  {
+   "id": "nf_ton_iot_v3/graph_size",
+   "dataset": "nf_ton_iot_v3",
+   "level": "graph",
+   "file": "gd2_nf_ton_iot_v3_graph_size.png",
+   "title": "NF-ToN-IoT-v3: phân bố số node và số cạnh mỗi cửa sổ",
+   "dpi": 160,
+   "axes": [
+    {
+     "x": "Số node mỗi cửa sổ 5 s (thang log)",
+     "y": "Số cửa sổ (thang log)"
+    },
+    {
+     "x": "Số cạnh mỗi cửa sổ 5 s (thang log)",
+     "y": "Số cửa sổ (thang log)"
+    }
+   ],
+   "axis_label_problems": [],
+   "numbers": {
+    "n_graphs": 66693,
+    "n_nodes": {
+     "mean": 12.172701782795796,
+     "median": 11.0,
+     "p95": 19.0,
+     "p99": 68.0,
+     "max": 269,
+     "min": 2
+    },
+    "n_edges": {
+     "mean": 14.678946816007677,
+     "median": 11.0,
+     "p95": 26.0,
+     "p99": 79.0,
+     "max": 705,
+     "min": 1
+    },
+    "share_windows_le_300_nodes": 1.0,
+    "edges_per_node_mean": 1.2058906131056348
+   },
+   "comment": "Đồ thị rất nhỏ: median 11 node và 11 cạnh mỗi cửa sổ, p99 là 68 node và 79 cạnh, lớn nhất 269 node. 100,00 % cửa sổ có ≤ 300 node nên vẽ được nguyên cửa sổ; mỗi node có trung bình 1,21 cạnh, đủ nhỏ để GNN nhẹ 2 lớp chạy theo thời gian thực."
+  },
+  {
+   "id": "nf_ton_iot_v3/degree_by_class",
+   "dataset": "nf_ton_iot_v3",
+   "level": "graph",
+   "file": "gd2_nf_ton_iot_v3_degree_by_class.png",
+   "title": "NF-ToN-IoT-v3: bậc vào và bậc ra của node theo lớp",
+   "dpi": 160,
+   "axes": [
+    {
+     "x": "Bậc vào (số IP gửi tới node) k (thang log)",
+     "y": "Tỉ lệ node có bậc ≥ k (thang log)"
+    },
+    {
+     "x": "Bậc ra (số IP node gửi tới) k (thang log)",
+     "y": "Tỉ lệ node có bậc ≥ k (thang log)"
+    }
+   ],
+   "axis_label_problems": [],
+   "numbers": {
+    "in_degree_by_class": {
+     "Normal": {
+      "n": 529917,
+      "mean": 1.0816958127404859,
+      "median": 1.0,
+      "p90": 2.0,
+      "p99": 5.0,
+      "max": 27.0
+     },
+     "DoS_DDoS": {
+      "n": 106526,
+      "mean": 1.5179674445675235,
+      "median": 2.0,
+      "p90": 3.0,
+      "p99": 5.0,
+      "max": 20.0
+     },
+     "Botnet_Backdoor": {
+      "n": 36463,
+      "mean": 1.12725228313633,
+      "median": 1.0,
+      "p90": 2.0,
+      "p99": 3.0,
+      "max": 4.0
+     },
+     "Truy_cap_trai_phep": {
+      "n": 136535,
+      "mean": 1.473995678763687,
+      "median": 2.0,
+      "p90": 2.0,
+      "p99": 3.0,
+      "max": 27.0
+     },
+     "Khac": {
+      "n": 2393,
+      "mean": 0.7170915169243627,
+      "median": 1.0,
+      "p90": 1.0,
+      "p99": 3.0,
+      "max": 4.0
+     }
+    },
+    "out_degree_by_class": {
+     "Normal": {
+      "n": 529917,
+      "mean": 1.1296561536995415,
+      "median": 1.0,
+      "p90": 2.0,
+      "p99": 8.0,
+      "max": 229.0
+     },
+     "DoS_DDoS": {
+      "n": 106526,
+      "mean": 1.6500197134971744,
+      "median": 0.0,
+      "p90": 8.0,
+      "p99": 10.0,
+      "max": 49.0
+     },
+     "Botnet_Backdoor": {
+      "n": 36463,
+      "mean": 0.9313276472040151,
+      "median": 1.0,
+      "p90": 3.0,
+      "p99": 4.0,
+      "max": 7.0
+     },
+     "Truy_cap_trai_phep": {
+      "n": 136535,
+      "mean": 1.2363423298055443,
+      "median": 0.0,
+      "p90": 4.0,
+      "p99": 7.0,
+      "max": 229.0
+     },
+     "Khac": {
+      "n": 2393,
+      "mean": 0.7630589218554116,
+      "median": 0.0,
+      "p90": 1.0,
+      "p99": 10.0,
+      "max": 37.0
+     }
+    },
+    "share_in_degree_ge5": {
+     "Normal": 0.01120552841294014,
+     "DoS_DDoS": 0.013433340217411712,
+     "Botnet_Backdoor": 0.0,
+     "Truy_cap_trai_phep": 0.00397700223385945,
+     "Khac": 0.0
+    },
+    "share_out_degree_ge5": {
+     "Normal": 0.02772320948374934,
+     "DoS_DDoS": 0.1315078009124533,
+     "Botnet_Backdoor": 0.0035104078106573786,
+     "Truy_cap_trai_phep": 0.08325337825465998,
+     "Khac": 0.0162975344755537
+    },
+    "fan_in_ddos_vs_normal": {
+     "mean_attack": 1.5179674445675235,
+     "mean_normal": 1.0816958127404859,
+     "ratio_mean": 1.403321919793458,
+     "median_attack": 2.0,
+     "median_normal": 1.0,
+     "p99_attack": 5.0,
+     "p99_normal": 5.0,
+     "max_attack": 20.0,
+     "max_normal": 27.0
+    },
+    "fan_out_scan_vs_normal": {
+     "mean_attack": 1.2363423298055443,
+     "mean_normal": 1.1296561536995415,
+     "ratio_mean": 1.0944412826474792,
+     "median_attack": 0.0,
+     "median_normal": 1.0,
+     "p99_attack": 7.0,
+     "p99_normal": 8.0,
+     "max_attack": 229.0,
+     "max_normal": 229.0
+    },
+    "degree_definition": "số cạnh (cặp src→dst) trong cửa sổ 5 s, mỗi cặp tính một lần"
+   },
+   "comment": "Bậc vào trung bình của DoS_DDoS là 1,52 (lớn nhất 20; 1,34 % node có bậc ≥ 5) so với 1,08 của Normal (1,12 % node có bậc ≥ 5): xấp xỉ nhau (gấp 1,40 lần), bậc này không phân biệt được lớp. Bậc ra trung bình của Truy_cap_trai_phep là 1,24 (lớn nhất 229; 8,33 % node có bậc ≥ 5) so với 1,13 của Normal (2,77 % node có bậc ≥ 5): xấp xỉ nhau (gấp 1,09 lần), bậc này không phân biệt được lớp."
+  },
+  {
+   "id": "nf_ton_iot_v3/homophily",
+   "dataset": "nf_ton_iot_v3",
+   "level": "graph",
+   "file": "gd2_nf_ton_iot_v3_homophily.png",
+   "title": "NF-ToN-IoT-v3: edge homophily và class-insensitive homophily",
+   "dpi": 160,
+   "axes": [
+    {
+     "x": "Lớp của node đích (dst)",
+     "y": "Lớp của node nguồn (src)"
+    },
+    {
+     "x": "Lớp của node",
+     "y": "Tỉ lệ (không đơn vị)"
+    }
+   ],
+   "axis_label_problems": [],
+   "numbers": {
+    "edge_homophily": 0.6708206373348669,
+    "class_insensitive_homophily": 0.5554147271605537,
+    "adjusted_homophily": 0.42741654082698605,
+    "random_edge_homophily": 0.4735988501145372,
+    "level_by_class_insensitive": "khá cao",
+    "class_wise_homophily": {
+     "Normal": 0.7249940904548686,
+     "DoS_DDoS": 0.6312327208398895,
+     "Botnet_Backdoor": 0.47600650129226507,
+     "Truy_cap_trai_phep": 0.5735023888276369,
+     "Khac": 0.8159232072275551
+    },
+    "node_fraction": {
+     "Normal": 0.6527405848978979,
+     "DoS_DDoS": 0.13121648021639892,
+     "Botnet_Backdoor": 0.04491435441235524,
+     "Truy_cap_trai_phep": 0.16818093354060065,
+     "Khac": 0.002947646932747335
+    },
+    "mixing_matrix_counts": {
+     "Normal": {
+      "Normal": 424786,
+      "DoS_DDoS": 55191,
+      "Botnet_Backdoor": 23238,
+      "Truy_cap_trai_phep": 95138,
+      "Khac": 271
+     },
+     "DoS_DDoS": {
+      "Normal": 69258,
+      "DoS_DDoS": 106512,
+      "Botnet_Backdoor": 0,
+      "Truy_cap_trai_phep": 0,
+      "Khac": 0
+     },
+     "Botnet_Backdoor": {
+      "Normal": 16094,
+      "DoS_DDoS": 0,
+      "Botnet_Backdoor": 17865,
+      "Truy_cap_trai_phep": 0,
+      "Khac": 0
+     },
+     "Truy_cap_trai_phep": {
+      "Normal": 62690,
+      "DoS_DDoS": 0,
+      "Botnet_Backdoor": 0,
+      "Truy_cap_trai_phep": 106114,
+      "Khac": 0
+     },
+     "Khac": {
+      "Normal": 381,
+      "DoS_DDoS": 0,
+      "Botnet_Backdoor": 0,
+      "Truy_cap_trai_phep": 0,
+      "Khac": 1445
+     }
+    },
+    "per_split": {
+     "train": {
+      "edge_homophily": 0.6606359725645757,
+      "class_insensitive_homophily": 0.5926281328480645,
+      "adjusted_homophily": 0.4126250302353643
+     },
+     "val": {
+      "edge_homophily": 0.6875903095889568,
+      "class_insensitive_homophily": 0.5215905904340378,
+      "adjusted_homophily": 0.4254078139289852
+     },
+     "test": {
+      "edge_homophily": 0.7094443060054821,
+      "class_insensitive_homophily": 0.5927905388239917,
+      "adjusted_homophily": 0.4845850712972811
+     }
+    },
+    "n_edges": 978983,
+    "n_nodes": 811834,
+    "direction": "edge_homophily trên cạnh có hướng; h_k theo cạnh vô hướng (M + M^T)"
+   },
+   "comment": "Edge homophily = 0,671 (mức ngẫu nhiên 0,474) và class-insensitive homophily = 0,555, tức mức khá cao. Phần lớn cạnh nối các node cùng lớp (cao hơn rõ rệt mức ngẫu nhiên), nên gom thông điệp từ láng giềng có thể giúp GNN làm mượt nhãn; tuy vậy 32,9 % cạnh vẫn nối hai lớp khác nhau (chủ yếu tấn công ↔ Normal), nên láng giềng không thay thế được đặc trưng riêng của từng node."
+  },
+  {
+   "id": "nf_ton_iot_v3/window_normal",
+   "dataset": "nf_ton_iot_v3",
+   "level": "graph_viz",
+   "file": "gd2_nf_ton_iot_v3_window_normal.png",
+   "title": "NF-ToN-IoT-v3: cửa sổ bình thường (win 311207311, 14 node, 33 cạnh)",
+   "dpi": 160,
+   "axes": [],
+   "axis_label_problems": [],
+   "numbers": {
+    "win": 311207311,
+    "t_start_utc": "2019-04-23 16:22:35",
+    "n_nodes": 14,
+    "n_edges": 33,
+    "class_counts": {
+     "Normal": 14
+    },
+    "criterion": "cửa sổ chỉ có node Normal, kích thước gần median (14 node) của các cửa sổ Normal",
+    "split": "train",
+    "layout_seed": 42,
+    "hub_degree": 16,
+    "mean_degree_in_window": 4.714285714285714,
+    "hub_reach": 1.0
+   },
+   "comment": "Cửa sổ bình thường gồm 14 node và 33 cạnh; node bậc lớn nhất có bậc 16 (nối tới 100 % số node còn lại) so với bậc trung bình 4,71 của cửa sổ."
+  },
+  {
+   "id": "nf_ton_iot_v3/window_ddos",
+   "dataset": "nf_ton_iot_v3",
+   "level": "graph_viz",
+   "file": "gd2_nf_ton_iot_v3_window_ddos.png",
+   "title": "NF-ToN-IoT-v3: cửa sổ DDoS/DoS (win 311225966, 39 node, 48 cạnh)",
+   "dpi": 160,
+   "axes": [],
+   "axis_label_problems": [],
+   "numbers": {
+    "win": 311225966,
+    "t_start_utc": "2019-04-24 18:17:10",
+    "n_nodes": 39,
+    "n_edges": 48,
+    "class_counts": {
+     "Normal": 15,
+     "DoS_DDoS": 24
+    },
+    "criterion": "cửa sổ ≤ 300 node, ≥ 50 % node DoS_DDoS, có bậc vào lớn nhất của node DoS_DDoS (cao hơn 100,0 % cửa sổ DoS_DDoS khác trong train)",
+    "split": "train",
+    "layout_seed": 42,
+    "hub_degree": 13,
+    "mean_degree_in_window": 1.2307692307692308,
+    "hub_reach": 0.34210526315789475
+   },
+   "comment": "Cửa sổ DDoS/DoS (39 node, 48 cạnh) có một node fan-in với bậc vào 13, trong khi bậc trung bình toàn cửa sổ chỉ 1,23; node này nằm trên mức cao hơn 100,0 % cửa sổ cùng loại trong train."
+  },
+  {
+   "id": "nf_ton_iot_v3/window_scan",
+   "dataset": "nf_ton_iot_v3",
+   "level": "graph_viz",
+   "file": "gd2_nf_ton_iot_v3_window_scan.png",
+   "title": "NF-ToN-IoT-v3: cửa sổ dò quét/truy cập trái phép (win 311205836, 237 node, 424 cạnh)",
+   "dpi": 160,
+   "axes": [],
+   "axis_label_problems": [],
+   "numbers": {
+    "win": 311205836,
+    "t_start_utc": "2019-04-23 14:19:40",
+    "n_nodes": 237,
+    "n_edges": 424,
+    "class_counts": {
+     "Normal": 66,
+     "Truy_cap_trai_phep": 171
+    },
+    "criterion": "cửa sổ ≤ 300 node, ≥ 50 % node Truy_cap_trai_phep, có bậc ra lớn nhất của node Truy_cap_trai_phep (cao hơn 100,0 % cửa sổ Truy_cap_trai_phep khác trong train)",
+    "split": "train",
+    "layout_seed": 42,
+    "hub_degree": 229,
+    "mean_degree_in_window": 1.7890295358649788,
+    "hub_reach": 0.9703389830508474
+   },
+   "comment": "Cửa sổ dò quét/truy cập trái phép (237 node, 424 cạnh) có một node fan-out với bậc ra 229, trong khi bậc trung bình toàn cửa sổ chỉ 1,79; node này nằm trên mức cao hơn 100,0 % cửa sổ cùng loại trong train."
+  },
+  {
+   "id": "nf_ton_iot_v3/window_backdoor",
+   "dataset": "nf_ton_iot_v3",
+   "level": "graph_viz",
+   "file": "gd2_nf_ton_iot_v3_window_backdoor.png",
+   "title": "NF-ToN-IoT-v3: cửa sổ backdoor (win 311295920, 7 node, 7 cạnh)",
+   "dpi": 160,
+   "axes": [],
+   "axis_label_problems": [],
+   "numbers": {
+    "win": 311295920,
+    "t_start_utc": "2019-04-28 19:26:40",
+    "n_nodes": 7,
+    "n_edges": 7,
+    "class_counts": {
+     "Normal": 2,
+     "Botnet_Backdoor": 5
+    },
+    "criterion": "cửa sổ ≤ 300 node, ≥ 50 % node Botnet_Backdoor, nhiều node Botnet_Backdoor nhất",
+    "split": "train",
+    "layout_seed": 42,
+    "hub_degree": 4,
+    "mean_degree_in_window": 2.0,
+    "hub_reach": 0.6666666666666666
+   },
+   "comment": "Cửa sổ backdoor gồm 7 node và 7 cạnh; node bậc lớn nhất có bậc 4 (nối tới 67 % số node còn lại) so với bậc trung bình 2,00 của cửa sổ."
+  },
+  {
+   "id": "nf_ton_iot_v3/windows_overview",
+   "dataset": "nf_ton_iot_v3",
+   "level": "graph_viz",
+   "file": "gd2_nf_ton_iot_v3_windows_overview.png",
+   "title": "NF-ToN-IoT-v3: so sánh các cửa sổ mẫu (cùng layout seed 42)",
+   "dpi": 160,
+   "axes": [],
+   "axis_label_problems": [],
+   "numbers": {
+    "windows": {
+     "normal": {
+      "win": 311207311,
+      "t_start_utc": "2019-04-23 16:22:35",
+      "n_nodes": 14,
+      "n_edges": 33,
+      "class_counts": {
+       "Normal": 14
+      },
+      "criterion": "cửa sổ chỉ có node Normal, kích thước gần median (14 node) của các cửa sổ Normal",
+      "split": "train",
+      "layout_seed": 42,
+      "hub_degree": 16,
+      "mean_degree_in_window": 4.714285714285714,
+      "hub_reach": 1.0
+     },
+     "ddos": {
+      "win": 311225966,
+      "t_start_utc": "2019-04-24 18:17:10",
+      "n_nodes": 39,
+      "n_edges": 48,
+      "class_counts": {
+       "Normal": 15,
+       "DoS_DDoS": 24
+      },
+      "criterion": "cửa sổ ≤ 300 node, ≥ 50 % node DoS_DDoS, có bậc vào lớn nhất của node DoS_DDoS (cao hơn 100,0 % cửa sổ DoS_DDoS khác trong train)",
+      "split": "train",
+      "layout_seed": 42,
+      "hub_degree": 13,
+      "mean_degree_in_window": 1.2307692307692308,
+      "hub_reach": 0.34210526315789475
+     },
+     "scan": {
+      "win": 311205836,
+      "t_start_utc": "2019-04-23 14:19:40",
+      "n_nodes": 237,
+      "n_edges": 424,
+      "class_counts": {
+       "Normal": 66,
+       "Truy_cap_trai_phep": 171
+      },
+      "criterion": "cửa sổ ≤ 300 node, ≥ 50 % node Truy_cap_trai_phep, có bậc ra lớn nhất của node Truy_cap_trai_phep (cao hơn 100,0 % cửa sổ Truy_cap_trai_phep khác trong train)",
+      "split": "train",
+      "layout_seed": 42,
+      "hub_degree": 229,
+      "mean_degree_in_window": 1.7890295358649788,
+      "hub_reach": 0.9703389830508474
+     },
+     "backdoor": {
+      "win": 311295920,
+      "t_start_utc": "2019-04-28 19:26:40",
+      "n_nodes": 7,
+      "n_edges": 7,
+      "class_counts": {
+       "Normal": 2,
+       "Botnet_Backdoor": 5
+      },
+      "criterion": "cửa sổ ≤ 300 node, ≥ 50 % node Botnet_Backdoor, nhiều node Botnet_Backdoor nhất",
+      "split": "train",
+      "layout_seed": 42,
+      "hub_degree": 4,
+      "mean_degree_in_window": 2.0,
+      "hub_reach": 0.6666666666666666
+     }
+    }
+   },
+   "comment": "Cùng seed layout và cùng cách tô màu/kích thước cho mọi cửa sổ. Bình thường: 14 node, node trung tâm bậc 16 (nối 100 % node còn lại); DDoS/DoS: 39 node, node trung tâm bậc 13 (nối 34 % node còn lại); Dò quét/truy cập trái phép: 237 node, node trung tâm bậc 229 (nối 97 % node còn lại); Backdoor: 7 node, node trung tâm bậc 4 (nối 67 % node còn lại)."
+  },
+  {
+   "id": "nf_bot_iot_v3/label_dist",
+   "dataset": "nf_bot_iot_v3",
+   "level": "flow",
+   "file": "gd2_nf_bot_iot_v3_label_dist.png",
+   "title": "NF-BoT-IoT-v3: phân bố nhãn (số flow, thang log)",
+   "dpi": 160,
+   "axes": [
+    {
+     "x": "Số flow (thang log)",
+     "y": "Nhãn gốc (cột Attack)"
+    },
+    {
+     "x": "Số flow (thang log)",
+     "y": "Lớp"
+    }
+   ],
+   "axis_label_problems": [],
+   "numbers": {
+    "total_flows": 16933808,
+    "raw_counts": {
+     "DDoS": 7150882,
+     "Benign": 51989,
+     "DoS": 8034190,
+     "Reconnaissance": 1695132,
+     "Theft": 1615
+    },
+    "group_counts": {
+     "Normal": 51989,
+     "DoS_DDoS": 15185072,
+     "Botnet_Backdoor": 0,
+     "Truy_cap_trai_phep": 1696747,
+     "Khac": 0
+    },
+    "imbalance_max_over_min": 4974.730650154799,
+    "absent_classes": [
+     "Botnet_Backdoor",
+     "Khac"
+    ]
+   },
+   "comment": "NF-BoT-IoT-v3 có 16.933.808 flow thuộc 5 nhãn gốc: nhãn lớn nhất DoS chiếm 47,4 %, nhãn nhỏ nhất Theft chỉ 1.615 flow (lệch 4.975 lần). Theo 5 lớp thì Normal chiếm 0,3 %; lớp vắng mặt: Botnet_Backdoor, Khac. Mất cân bằng mạnh nên cần macro-F1 và trọng số lớp."
+  },
+  {
+   "id": "nf_bot_iot_v3/flows_over_time",
+   "dataset": "nf_bot_iot_v3",
+   "level": "flow",
+   "file": "gd2_nf_bot_iot_v3_flows_over_time.png",
+   "title": "NF-BoT-IoT-v3: số flow theo thời gian, tô màu theo loại tấn công",
+   "dpi": 160,
+   "axes": [
+    {
+     "x": "Thời điểm bắt đầu flow (UTC); vạch đứt = khoảng trống > 2 giờ đã bị nén",
+     "y": "Số flow mỗi 10 phút (xếp chồng)"
+    },
+    {
+     "x": "Thời điểm bắt đầu flow (UTC); vạch đứt = khoảng trống > 2 giờ đã bị nén",
+     "y": "Số flow mỗi 10 phút (thang log)"
+    }
+   ],
+   "axis_label_problems": [],
+   "numbers": {
+    "t_start_utc": "2018-05-15 00:20:00",
+    "t_end_utc": "2018-06-19 04:20:00",
+    "span_hours": 844.0,
+    "bin_minutes": 10,
+    "n_bins_active": 159,
+    "coverage": 0.03139810426540284,
+    "n_calendar_days": 6,
+    "attack_share": 0.9969298695249172,
+    "active_share_per_attack_label": {
+     "DoS": 0.08176100628930817,
+     "DDoS": 0.08176100628930817,
+     "Reconnaissance": 0.6918238993710691,
+     "Theft": 0.03773584905660377
+    },
+    "peak_flows_per_bin": {
+     "DoS": 1013571,
+     "DDoS": 1355014,
+     "Reconnaissance": 284031,
+     "Benign": 3273,
+     "Theft": 720
+    }
+   },
+   "comment": "Dữ liệu trải từ 15/05/2018 00:20 đến 19/06/2018 04:20 UTC (844,0 giờ, 6 ngày lịch có flow); 3 % số ô 10 phút trong khoảng này có flow, phần còn lại là khoảng trống. Flow tấn công chiếm 99,7 %; nhãn DDoS có đỉnh 1.355.014 flow mỗi 10 phút, nhãn Theft có mặt trong 4 % số ô có flow, tức đến theo từng đợt xen kẽ lưu lượng khác."
+  },
+  {
+   "id": "nf_bot_iot_v3/boxplot_log_features",
+   "dataset": "nf_bot_iot_v3",
+   "level": "flow",
+   "file": "gd2_nf_bot_iot_v3_boxplot_log_features.png",
+   "title": "NF-BoT-IoT-v3: log(1 + x) của các đặc trưng chính theo lớp",
+   "dpi": 160,
+   "axes": [
+    {
+     "x": "Lớp (màu theo chú thích)",
+     "y": "log(1 + x), x tính bằng byte"
+    },
+    {
+     "x": "Lớp (màu theo chú thích)",
+     "y": "log(1 + x), x tính bằng byte"
+    },
+    {
+     "x": "Lớp (màu theo chú thích)",
+     "y": "log(1 + x), x tính bằng gói"
+    },
+    {
+     "x": "Lớp (màu theo chú thích)",
+     "y": "log(1 + x), x tính bằng gói"
+    },
+    {
+     "x": "Lớp (màu theo chú thích)",
+     "y": "log(1 + x), x tính bằng ms"
+    },
+    {
+     "x": "Lớp (màu theo chú thích)",
+     "y": "log(1 + x), x tính bằng bit/s"
+    },
+    {
+     "x": "Lớp (màu theo chú thích)",
+     "y": "log(1 + x), x tính bằng ms"
+    },
+    {
+     "x": "Lớp (màu theo chú thích)",
+     "y": "log(1 + x), x tính bằng số hiệu cổng"
+    }
+   ],
+   "axis_label_problems": [],
+   "numbers": {
+    "features": [
+     "IN_BYTES",
+     "OUT_BYTES",
+     "IN_PKTS",
+     "OUT_PKTS",
+     "FLOW_DURATION_MILLISECONDS",
+     "SRC_TO_DST_AVG_THROUGHPUT",
+     "SRC_TO_DST_IAT_AVG",
+     "L4_DST_PORT"
+    ],
+    "classes": [
+     "Normal",
+     "DoS_DDoS",
+     "Truy_cap_trai_phep"
+    ],
+    "median_log1p_by_class": {
+     "IN_BYTES": {
+      "Normal": 3.713572066704308,
+      "DoS_DDoS": 5.8888779583328805,
+      "Truy_cap_trai_phep": 3.8066624897703196
+     },
+     "OUT_BYTES": {
+      "Normal": 3.713572066704308,
+      "DoS_DDoS": 0.0,
+      "Truy_cap_trai_phep": 3.713572066704308
+     },
+     "IN_PKTS": {
+      "Normal": 0.6931471805599453,
+      "DoS_DDoS": 1.9459101490553132,
+      "Truy_cap_trai_phep": 0.6931471805599453
+     },
+     "OUT_PKTS": {
+      "Normal": 0.6931471805599453,
+      "DoS_DDoS": 0.0,
+      "Truy_cap_trai_phep": 0.6931471805599453
+     },
+     "FLOW_DURATION_MILLISECONDS": {
+      "Normal": 0.0,
+      "DoS_DDoS": 10.160607319405269,
+      "Truy_cap_trai_phep": 1.3862943611198906
+     },
+     "SRC_TO_DST_AVG_THROUGHPUT": {
+      "Normal": 12.676079399771027,
+      "DoS_DDoS": 4.709530201312334,
+      "Truy_cap_trai_phep": 11.672779847714164
+     },
+     "SRC_TO_DST_IAT_AVG": {
+      "Normal": 0.0,
+      "DoS_DDoS": 8.560444233410552,
+      "Truy_cap_trai_phep": 0.0
+     },
+     "L4_DST_PORT": {
+      "Normal": 7.745002803515839,
+      "DoS_DDoS": 4.394449154672439,
+      "Truy_cap_trai_phep": 9.41058370340406
+     }
+    },
+    "spread_of_medians": {
+     "IN_BYTES": 2.1753058916285726,
+     "OUT_BYTES": 3.713572066704308,
+     "IN_PKTS": 1.252762968495368,
+     "OUT_PKTS": 0.6931471805599453,
+     "FLOW_DURATION_MILLISECONDS": 10.160607319405269,
+     "SRC_TO_DST_AVG_THROUGHPUT": 7.966549198458693,
+     "SRC_TO_DST_IAT_AVG": 8.560444233410552,
+     "L4_DST_PORT": 5.01613454873162
+    },
+    "sample_rows": 121479,
+    "sample_per_group": {
+     "Normal": 30124,
+     "DoS_DDoS": 59806,
+     "Truy_cap_trai_phep": 31549
+    }
+   },
+   "comment": "Đặc trưng FLOW_DURATION_MILLISECONDS tách các lớp rõ nhất: median là 25.863,0 ms ở lớp DoS_DDoS so với 0,0 ms ở lớp Normal. 7/8 đặc trưng có median giữa các lớp lệch hơn 1 đơn vị log (khoảng 2,7 lần), nên các thống kê thô đã mang tín hiệu phân biệt lớp (mẫu cân bằng theo nhãn gốc)."
+  },
+  {
+   "id": "nf_bot_iot_v3/corr_heatmap",
+   "dataset": "nf_bot_iot_v3",
+   "level": "flow",
+   "file": "gd2_nf_bot_iot_v3_corr_heatmap.png",
+   "title": "NF-BoT-IoT-v3: tương quan Spearman giữa các đặc trưng số (log(1 + x))",
+   "dpi": 160,
+   "axes": [
+    {
+     "x": "Đặc trưng (xếp theo cụm tương quan)",
+     "y": "Đặc trưng (xếp theo cụm tương quan)"
+    }
+   ],
+   "axis_label_problems": [],
+   "numbers": {
+    "n_features": 49,
+    "sample_rows": 100000,
+    "constant_features_dropped": [],
+    "pairs_abs_rho_ge_0.95": 26,
+    "n_pairs": 1176,
+    "top_pairs": [
+     {
+      "a": "LONGEST_FLOW_PKT",
+      "b": "MAX_IP_PKT_LEN",
+      "rho": 1.0
+     },
+     {
+      "a": "MIN_TTL",
+      "b": "MAX_TTL",
+      "rho": 1.0
+     },
+     {
+      "a": "ICMP_TYPE",
+      "b": "ICMP_IPV4_TYPE",
+      "rho": 0.9999999999864326
+     },
+     {
+      "a": "RETRANSMITTED_OUT_BYTES",
+      "b": "RETRANSMITTED_OUT_PKTS",
+      "rho": 0.9999999994197389
+     },
+     {
+      "a": "RETRANSMITTED_IN_BYTES",
+      "b": "RETRANSMITTED_IN_PKTS",
+      "rho": 0.9999999861228349
+     }
+    ],
+    "mean_abs_rho": 0.2182019565541322
+   },
+   "comment": "26/1176 cặp đặc trưng có |ρ| ≥ 0,95 (cao nhất: LONGEST_FLOW_PKT và MAX_IP_PKT_LEN, ρ = 1,000). Trung bình |ρ| = 0,22, nhiều đặc trưng trùng thông tin nên có thể gộp bớt."
+  },
+  {
+   "id": "nf_bot_iot_v3/mutual_information",
+   "dataset": "nf_bot_iot_v3",
+   "level": "flow",
+   "file": "gd2_nf_bot_iot_v3_mutual_information.png",
+   "title": "NF-BoT-IoT-v3: mutual information của đặc trưng flow với nhãn",
+   "dpi": 160,
+   "axes": [
+    {
+     "x": "Mutual information với nhãn 5 lớp (nat)",
+     "y": "Đặc trưng (25 đặc trưng mạnh nhất; 3 cột cam = mạnh nhất)"
+    }
+   ],
+   "axis_label_problems": [],
+   "numbers": {
+    "top3": [
+     {
+      "feature": "IN_BYTES",
+      "mi": 0.9139304722011032
+     },
+     {
+      "feature": "SRC_TO_DST_AVG_THROUGHPUT",
+      "mi": 0.8918092744462047
+     },
+     {
+      "feature": "LONGEST_FLOW_PKT",
+      "mi": 0.8460459273864347
+     }
+    ],
+    "mi_all": {
+     "IN_BYTES": 0.9139304722011032,
+     "SRC_TO_DST_AVG_THROUGHPUT": 0.8918092744462047,
+     "LONGEST_FLOW_PKT": 0.8460459273864347,
+     "MAX_IP_PKT_LEN": 0.8459938200877866,
+     "L4_DST_PORT": 0.7766362261521731,
+     "DST_TO_SRC_SECOND_BYTES": 0.7457963904161571,
+     "FLOW_DURATION_MILLISECONDS": 0.699688464343416,
+     "SRC_TO_DST_IAT_AVG": 0.655046849712484,
+     "SRC_TO_DST_IAT_MIN": 0.6525986958505643,
+     "DURATION_IN": 0.6419143170355761,
+     "SRC_TO_DST_IAT_MAX": 0.633339375509578,
+     "DST_TO_SRC_AVG_THROUGHPUT": 0.6143913390753415,
+     "L4_SRC_PORT": 0.5640388097973745,
+     "SRC_TO_DST_IAT_STDDEV": 0.4893961616619462,
+     "IN_PKTS": 0.48798076304198257,
+     "TCP_WIN_MAX_IN": 0.45553884467693706,
+     "OUT_BYTES": 0.4555042010063839,
+     "MAX_TTL": 0.43742728269303055,
+     "MIN_TTL": 0.4362493720987519,
+     "SHORTEST_FLOW_PKT": 0.4308187663668317,
+     "SERVER_TCP_FLAGS": 0.3892502227429686,
+     "NUM_PKTS_UP_TO_128_BYTES": 0.3661953169988843,
+     "OUT_PKTS": 0.35442133491826455,
+     "TCP_FLAGS": 0.33909387354979303,
+     "MIN_IP_PKT_LEN": 0.30703959676861414,
+     "SRC_TO_DST_SECOND_BYTES": 0.2903577055229909,
+     "L7_PROTO": 0.26870983164038953,
+     "CLIENT_TCP_FLAGS": 0.21170714668957769,
+     "NUM_PKTS_128_TO_256_BYTES": 0.1907095047366214,
+     "PROTOCOL": 0.11548077312420535,
+     "DST_TO_SRC_IAT_MAX": 0.07757610403103588,
+     "DST_TO_SRC_IAT_AVG": 0.07675977676263734,
+     "TCP_WIN_MAX_OUT": 0.07632356751844616,
+     "DURATION_OUT": 0.06233191780999747,
+     "NUM_PKTS_1024_TO_1514_BYTES": 0.05395630876119095,
+     "NUM_PKTS_512_TO_1024_BYTES": 0.05295647440938955,
+     "DST_TO_SRC_IAT_MIN": 0.04574026256573194,
+     "DST_TO_SRC_IAT_STDDEV": 0.04307914062426077,
+     "NUM_PKTS_256_TO_512_BYTES": 0.042819083269049374,
+     "DNS_QUERY_ID": 0.04129458016796783,
+     "DNS_QUERY_TYPE": 0.03790185325874229,
+     "DNS_TTL_ANSWER": 0.019208777160351076,
+     "RETRANSMITTED_IN_PKTS": 0.012546240905933148,
+     "ICMP_IPV4_TYPE": 0.007748670631217314,
+     "FTP_COMMAND_RET_CODE": 0.0077105424140009315,
+     "ICMP_TYPE": 0.006411361394411008,
+     "RETRANSMITTED_OUT_PKTS": 0.0002395895941740278,
+     "RETRANSMITTED_IN_BYTES": 0.0,
+     "RETRANSMITTED_OUT_BYTES": 0.0
+    },
+    "n_weak_below_0.01": 6,
+    "sample_rows": 21615,
+    "classes": [
+     "Normal",
+     "DoS_DDoS",
+     "Truy_cap_trai_phep"
+    ]
+   },
+   "comment": "Ba đặc trưng mạnh nhất: IN_BYTES (MI = 0,914 nat), SRC_TO_DST_AVG_THROUGHPUT (MI = 0,892 nat), LONGEST_FLOW_PKT (MI = 0,846 nat). 6/49 đặc trưng có MI < 0,01 nat."
+  },
+  {
+   "id": "nf_bot_iot_v3/graph_size",
+   "dataset": "nf_bot_iot_v3",
+   "level": "graph",
+   "file": "gd2_nf_bot_iot_v3_graph_size.png",
+   "title": "NF-BoT-IoT-v3: phân bố số node và số cạnh mỗi cửa sổ",
+   "dpi": 160,
+   "axes": [
+    {
+     "x": "Số node mỗi cửa sổ 5 s (thang log)",
+     "y": "Số cửa sổ (thang log)"
+    },
+    {
+     "x": "Số cạnh mỗi cửa sổ 5 s (thang log)",
+     "y": "Số cửa sổ (thang log)"
+    }
+   ],
+   "axis_label_problems": [],
+   "numbers": {
+    "n_graphs": 13937,
+    "n_nodes": {
+     "mean": 5.102317571930832,
+     "median": 5.0,
+     "p95": 9.0,
+     "p99": 11.0,
+     "max": 39,
+     "min": 2
+    },
+    "n_edges": {
+     "mean": 4.230178661117888,
+     "median": 4.0,
+     "p95": 9.0,
+     "p99": 11.0,
+     "max": 38,
+     "min": 1
+    },
+    "share_windows_le_300_nodes": 1.0,
+    "edges_per_node_mean": 0.829070045421946
+   },
+   "comment": "Đồ thị rất nhỏ: median 5 node và 4 cạnh mỗi cửa sổ, p99 là 11 node và 11 cạnh, lớn nhất 39 node. 100,00 % cửa sổ có ≤ 300 node nên vẽ được nguyên cửa sổ; mỗi node có trung bình 0,83 cạnh, đủ nhỏ để GNN nhẹ 2 lớp chạy theo thời gian thực."
+  },
+  {
+   "id": "nf_bot_iot_v3/degree_by_class",
+   "dataset": "nf_bot_iot_v3",
+   "level": "graph",
+   "file": "gd2_nf_bot_iot_v3_degree_by_class.png",
+   "title": "NF-BoT-IoT-v3: bậc vào và bậc ra của node theo lớp",
+   "dpi": 160,
+   "axes": [
+    {
+     "x": "Bậc vào (số IP gửi tới node) k (thang log)",
+     "y": "Tỉ lệ node có bậc ≥ k (thang log)"
+    },
+    {
+     "x": "Bậc ra (số IP node gửi tới) k (thang log)",
+     "y": "Tỉ lệ node có bậc ≥ k (thang log)"
+    }
+   ],
+   "axis_label_problems": [],
+   "numbers": {
+    "in_degree_by_class": {
+     "Normal": {
+      "n": 21280,
+      "mean": 1.0230263157894737,
+      "median": 1.0,
+      "p90": 4.0,
+      "p99": 7.0,
+      "max": 8.0
+     },
+     "DoS_DDoS": {
+      "n": 4761,
+      "mean": 0.6223482461667716,
+      "median": 0.0,
+      "p90": 1.0,
+      "p99": 5.0,
+      "max": 8.0
+     },
+     "Truy_cap_trai_phep": {
+      "n": 45070,
+      "mean": 0.7593299312181052,
+      "median": 0.0,
+      "p90": 4.0,
+      "p99": 4.0,
+      "max": 8.0
+     }
+    },
+    "out_degree_by_class": {
+     "Normal": {
+      "n": 21280,
+      "mean": 0.7635808270676692,
+      "median": 1.0,
+      "p90": 1.0,
+      "p99": 3.0,
+      "max": 35.0
+     },
+     "DoS_DDoS": {
+      "n": 4761,
+      "mean": 0.7242176013442554,
+      "median": 1.0,
+      "p90": 1.0,
+      "p99": 2.0,
+      "max": 5.0
+     },
+     "Truy_cap_trai_phep": {
+      "n": 45070,
+      "mean": 0.8710672287552695,
+      "median": 1.0,
+      "p90": 1.0,
+      "p99": 2.0,
+      "max": 6.0
+     }
+    },
+    "share_in_degree_ge5": {
+     "Normal": 0.020958646616541354,
+     "DoS_DDoS": 0.017013232514177693,
+     "Truy_cap_trai_phep": 0.0011759485245174174
+    },
+    "share_out_degree_ge5": {
+     "Normal": 0.003618421052631579,
+     "DoS_DDoS": 0.000630119722747322,
+     "Truy_cap_trai_phep": 0.0002440647881073885
+    },
+    "fan_in_ddos_vs_normal": {
+     "mean_attack": 0.6223482461667716,
+     "mean_normal": 1.0230263157894737,
+     "ratio_mean": 0.6083404078286128,
+     "median_attack": 0.0,
+     "median_normal": 1.0,
+     "p99_attack": 5.0,
+     "p99_normal": 7.0,
+     "max_attack": 8.0,
+     "max_normal": 8.0
+    },
+    "fan_out_scan_vs_normal": {
+     "mean_attack": 0.8710672287552695,
+     "mean_normal": 0.7635808270676692,
+     "ratio_mean": 1.1407662396401093,
+     "median_attack": 1.0,
+     "median_normal": 1.0,
+     "p99_attack": 2.0,
+     "p99_normal": 3.0,
+     "max_attack": 6.0,
+     "max_normal": 35.0
+    },
+    "degree_definition": "số cạnh (cặp src→dst) trong cửa sổ 5 s, mỗi cặp tính một lần"
+   },
+   "comment": "Bậc vào trung bình của DoS_DDoS là 0,62 (lớn nhất 8; 1,70 % node có bậc ≥ 5) so với 1,02 của Normal (2,10 % node có bậc ≥ 5): chỉ bằng 0,61 lần, không có dấu hiệu fan-in ở mức node. Bậc ra trung bình của Truy_cap_trai_phep là 0,87 (lớn nhất 6; 0,02 % node có bậc ≥ 5) so với 0,76 của Normal (0,36 % node có bậc ≥ 5): xấp xỉ nhau (gấp 1,14 lần), bậc này không phân biệt được lớp."
+  },
+  {
+   "id": "nf_bot_iot_v3/homophily",
+   "dataset": "nf_bot_iot_v3",
+   "level": "graph",
+   "file": "gd2_nf_bot_iot_v3_homophily.png",
+   "title": "NF-BoT-IoT-v3: edge homophily và class-insensitive homophily",
+   "dpi": 160,
+   "axes": [
+    {
+     "x": "Lớp của node đích (dst)",
+     "y": "Lớp của node nguồn (src)"
+    },
+    {
+     "x": "Lớp của node",
+     "y": "Tỉ lệ (không đơn vị)"
+    }
+   ],
+   "axis_label_problems": [],
+   "numbers": {
+    "edge_homophily": 0.8614729628875771,
+    "class_insensitive_homophily": 0.7503876943246583,
+    "adjusted_homophily": 0.7255308724666121,
+    "random_edge_homophily": 0.495733102145691,
+    "level_by_class_insensitive": "cao",
+    "class_wise_homophily": {
+     "Normal": 0.7851863541913254,
+     "DoS_DDoS": 0.8101700202776478,
+     "Truy_cap_trai_phep": 0.9054190141803435
+    },
+    "node_fraction": {
+     "Normal": 0.2992504675788556,
+     "DoS_DDoS": 0.06695166711197986,
+     "Truy_cap_trai_phep": 0.6337978653091646
+    },
+    "mixing_matrix_counts": {
+     "Normal": {
+      "Normal": 14926,
+      "DoS_DDoS": 366,
+      "Truy_cap_trai_phep": 957
+     },
+     "DoS_DDoS": {
+      "Normal": 851,
+      "DoS_DDoS": 2597,
+      "Truy_cap_trai_phep": 0
+     },
+     "Truy_cap_trai_phep": {
+      "Normal": 5993,
+      "DoS_DDoS": 0,
+      "Truy_cap_trai_phep": 33266
+     }
+    },
+    "per_split": {
+     "train": {
+      "edge_homophily": 0.859690987538265,
+      "class_insensitive_homophily": 0.7325729095543665,
+      "adjusted_homophily": 0.7229694243555329
+     },
+     "val": {
+      "edge_homophily": 0.8765149782757832,
+      "class_insensitive_homophily": 0.7906532767715844,
+      "adjusted_homophily": 0.7562413339000411
+     },
+     "test": {
+      "edge_homophily": 0.8548664450303795,
+      "class_insensitive_homophily": 0.7707327566123823,
+      "adjusted_homophily": 0.7041811674906902
+     }
+    },
+    "n_edges": 58956,
+    "n_nodes": 71111,
+    "direction": "edge_homophily trên cạnh có hướng; h_k theo cạnh vô hướng (M + M^T)"
+   },
+   "comment": "Edge homophily = 0,861 (mức ngẫu nhiên 0,496) và class-insensitive homophily = 0,750, tức mức cao. Phần lớn cạnh nối các node cùng lớp (cao hơn rõ rệt mức ngẫu nhiên), nên gom thông điệp từ láng giềng có thể giúp GNN làm mượt nhãn; tuy vậy 13,9 % cạnh vẫn nối hai lớp khác nhau (chủ yếu tấn công ↔ Normal), nên láng giềng không thay thế được đặc trưng riêng của từng node."
+  },
+  {
+   "id": "nf_bot_iot_v3/window_normal",
+   "dataset": "nf_bot_iot_v3",
+   "level": "graph_viz",
+   "file": "gd2_nf_bot_iot_v3_window_normal.png",
+   "title": "NF-BoT-IoT-v3: cửa sổ bình thường (win 305269144, 5 node, 6 cạnh)",
+   "dpi": 160,
+   "axes": [],
+   "axis_label_problems": [],
+   "numbers": {
+    "win": 305269144,
+    "t_start_utc": "2018-05-15 00:55:20",
+    "n_nodes": 5,
+    "n_edges": 6,
+    "class_counts": {
+     "Normal": 5
+    },
+    "criterion": "cửa sổ chỉ có node Normal, kích thước gần median (5 node) của các cửa sổ Normal",
+    "split": "train",
+    "layout_seed": 42,
+    "hub_degree": 6,
+    "mean_degree_in_window": 2.4,
+    "hub_reach": 1.0
+   },
+   "comment": "Cửa sổ bình thường gồm 5 node và 6 cạnh; node bậc lớn nhất có bậc 6 (nối tới 100 % số node còn lại) so với bậc trung bình 2,40 của cửa sổ."
+  },
+  {
+   "id": "nf_bot_iot_v3/window_ddos",
+   "dataset": "nf_bot_iot_v3",
+   "level": "graph_viz",
+   "file": "gd2_nf_bot_iot_v3_window_ddos.png",
+   "title": "NF-BoT-IoT-v3: cửa sổ DDoS/DoS (win 305619165, 10 node, 9 cạnh)",
+   "dpi": 160,
+   "axes": [],
+   "axis_label_problems": [],
+   "numbers": {
+    "win": 305619165,
+    "t_start_utc": "2018-06-04 07:03:45",
+    "n_nodes": 10,
+    "n_edges": 9,
+    "class_counts": {
+     "Normal": 5,
+     "DoS_DDoS": 5
+    },
+    "criterion": "cửa sổ ≤ 300 node, ≥ 50 % node DoS_DDoS, có bậc vào lớn nhất của node DoS_DDoS (cao hơn 96,1 % cửa sổ DoS_DDoS khác trong train)",
+    "split": "train",
+    "layout_seed": 42,
+    "hub_degree": 8,
+    "mean_degree_in_window": 0.9,
+    "hub_reach": 0.8888888888888888
+   },
+   "comment": "Cửa sổ DDoS/DoS (10 node, 9 cạnh) có một node fan-in với bậc vào 8, trong khi bậc trung bình toàn cửa sổ chỉ 0,90; node này nằm trên mức cao hơn 96,1 % cửa sổ cùng loại trong train."
+  },
+  {
+   "id": "nf_bot_iot_v3/window_scan",
+   "dataset": "nf_bot_iot_v3",
+   "level": "graph_viz",
+   "file": "gd2_nf_bot_iot_v3_window_scan.png",
+   "title": "NF-BoT-IoT-v3: cửa sổ dò quét/truy cập trái phép (win 305375942, 10 node, 15 cạnh)",
+   "dpi": 160,
+   "axes": [],
+   "axis_label_problems": [],
+   "numbers": {
+    "win": 305375942,
+    "t_start_utc": "2018-05-21 05:15:10",
+    "n_nodes": 10,
+    "n_edges": 15,
+    "class_counts": {
+     "Normal": 5,
+     "Truy_cap_trai_phep": 5
+    },
+    "criterion": "cửa sổ ≤ 300 node, ≥ 50 % node Truy_cap_trai_phep, có bậc ra lớn nhất của node Truy_cap_trai_phep (cao hơn 100,0 % cửa sổ Truy_cap_trai_phep khác trong train)",
+    "split": "train",
+    "layout_seed": 42,
+    "hub_degree": 5,
+    "mean_degree_in_window": 1.5,
+    "hub_reach": 0.5555555555555556
+   },
+   "comment": "Cửa sổ dò quét/truy cập trái phép (10 node, 15 cạnh) có một node fan-out với bậc ra 5, trong khi bậc trung bình toàn cửa sổ chỉ 1,50; node này nằm trên mức cao hơn 100,0 % cửa sổ cùng loại trong train."
+  },
+  {
+   "id": "nf_bot_iot_v3/windows_overview",
+   "dataset": "nf_bot_iot_v3",
+   "level": "graph_viz",
+   "file": "gd2_nf_bot_iot_v3_windows_overview.png",
+   "title": "NF-BoT-IoT-v3: so sánh các cửa sổ mẫu (cùng layout seed 42)",
+   "dpi": 160,
+   "axes": [],
+   "axis_label_problems": [],
+   "numbers": {
+    "windows": {
+     "normal": {
+      "win": 305269144,
+      "t_start_utc": "2018-05-15 00:55:20",
+      "n_nodes": 5,
+      "n_edges": 6,
+      "class_counts": {
+       "Normal": 5
+      },
+      "criterion": "cửa sổ chỉ có node Normal, kích thước gần median (5 node) của các cửa sổ Normal",
+      "split": "train",
+      "layout_seed": 42,
+      "hub_degree": 6,
+      "mean_degree_in_window": 2.4,
+      "hub_reach": 1.0
+     },
+     "ddos": {
+      "win": 305619165,
+      "t_start_utc": "2018-06-04 07:03:45",
+      "n_nodes": 10,
+      "n_edges": 9,
+      "class_counts": {
+       "Normal": 5,
+       "DoS_DDoS": 5
+      },
+      "criterion": "cửa sổ ≤ 300 node, ≥ 50 % node DoS_DDoS, có bậc vào lớn nhất của node DoS_DDoS (cao hơn 96,1 % cửa sổ DoS_DDoS khác trong train)",
+      "split": "train",
+      "layout_seed": 42,
+      "hub_degree": 8,
+      "mean_degree_in_window": 0.9,
+      "hub_reach": 0.8888888888888888
+     },
+     "scan": {
+      "win": 305375942,
+      "t_start_utc": "2018-05-21 05:15:10",
+      "n_nodes": 10,
+      "n_edges": 15,
+      "class_counts": {
+       "Normal": 5,
+       "Truy_cap_trai_phep": 5
+      },
+      "criterion": "cửa sổ ≤ 300 node, ≥ 50 % node Truy_cap_trai_phep, có bậc ra lớn nhất của node Truy_cap_trai_phep (cao hơn 100,0 % cửa sổ Truy_cap_trai_phep khác trong train)",
+      "split": "train",
+      "layout_seed": 42,
+      "hub_degree": 5,
+      "mean_degree_in_window": 1.5,
+      "hub_reach": 0.5555555555555556
+     }
+    }
+   },
+   "comment": "Cùng seed layout và cùng cách tô màu/kích thước cho mọi cửa sổ. Bình thường: 5 node, node trung tâm bậc 6 (nối 100 % node còn lại); DDoS/DoS: 10 node, node trung tâm bậc 8 (nối 89 % node còn lại); Dò quét/truy cập trái phép: 10 node, node trung tâm bậc 5 (nối 56 % node còn lại)."
+  },
+  {
+   "id": "chung/quy_trinh",
+   "dataset": "chung",
+   "level": "diagram",
+   "file": "gd2_chung_quy_trinh.png",
+   "title": "Quy trình dựng đồ thị: flow → cửa sổ 5 giây → đồ thị",
+   "dpi": 160,
+   "axes": [],
+   "axis_label_problems": [],
+   "numbers": {
+    "nf_ton_iot_v3": {
+     "flows_raw": 27520260,
+     "flows_clean": 25661634,
+     "n_graphs": 66693,
+     "mean_nodes": 12.172701782795796,
+     "mean_edges": 14.678946816007677,
+     "window_sec": 5
+    },
+    "nf_bot_iot_v3": {
+     "flows_raw": 16933808,
+     "flows_clean": 16933807,
+     "n_graphs": 13937,
+     "mean_nodes": 5.102317571930832,
+     "mean_edges": 4.230178661117888,
+     "window_sec": 5
+    }
+   },
+   "comment": "NF-ToN-IoT-v3: 27.520.260 flow gốc, 25.661.634 flow sau làm sạch  →  66.693 đồ thị (trung bình 12,2 node và 14,7 cạnh mỗi cửa sổ) NF-BoT-IoT-v3: 16.933.808 flow gốc, 16.933.807 flow sau làm sạch  →  13.937 đồ thị (trung bình 5,1 node và 4,2 cạnh mỗi cửa sổ) Mỗi cửa sổ 5 giây là một đồ thị, node là IP và cạnh là flow."
+  }
+ ],
+ "homophily": {
+  "nf_ton_iot_v3": {
+   "edge_homophily": 0.6708206373348669,
+   "class_insensitive_homophily": 0.5554147271605537,
+   "adjusted_homophily": 0.42741654082698605,
+   "random_edge_homophily": 0.4735988501145372,
+   "level": "khá cao",
+   "meaning_for_gnn": "Phần lớn cạnh nối các node cùng lớp (cao hơn rõ rệt mức ngẫu nhiên), nên gom thông điệp từ láng giềng có thể giúp GNN làm mượt nhãn; tuy vậy 32,9 % cạnh vẫn nối hai lớp khác nhau (chủ yếu tấn công ↔ Normal), nên láng giềng không thay thế được đặc trưng riêng của từng node.",
+   "per_split": {
+    "train": {
+     "edge_homophily": 0.6606359725645757,
+     "class_insensitive_homophily": 0.5926281328480645,
+     "adjusted_homophily": 0.4126250302353643
+    },
+    "val": {
+     "edge_homophily": 0.6875903095889568,
+     "class_insensitive_homophily": 0.5215905904340378,
+     "adjusted_homophily": 0.4254078139289852
+    },
+    "test": {
+     "edge_homophily": 0.7094443060054821,
+     "class_insensitive_homophily": 0.5927905388239917,
+     "adjusted_homophily": 0.4845850712972811
+    }
+   },
+   "class_wise_homophily": {
+    "Normal": 0.7249940904548686,
+    "DoS_DDoS": 0.6312327208398895,
+    "Botnet_Backdoor": 0.47600650129226507,
+    "Truy_cap_trai_phep": 0.5735023888276369,
+    "Khac": 0.8159232072275551
+   }
+  },
+  "nf_bot_iot_v3": {
+   "edge_homophily": 0.8614729628875771,
+   "class_insensitive_homophily": 0.7503876943246583,
+   "adjusted_homophily": 0.7255308724666121,
+   "random_edge_homophily": 0.495733102145691,
+   "level": "cao",
+   "meaning_for_gnn": "Phần lớn cạnh nối các node cùng lớp (cao hơn rõ rệt mức ngẫu nhiên), nên gom thông điệp từ láng giềng có thể giúp GNN làm mượt nhãn; tuy vậy 13,9 % cạnh vẫn nối hai lớp khác nhau (chủ yếu tấn công ↔ Normal), nên láng giềng không thay thế được đặc trưng riêng của từng node.",
+   "per_split": {
+    "train": {
+     "edge_homophily": 0.859690987538265,
+     "class_insensitive_homophily": 0.7325729095543665,
+     "adjusted_homophily": 0.7229694243555329
+    },
+    "val": {
+     "edge_homophily": 0.8765149782757832,
+     "class_insensitive_homophily": 0.7906532767715844,
+     "adjusted_homophily": 0.7562413339000411
+    },
+    "test": {
+     "edge_homophily": 0.8548664450303795,
+     "class_insensitive_homophily": 0.7707327566123823,
+     "adjusted_homophily": 0.7041811674906902
+    }
+   },
+   "class_wise_homophily": {
+    "Normal": 0.7851863541913254,
+    "DoS_DDoS": 0.8101700202776478,
+    "Truy_cap_trai_phep": 0.9054190141803435
+   }
+  }
+ },
+ "flow_tables": {
+  "nf_ton_iot_v3": {
+   "title": "NF-ToN-IoT-v3: thống kê đặc trưng số (min, median, max, % thiếu)",
+   "file": "gd2_nf_ton_iot_v3_flow_stats.csv",
+   "n_features": 49,
+   "n_with_missing": 0,
+   "n_constant": 0,
+   "n_with_negative": 0,
+   "median_source": "mẫu đều 551679 flow",
+   "rows": [
+    {
+     "feature": "L4_SRC_PORT",
+     "unit": "số hiệu cổng",
+     "min": 0.0,
+     "median": 40519.0,
+     "max": 65535.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "L4_DST_PORT",
+     "unit": "số hiệu cổng",
+     "min": 0.0,
+     "median": 2043.0,
+     "max": 65535.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "PROTOCOL",
+     "unit": "",
+     "min": 1.0,
+     "median": 6.0,
+     "max": 58.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "L7_PROTO",
+     "unit": "",
+     "min": 0.0,
+     "median": 7.0,
+     "max": 401.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "IN_BYTES",
+     "unit": "byte",
+     "min": 4.0,
+     "median": 67.0,
+     "max": 79846944.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "IN_PKTS",
+     "unit": "gói",
+     "min": 1.0,
+     "median": 1.0,
+     "max": 1220131.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "OUT_BYTES",
+     "unit": "byte",
+     "min": 0.0,
+     "median": 40.0,
+     "max": 70221306.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "OUT_PKTS",
+     "unit": "gói",
+     "min": 0.0,
+     "median": 1.0,
+     "max": 1350048.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "TCP_FLAGS",
+     "unit": "",
+     "min": 0.0,
+     "median": 17.0,
+     "max": 219.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "CLIENT_TCP_FLAGS",
+     "unit": "",
+     "min": 0.0,
+     "median": 16.0,
+     "max": 219.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "SERVER_TCP_FLAGS",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 31.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "FLOW_DURATION_MILLISECONDS",
+     "unit": "ms",
+     "min": 1.0,
+     "median": 1.0,
+     "max": 120999.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "DURATION_IN",
+     "unit": "ms",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 120999.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "DURATION_OUT",
+     "unit": "ms",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 120989.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "MIN_TTL",
+     "unit": "hop",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 255.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "MAX_TTL",
+     "unit": "hop",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 255.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "LONGEST_FLOW_PKT",
+     "unit": "byte",
+     "min": 28.0,
+     "median": 60.0,
+     "max": 3990.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "SHORTEST_FLOW_PKT",
+     "unit": "byte",
+     "min": 28.0,
+     "median": 52.0,
+     "max": 3990.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "MIN_IP_PKT_LEN",
+     "unit": "byte",
+     "min": 0.0,
+     "median": 40.0,
+     "max": 651.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "MAX_IP_PKT_LEN",
+     "unit": "byte",
+     "min": 28.0,
+     "median": 60.0,
+     "max": 3990.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "SRC_TO_DST_SECOND_BYTES",
+     "unit": "byte/s",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 25265.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "DST_TO_SRC_SECOND_BYTES",
+     "unit": "byte/s",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 44304.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "RETRANSMITTED_IN_BYTES",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 27436158.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "RETRANSMITTED_IN_PKTS",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 20216.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "RETRANSMITTED_OUT_BYTES",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 21150507.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "RETRANSMITTED_OUT_PKTS",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 15163.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "SRC_TO_DST_AVG_THROUGHPUT",
+     "unit": "bit/s",
+     "min": 3.0,
+     "median": 352000.0,
+     "max": 372400000.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "DST_TO_SRC_AVG_THROUGHPUT",
+     "unit": "bit/s",
+     "min": 0.0,
+     "median": 15407.0,
+     "max": 229056000.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "NUM_PKTS_UP_TO_128_BYTES",
+     "unit": "",
+     "min": 0.0,
+     "median": 2.0,
+     "max": 1361532.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "NUM_PKTS_128_TO_256_BYTES",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 50551.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "NUM_PKTS_256_TO_512_BYTES",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 61207.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "NUM_PKTS_512_TO_1024_BYTES",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 667.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "NUM_PKTS_1024_TO_1514_BYTES",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 46229.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "TCP_WIN_MAX_IN",
+     "unit": "byte",
+     "min": 0.0,
+     "median": 1024.0,
+     "max": 65535.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "TCP_WIN_MAX_OUT",
+     "unit": "byte",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 65535.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "ICMP_TYPE",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 65280.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "ICMP_IPV4_TYPE",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 255.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "DNS_QUERY_ID",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 65535.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "DNS_QUERY_TYPE",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 11828.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "DNS_TTL_ANSWER",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 6048000.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "FTP_COMMAND_RET_CODE",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 553.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "SRC_TO_DST_IAT_MIN",
+     "unit": "ms",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 60004.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "SRC_TO_DST_IAT_MAX",
+     "unit": "ms",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 60844.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "SRC_TO_DST_IAT_AVG",
+     "unit": "ms",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 60175.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "SRC_TO_DST_IAT_STDDEV",
+     "unit": "ms",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 30024.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "DST_TO_SRC_IAT_MIN",
+     "unit": "ms",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 60040.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "DST_TO_SRC_IAT_MAX",
+     "unit": "ms",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 60858.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "DST_TO_SRC_IAT_AVG",
+     "unit": "ms",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 60045.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "DST_TO_SRC_IAT_STDDEV",
+     "unit": "ms",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 29849.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    }
+   ],
+   "comment": "49 đặc trưng số: 0 đặc trưng có giá trị thiếu (tối đa 0,000 %), 0 đặc trưng không đổi, 0 đặc trưng có giá trị âm. Median lấy từ mẫu đều 551.679 flow, min, max và % thiếu tính trên toàn bộ 27.520.260 flow."
+  },
+  "nf_bot_iot_v3": {
+   "title": "NF-BoT-IoT-v3: thống kê đặc trưng số (min, median, max, % thiếu)",
+   "file": "gd2_nf_bot_iot_v3_flow_stats.csv",
+   "n_features": 49,
+   "n_with_missing": 2,
+   "n_constant": 0,
+   "n_with_negative": 0,
+   "median_source": "mẫu đều 339116 flow",
+   "rows": [
+    {
+     "feature": "L4_SRC_PORT",
+     "unit": "số hiệu cổng",
+     "min": 0.0,
+     "median": 35077.0,
+     "max": 65535.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "L4_DST_PORT",
+     "unit": "số hiệu cổng",
+     "min": 0.0,
+     "median": 80.0,
+     "max": 65535.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "PROTOCOL",
+     "unit": "",
+     "min": 1.0,
+     "median": 6.0,
+     "max": 58.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "L7_PROTO",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 401.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "IN_BYTES",
+     "unit": "byte",
+     "min": 4.0,
+     "median": 336.0,
+     "max": 189027266.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "IN_PKTS",
+     "unit": "gói",
+     "min": 1.0,
+     "median": 5.0,
+     "max": 49153.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "OUT_BYTES",
+     "unit": "byte",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 196978660.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "OUT_PKTS",
+     "unit": "gói",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 32518.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "TCP_FLAGS",
+     "unit": "",
+     "min": 0.0,
+     "median": 2.0,
+     "max": 214.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "CLIENT_TCP_FLAGS",
+     "unit": "",
+     "min": 0.0,
+     "median": 2.0,
+     "max": 198.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "SERVER_TCP_FLAGS",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 198.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "FLOW_DURATION_MILLISECONDS",
+     "unit": "ms",
+     "min": 0.0,
+     "median": 24268.0,
+     "max": 120998.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "DURATION_IN",
+     "unit": "ms",
+     "min": 0.0,
+     "median": 24259.0,
+     "max": 120998.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "DURATION_OUT",
+     "unit": "ms",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 120997.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "MIN_TTL",
+     "unit": "hop",
+     "min": 0.0,
+     "median": 64.0,
+     "max": 241.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "MAX_TTL",
+     "unit": "hop",
+     "min": 0.0,
+     "median": 64.0,
+     "max": 241.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "LONGEST_FLOW_PKT",
+     "unit": "byte",
+     "min": 28.0,
+     "median": 44.0,
+     "max": 65212.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "SHORTEST_FLOW_PKT",
+     "unit": "byte",
+     "min": 28.0,
+     "median": 40.0,
+     "max": 576.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "MIN_IP_PKT_LEN",
+     "unit": "byte",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 455.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "MAX_IP_PKT_LEN",
+     "unit": "byte",
+     "min": 28.0,
+     "median": 44.0,
+     "max": 65212.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "SRC_TO_DST_SECOND_BYTES",
+     "unit": "byte/s",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 7269.0,
+     "n_missing": 1052105,
+     "pct_missing": 6.213044343008968,
+     "n_negative": 0
+    },
+    {
+     "feature": "DST_TO_SRC_SECOND_BYTES",
+     "unit": "byte/s",
+     "min": 0.0006780120686148,
+     "median": 0.0140553625112247,
+     "max": 2099.1367684619654,
+     "n_missing": 1052105,
+     "pct_missing": 6.213044343008968,
+     "n_negative": 0
+    },
+    {
+     "feature": "RETRANSMITTED_IN_BYTES",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 921012.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "RETRANSMITTED_IN_PKTS",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 3266.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "RETRANSMITTED_OUT_BYTES",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 5737.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "RETRANSMITTED_OUT_PKTS",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 12.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "SRC_TO_DST_AVG_THROUGHPUT",
+     "unit": "bit/s",
+     "min": 5.0,
+     "median": 119.0,
+     "max": 92488000.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "DST_TO_SRC_AVG_THROUGHPUT",
+     "unit": "bit/s",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 29076000.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "NUM_PKTS_UP_TO_128_BYTES",
+     "unit": "",
+     "min": 0.0,
+     "median": 2.0,
+     "max": 9384.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "NUM_PKTS_128_TO_256_BYTES",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 605.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "NUM_PKTS_256_TO_512_BYTES",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 3267.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "NUM_PKTS_512_TO_1024_BYTES",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 9921.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "NUM_PKTS_1024_TO_1514_BYTES",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 8954.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "TCP_WIN_MAX_IN",
+     "unit": "byte",
+     "min": 0.0,
+     "median": 512.0,
+     "max": 65535.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "TCP_WIN_MAX_OUT",
+     "unit": "byte",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 42408.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "ICMP_TYPE",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 65280.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "ICMP_IPV4_TYPE",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 255.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "DNS_QUERY_ID",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 65534.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "DNS_QUERY_TYPE",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 255.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "DNS_TTL_ANSWER",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 4294915672.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "FTP_COMMAND_RET_CODE",
+     "unit": "",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 530.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "SRC_TO_DST_IAT_MIN",
+     "unit": "ms",
+     "min": 0.0,
+     "median": 3118.0,
+     "max": 59757.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "SRC_TO_DST_IAT_MAX",
+     "unit": "ms",
+     "min": 0.0,
+     "median": 7238.0,
+     "max": 60842.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "SRC_TO_DST_IAT_AVG",
+     "unit": "ms",
+     "min": 0.0,
+     "median": 4864.0,
+     "max": 59757.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "SRC_TO_DST_IAT_STDDEV",
+     "unit": "ms",
+     "min": 0.0,
+     "median": 957.0,
+     "max": 29410.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "DST_TO_SRC_IAT_MIN",
+     "unit": "ms",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 60153.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "DST_TO_SRC_IAT_MAX",
+     "unit": "ms",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 60573.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "DST_TO_SRC_IAT_AVG",
+     "unit": "ms",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 60153.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    },
+    {
+     "feature": "DST_TO_SRC_IAT_STDDEV",
+     "unit": "ms",
+     "min": 0.0,
+     "median": 0.0,
+     "max": 27212.0,
+     "n_missing": 0,
+     "pct_missing": 0.0,
+     "n_negative": 0
+    }
+   ],
+   "comment": "49 đặc trưng số: 2 đặc trưng có giá trị thiếu (tối đa 6,213 %), 0 đặc trưng không đổi, 0 đặc trưng có giá trị âm. Median lấy từ mẫu đều 339.116 flow, min, max và % thiếu tính trên toàn bộ 16.933.808 flow."
+  }
+ },
+ "datasets": {
+  "nf_ton_iot_v3": {
+   "n_flows": 27520260,
+   "n_graphs": 66693,
+   "classes": [
+    "Normal",
+    "DoS_DDoS",
+    "Botnet_Backdoor",
+    "Truy_cap_trai_phep",
+    "Khac"
+   ],
+   "smoke": false
+  },
+  "nf_bot_iot_v3": {
+   "n_flows": 16933808,
+   "n_graphs": 13937,
+   "classes": [
+    "Normal",
+    "DoS_DDoS",
+    "Truy_cap_trai_phep"
+   ],
+   "smoke": false
+  }
+ }
+}

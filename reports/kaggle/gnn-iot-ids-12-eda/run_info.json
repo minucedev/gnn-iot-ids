@@ -1,0 +1,33 @@
+{
+ "steps_s": {
+  "clone_va_cai_goi": 113.5,
+  "pytest_eda": 24.4,
+  "eda_nf_ton_iot_v3": 263.0,
+  "eda_nf_bot_iot_v3": 156.3,
+  "gop_va_kiem_tra": 10.4
+ },
+ "device": "CPU",
+ "gpu": null,
+ "smoke": false,
+ "commit": "d2e4d1ab4113b341045bcb6ad104692bbd297d2b",
+ "total_s": 574.9,
+ "peak_ram_gb": 4.23,
+ "cpu_count": 4,
+ "pytest": "5 passed, 3 warnings in 19.58s",
+ "n_figures": 26,
+ "figures_per_dataset": {
+  "nf_ton_iot_v3": 13,
+  "nf_bot_iot_v3": 12
+ },
+ "homophily": {
+  "nf_ton_iot_v3": {
+   "edge_homophily": 0.6708206373348669,
+   "class_insensitive_homophily": 0.5554147271605537
+  },
+  "nf_bot_iot_v3": {
+   "edge_homophily": 0.8614729628875771,
+   "class_insensitive_homophily": 0.7503876943246583
+  }
+ },
+ "problems": []
+}

@@ -1,0 +1,3 @@
+dataset,edge_homophily,class_insensitive_homophily,adjusted_homophily,random_edge_homophily,level
+NF-ToN-IoT-v3,0.670821,0.555415,0.427417,0.473599,khá cao
+NF-BoT-IoT-v3,0.861473,0.750388,0.725531,0.495733,cao
