@@ -300,9 +300,11 @@ def fig_time(rec, ds_title, per_min, raw_counts):
     cand = set(seg_start.tolist())
     for a, b in zip(seg_start, np.r_[seg_start[1:], len(bins)]):
         cand |= set(range(int(a), int(b), 60))
-    cand = sorted(cand)
-    if len(cand) > 14:
-        cand = [cand[i] for i in np.unique(np.linspace(0, len(cand) - 1, 14).round().astype(int))]
+    kept = []                               # bỏ nhãn cách nhãn trước < 7 % chiều rộng trục để không đè nhau
+    for j in sorted(cand):
+        if not kept or pos[j] - pos[kept[-1]] >= 0.07 * pos[-1]:
+            kept.append(j)
+    cand = kept
     for ax in axes:
         for j in np.flatnonzero(brk):
             ax.axvline(pos[j] - 2, color="#999999", ls="--", lw=0.8)
