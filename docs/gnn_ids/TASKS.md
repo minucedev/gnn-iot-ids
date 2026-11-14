@@ -31,7 +31,7 @@ Phúc làm toàn bộ task. Một task chỉ được chuyển sang `Xong` khi �
 | [3.2](#32-lý-thuyết-gnn-tại-sao-chọn-và-còn-mô-hình-nào-khác) | Lý thuyết GNN | GĐ3 | Phúc | Tự kiểm | 3 | B | Chưa làm |
 | [3.3](#33-lý-thuyết-baseline-ml-chỉ-số-đánh-giá-và-ahp) | Lý thuyết baseline, chỉ số, AHP | GĐ3 | Phúc | Tự kiểm | 4 | B | Chưa làm |
 | [3.4](#34-bảng-tổng-quan-nghiên-cứu-liên-quan) | Tổng quan nghiên cứu liên quan | GĐ3 | Phúc | Tự kiểm | 4 | B | Chưa làm |
-| [4.1](#41-baseline-ml-trên-đặc-trưng-node) | Baseline ML trên đặc trưng node | GĐ4 | Phúc | Tự kiểm | 4 | B | Chưa làm |
+| [4.1](#41-baseline-ml-trên-đặc-trưng-node) | Baseline ML trên đặc trưng node | GĐ4 | Phúc | Tự kiểm | 4 | B | **Xong** |
 | [4.2](#42-baseline-mức-flow) | Baseline mức flow | GĐ4 | Phúc | Tự kiểm | 4 | N | Chưa làm |
 | [5.1](#51-dataloader-pyg-và-vòng-huấn-luyện-chung) | Dataloader PyG, vòng huấn luyện | GĐ5 | Phúc | Tự kiểm | 4 | B | Chưa làm |
 | [5.2](#52-gnn-cơ-sở-gcn-và-graphsage) | GCN và GraphSAGE | GĐ5 | Phúc | Tự kiểm | 5 | B | Đang làm |
@@ -428,7 +428,7 @@ Làm mốc so sánh.
 
 LR, RF, XGBoost, LightGBM, MLP.
 
-- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 4 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** Xong · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 4 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** Baseline, Thuật toán & đánh giá
 - **Đầu vào:** `graphs_<bộ>.pt` (chỉ lấy `x` và `y`, bỏ cạnh), `split.json`, `evaluate.py`
 - **Đầu ra:** `notebooks/04_baseline.ipynb`; `models/baseline_*`; dòng kết quả `split=val` trong `results.csv`; file log không gian tìm kiếm siêu tham số
@@ -450,8 +450,8 @@ LR, RF, XGBoost, LightGBM, MLP.
     3. **Đạt.** 15 dòng = 5 mô hình × seed 42, 43, 44, mỗi (model, seed) đúng 1 dòng.
     4. **Đạt.** Cột `n_params`, `size_kb`, `infer_ms_per_window` có ở cả 15 dòng.
     5. **Đạt.** 15/15 dòng `split=val`, `task=multiclass`; không có dòng test.
-    6. **Chờ Phúc chốt.** `fpr`, `recall_attack`, `roc_auc` đã là chỉ số nhị phân suy ra từ dự đoán đa lớp (Normal là lớp âm, xem `src/evaluate.py`); chưa có dòng `task=binary` riêng. Đề xuất coi là đạt; chưa huấn luyện thêm.
-  - **Còn thiếu:** chỉ còn tiêu chí 6 (cả 2 bộ). Chưa đổi trạng thái sang Xong.
+    6. **Đạt (Phúc chấp nhận 14/11/2026).** `fpr`, `recall_attack`, `roc_auc` đã là chỉ số nhị phân suy ra từ dự đoán đa lớp (Normal là lớp âm, xem `src/evaluate.py`), có ở mọi dòng của cả 2 bộ. Không huấn luyện mô hình nhị phân riêng, không có dòng `task=binary`; nếu cần precision hoặc F1 của lớp "tấn công" gộp thì tính lại từ dự đoán ở GĐ H.
+  - **Đủ cả 2 bộ (NF-ToN-IoT-v3 từ notebook 05, NF-BoT-IoT-v3 từ notebook 13), 6/6 tiêu chí đạt → Xong.** Test chưa chạy (để GĐ H).
 
 ### 4.2 Baseline mức flow
 
