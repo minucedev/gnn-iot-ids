@@ -1,0 +1,38 @@
+{
+ "steps_s": {
+  "clone_va_cai_goi": 85.8,
+  "pytest": 22.0,
+  "fpr_nf_ton_iot_v3": 364.5,
+  "fpr_nf_bot_iot_v3": 176.9
+ },
+ "device": "CPU",
+ "gpu": null,
+ "commit": "e1cc0fb6fd8d4aa66bde63a00c2192e6343a3c78",
+ "total_s": 656.0,
+ "peak_ram_gb": 19.61,
+ "cpu_count": 4,
+ "pytest": "9 passed, 3 warnings in 16.53s",
+ "check_label_match_nf_ton_iot_v3": 1.0,
+ "fpr_nf_ton_iot_v3": {
+  "lightgbm": 0.0792,
+  "gat": 0.0731
+ },
+ "check_label_match_nf_bot_iot_v3": 1.0,
+ "fpr_nf_bot_iot_v3": {
+  "lightgbm": 0.1967,
+  "gat": 0.2084
+ },
+ "files": [
+  "fpr_analysis_nf_bot_iot_v3.json",
+  "fpr_analysis_nf_ton_iot_v3.json",
+  "gd5_fpr_nf_bot_iot_v3_centroid.png",
+  "gd5_fpr_nf_bot_iot_v3_ip.png",
+  "gd5_fpr_nf_bot_iot_v3_purity.png",
+  "gd5_fpr_nf_bot_iot_v3_relabel.png",
+  "gd5_fpr_nf_ton_iot_v3_centroid.png",
+  "gd5_fpr_nf_ton_iot_v3_ip.png",
+  "gd5_fpr_nf_ton_iot_v3_purity.png",
+  "gd5_fpr_nf_ton_iot_v3_relabel.png",
+  "run_info.json"
+ ]
+}

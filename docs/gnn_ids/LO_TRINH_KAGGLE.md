@@ -71,7 +71,7 @@ Cập nhật sau mỗi lần chạy. Giờ GPU lấy từ `run_info.json`.
 | C | 12-eda | v4 (v1 chạy thử, v2–v3 sửa hình) | `d2e4d1a` | Xong (13/11), 2.2 và 2.3 có ghi chú | 0 (CPU, 575 s, RAM đỉnh 4,23 GB) | 26 hình `gd2_*.png` vào `reports/figures/`; `eda_summary.json`, `run_info.json`, `gd2_<bộ>_flow_stats.csv`, `gd2_homophily.csv` trong `reports/kaggle/gnn-iot-ids-12-eda/` |
 | D | 13-baselines | v1 | `93c6625` | Xong (chạy 12/11, tiêu chí 6 được Phúc chấp nhận 14/11) | 0 (CPU, 293 s, RAM đỉnh 0,85 GB) | `results_baselines_nf_bot_iot_v3.csv`, `baseline_search_nf_bot_iot_v3.json`, `run_info.json` |
 | E | 14-train-gnn-bot | v1 | `ac05c06` | Chạy xong (12/11); 5.2, 5.3 để `Đang làm`: FPR val 20,6–22,3% > 4,08%, chưa có log tinh chỉnh, bảng tham số theo lớp, trọng số attention | 0 (CPU 4 lõi, 424,5 s tổng, 276,6 s huấn luyện, RAM đỉnh 0,66 GB; không dùng GPU) | `results_gnn_nf_bot_iot_v3.csv`, `curves_nf_bot_iot_v3.csv`, `run_info.json` trong `reports/kaggle/gnn-iot-ids-14-train-gnn-bot/`; 9 `ckpt/*.pt` ở lại trên Kaggle cho GĐ F |
-| F | 15-hybrid | | | Chưa làm | | |
+| F | 15a-fpr-analysis, 15-hybrid | 15a: v1 | 15a: `e1cc0fb`; code hybrid: `01aaafa` | **Đang làm (14/11):** 15a xong (phân tích FPR, đang chờ Phúc quyết đề xuất gán nhãn ở ToN); code hybrid xong, `pytest` 76 passed trên Kaggle CPU (notebook `15t-hybrid-tests`); **notebook 15 chưa chạy, chờ Phúc xem giờ GPU** | 15a: 0 (CPU, 656 s, RAM đỉnh 19,61 GB); 15: chưa chạy | 15a: `fpr_analysis_<bộ>.json`, 8 hình `gd5_fpr_*.png`, `run_info.json` trong `reports/kaggle/gnn-iot-ids-15a-fpr-analysis/` |
 | G | 16-ablation | | | Chưa làm | | |
 | H | 17-final-test, 18-aggregate | | | Chưa làm | | |
 | I | 19-ahp, 20-realtime | | | Chưa làm | 0 | |

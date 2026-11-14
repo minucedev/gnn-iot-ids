@@ -1,0 +1,612 @@
+{
+ "dataset": "nf_ton_iot_v3",
+ "classes": [
+  "Normal",
+  "DoS_DDoS",
+  "Botnet_Backdoor",
+  "Truy_cap_trai_phep",
+  "Khac"
+ ],
+ "n_val_nodes": 121599,
+ "n_val_normal": 88461,
+ "model_config": {
+  "lightgbm": {
+   "n_estimators": 300,
+   "num_leaves": 63,
+   "seed": 42,
+   "train": "train"
+  },
+  "gat": {
+   "ckpt": "nf_ton_iot_v3_gat_s42.pt"
+  }
+ },
+ "val_overview": {
+  "lightgbm": {
+   "accuracy": 0.9187822268275233,
+   "f1_macro": 0.8983368433926993,
+   "fpr": 0.0792100473655057,
+   "recall_attack": 0.9552175749894382,
+   "roc_auc": 0.9847974438651506
+  },
+  "gat": {
+   "accuracy": 0.929588236745368,
+   "f1_macro": 0.9154601095295165,
+   "fpr": 0.07306044471575045,
+   "recall_attack": 0.9612529422415353,
+   "roc_auc": 0.9828082699253227
+  }
+ },
+ "check_recomputed_label_matches_graph": 1.0,
+ "n_nodes_without_out_flow": 59273,
+ "val_label_counts_by_rule": {
+  "hien_tai": {
+   "Normal": 88461,
+   "DoS_DDoS": 16766,
+   "Botnet_Backdoor": 4648,
+   "Truy_cap_trai_phep": 10424,
+   "Khac": 1300
+  },
+  "tat_ca_flow": {
+   "Normal": 83627,
+   "DoS_DDoS": 17162,
+   "Botnet_Backdoor": 5475,
+   "Truy_cap_trai_phep": 13949,
+   "Khac": 1386
+  },
+  "chi_khoi_tao": {
+   "Normal": 48041,
+   "DoS_DDoS": 6265,
+   "Botnet_Backdoor": 2281,
+   "Truy_cap_trai_phep": 4903,
+   "Khac": 836
+  },
+  "co_flow_tan_cong": {
+   "Normal": 73428,
+   "DoS_DDoS": 23767,
+   "Botnet_Backdoor": 5729,
+   "Truy_cap_trai_phep": 17089,
+   "Khac": 1586
+  }
+ },
+ "ip_overall": {
+  "n_ip_train_val": 11825,
+  "n_ip_attack_node_train_val": 480
+ },
+ "models": {
+  "lightgbm": {
+   "rates": {
+    "n_normal": 88461,
+    "n_attack": 33138,
+    "n_fp": 7007,
+    "fpr": 0.0792100473655057,
+    "recall_attack": 0.9552175749894382
+   },
+   "fp_predicted_as": {
+    "DoS_DDoS": 1293,
+    "Botnet_Backdoor": 165,
+    "Truy_cap_trai_phep": 5085,
+    "Khac": 464
+   },
+   "ip": {
+    "n_ip_normal_val": 5494,
+    "n_ip_with_fp": 190,
+    "total_fp": 7007,
+    "share_fp_top1": 0.14071642643071214,
+    "share_fp_top3": 0.33124018838304553,
+    "share_fp_ip_also_attack_node": 0.861709718852576,
+    "share_normal_ip_also_attack_node": 0.025118310884601383,
+    "top": [
+     {
+      "ip": "192.168.1.193",
+      "val_normal_nodes": 5197,
+      "fp": 986,
+      "ref_attack_nodes": 23732,
+      "ref_normal_nodes": 23948,
+      "fp_rate": 0.18972484125456995
+     },
+     {
+      "ip": "192.168.1.194",
+      "val_normal_nodes": 1843,
+      "fp": 674,
+      "ref_attack_nodes": 7450,
+      "ref_normal_nodes": 11755,
+      "fp_rate": 0.3657080846446012
+     },
+     {
+      "ip": "192.168.1.152",
+      "val_normal_nodes": 8111,
+      "fp": 661,
+      "ref_attack_nodes": 10986,
+      "ref_normal_nodes": 34800,
+      "fp_rate": 0.08149426704475404
+     },
+     {
+      "ip": "192.168.1.184",
+      "val_normal_nodes": 1885,
+      "fp": 652,
+      "ref_attack_nodes": 8176,
+      "ref_normal_nodes": 9217,
+      "fp_rate": 0.3458885941644562
+     },
+     {
+      "ip": "101.119.11.17",
+      "val_normal_nodes": 563,
+      "fp": 505,
+      "ref_attack_nodes": 2408,
+      "ref_normal_nodes": 2531,
+      "fp_rate": 0.8969804618117229
+     },
+     {
+      "ip": "101.119.11.11",
+      "val_normal_nodes": 511,
+      "fp": 438,
+      "ref_attack_nodes": 3895,
+      "ref_normal_nodes": 2061,
+      "fp_rate": 0.8571428571428571
+     },
+     {
+      "ip": "52.59.177.21",
+      "val_normal_nodes": 785,
+      "fp": 383,
+      "ref_attack_nodes": 2647,
+      "ref_normal_nodes": 3175,
+      "fp_rate": 0.4878980891719745
+     },
+     {
+      "ip": "176.28.50.165",
+      "val_normal_nodes": 969,
+      "fp": 236,
+      "ref_attack_nodes": 7002,
+      "ref_normal_nodes": 4454,
+      "fp_rate": 0.2435500515995872
+     },
+     {
+      "ip": "192.168.1.33",
+      "val_normal_nodes": 1101,
+      "fp": 221,
+      "ref_attack_nodes": 17507,
+      "ref_normal_nodes": 6399,
+      "fp_rate": 0.20072661217075385
+     },
+     {
+      "ip": "192.168.1.1",
+      "val_normal_nodes": 3875,
+      "fp": 213,
+      "ref_attack_nodes": 8094,
+      "ref_normal_nodes": 19837,
+      "fp_rate": 0.05496774193548387
+     }
+    ],
+    "all": null
+   },
+   "purity": {
+    "fp": {
+     "n": 7007,
+     "share_label_from_in_only": 0.9246467817896389,
+     "mean_n_out": 29.65677179962894,
+     "median_n_out": 0.0,
+     "mean_n_in": 6.9715998287426855,
+     "median_n_in": 2.0,
+     "mean_all_normal_frac": 0.9372726122877058,
+     "median_all_normal_frac": 1.0,
+     "share_all_flows_normal": 0.7727986299414871,
+     "share_less_than_half_flows_normal": 0.0015698587127158557,
+     "mean_label_purity": 0.9394082701936823,
+     "share_label_via_out_but_in_flows_mostly_attack": 0.22988505747126436,
+     "hist_all_normal_frac": [
+      4,
+      2,
+      3,
+      2,
+      0,
+      272,
+      413,
+      418,
+      364,
+      5529
+     ]
+    },
+    "tn": {
+     "n": 81454,
+     "share_label_from_in_only": 0.41668917425786334,
+     "mean_n_out": 12.313170623910429,
+     "median_n_out": 1.0,
+     "mean_n_in": 17.534743536229037,
+     "median_n_in": 1.0,
+     "mean_all_normal_frac": 0.9193833046649026,
+     "median_all_normal_frac": 1.0,
+     "share_all_flows_normal": 0.8349866182139613,
+     "share_less_than_half_flows_normal": 0.07572372136420556,
+     "mean_label_purity": 0.9974064685330102,
+     "share_label_via_out_but_in_flows_mostly_attack": 0.4887994316836372,
+     "hist_all_normal_frac": [
+      1598,
+      1203,
+      1251,
+      1462,
+      654,
+      1307,
+      1264,
+      1369,
+      1779,
+      69567
+     ]
+    }
+   },
+   "centroid": {
+    "fp": {
+     "n": 7007,
+     "nearest_share": {
+      "Normal": 0.04937919223633509,
+      "DoS_DDoS": 0.04809476238047666,
+      "Botnet_Backdoor": 0.2431853860425289,
+      "Truy_cap_trai_phep": 0.12944198658484374,
+      "Khac": 0.5298986727558156
+     },
+     "mean_dist_to_normal": 3.9288446348010866,
+     "mean_dist_to_nearest_attack": 2.969189219164774,
+     "share_closer_to_normal_than_any_attack": 0.04937919223633509
+    },
+    "tn": {
+     "n": 81454,
+     "nearest_share": {
+      "Normal": 0.512767942642473,
+      "DoS_DDoS": 0.12186019102806492,
+      "Botnet_Backdoor": 0.032005794681660815,
+      "Truy_cap_trai_phep": 0.048456797701770325,
+      "Khac": 0.2849092739460309
+     },
+     "mean_dist_to_normal": 3.8466413827770256,
+     "mean_dist_to_nearest_attack": 3.9092441167275735,
+     "share_closer_to_normal_than_any_attack": 0.512767942642473
+    }
+   },
+   "relabel": {
+    "hien_tai": {
+     "desc": "Hiện tại: đa số flow ra; không có flow ra thì đa số flow nhận",
+     "n_normal": 88461,
+     "n_attack": 33138,
+     "n_fp": 7007,
+     "fpr": 0.0792100473655057,
+     "recall_attack": 0.9552175749894382,
+     "n_nodes_kept": 121599,
+     "n_dropped": 0,
+     "n_label_changed": 0,
+     "share_label_changed": 0.0,
+     "label_counts": {
+      "Normal": 88461,
+      "DoS_DDoS": 16766,
+      "Botnet_Backdoor": 4648,
+      "Truy_cap_trai_phep": 10424,
+      "Khac": 1300
+     }
+    },
+    "tat_ca_flow": {
+     "desc": "Đa số trên mọi flow (ra + nhận)",
+     "n_normal": 83627,
+     "n_attack": 37972,
+     "n_fp": 8871,
+     "fpr": 0.10607818049194638,
+     "recall_attack": 0.7845254397977457,
+     "n_nodes_kept": 121599,
+     "n_dropped": 0,
+     "n_label_changed": 8816,
+     "share_label_changed": 0.0725005962220084,
+     "label_counts": {
+      "Normal": 83627,
+      "DoS_DDoS": 17162,
+      "Botnet_Backdoor": 5475,
+      "Truy_cap_trai_phep": 13949,
+      "Khac": 1386
+     }
+    },
+    "chi_khoi_tao": {
+     "desc": "Chỉ node có flow ra (node chỉ nhận bị bỏ khỏi đánh giá)",
+     "n_normal": 48041,
+     "n_attack": 14285,
+     "n_fp": 528,
+     "fpr": 0.01099061218542495,
+     "recall_attack": 0.943577178858943,
+     "n_nodes_kept": 62326,
+     "n_dropped": 59273,
+     "n_label_changed": 0,
+     "share_label_changed": 0.0,
+     "label_counts": {
+      "Normal": 48041,
+      "DoS_DDoS": 6265,
+      "Botnet_Backdoor": 2281,
+      "Truy_cap_trai_phep": 4903,
+      "Khac": 836
+     }
+    },
+    "co_flow_tan_cong": {
+     "desc": "Có ≥ 1 flow tấn công (ra hoặc nhận) thì là tấn công",
+     "n_normal": 73428,
+     "n_attack": 48171,
+     "n_fp": 5415,
+     "fpr": 0.07374571008334695,
+     "recall_attack": 0.6901662826181728,
+     "n_nodes_kept": 121599,
+     "n_dropped": 0,
+     "n_label_changed": 15033,
+     "share_label_changed": 0.12362766141168924,
+     "label_counts": {
+      "Normal": 73428,
+      "DoS_DDoS": 23767,
+      "Botnet_Backdoor": 5729,
+      "Truy_cap_trai_phep": 17089,
+      "Khac": 1586
+     }
+    }
+   }
+  },
+  "gat": {
+   "rates": {
+    "n_normal": 88461,
+    "n_attack": 33138,
+    "n_fp": 6463,
+    "fpr": 0.07306044471575045,
+    "recall_attack": 0.9612529422415353
+   },
+   "fp_predicted_as": {
+    "DoS_DDoS": 1003,
+    "Botnet_Backdoor": 140,
+    "Truy_cap_trai_phep": 4660,
+    "Khac": 660
+   },
+   "ip": {
+    "n_ip_normal_val": 5494,
+    "n_ip_with_fp": 215,
+    "total_fp": 6463,
+    "share_fp_top1": 0.17592449326937953,
+    "share_fp_top3": 0.40198050440971683,
+    "share_fp_ip_also_attack_node": 0.899118056630048,
+    "share_normal_ip_also_attack_node": 0.025118310884601383,
+    "top": [
+     {
+      "ip": "192.168.1.193",
+      "val_normal_nodes": 5197,
+      "fp": 1137,
+      "ref_attack_nodes": 23732,
+      "ref_normal_nodes": 23948,
+      "fp_rate": 0.21878006542235906
+     },
+     {
+      "ip": "192.168.1.152",
+      "val_normal_nodes": 8111,
+      "fp": 742,
+      "ref_attack_nodes": 10986,
+      "ref_normal_nodes": 34800,
+      "fp_rate": 0.09148070521513993
+     },
+     {
+      "ip": "192.168.1.184",
+      "val_normal_nodes": 1885,
+      "fp": 719,
+      "ref_attack_nodes": 8176,
+      "ref_normal_nodes": 9217,
+      "fp_rate": 0.3814323607427056
+     },
+     {
+      "ip": "192.168.1.194",
+      "val_normal_nodes": 1843,
+      "fp": 676,
+      "ref_attack_nodes": 7450,
+      "ref_normal_nodes": 11755,
+      "fp_rate": 0.3667932718393923
+     },
+     {
+      "ip": "52.59.177.21",
+      "val_normal_nodes": 785,
+      "fp": 415,
+      "ref_attack_nodes": 2647,
+      "ref_normal_nodes": 3175,
+      "fp_rate": 0.5286624203821656
+     },
+     {
+      "ip": "192.168.1.1",
+      "val_normal_nodes": 3875,
+      "fp": 323,
+      "ref_attack_nodes": 8094,
+      "ref_normal_nodes": 19837,
+      "fp_rate": 0.08335483870967741
+     },
+     {
+      "ip": "192.168.1.33",
+      "val_normal_nodes": 1101,
+      "fp": 272,
+      "ref_attack_nodes": 17507,
+      "ref_normal_nodes": 6399,
+      "fp_rate": 0.24704813805631246
+     },
+     {
+      "ip": "176.28.50.165",
+      "val_normal_nodes": 969,
+      "fp": 237,
+      "ref_attack_nodes": 7002,
+      "ref_normal_nodes": 4454,
+      "fp_rate": 0.24458204334365324
+     },
+     {
+      "ip": "18.184.104.180",
+      "val_normal_nodes": 522,
+      "fp": 207,
+      "ref_attack_nodes": 2812,
+      "ref_normal_nodes": 1760,
+      "fp_rate": 0.39655172413793105
+     },
+     {
+      "ip": "192.168.1.190",
+      "val_normal_nodes": 5143,
+      "fp": 195,
+      "ref_attack_nodes": 13106,
+      "ref_normal_nodes": 22754,
+      "fp_rate": 0.0379156134551818
+     }
+    ],
+    "all": null
+   },
+   "purity": {
+    "fp": {
+     "n": 6463,
+     "share_label_from_in_only": 0.8017948321213059,
+     "mean_n_out": 18.5949249574501,
+     "median_n_out": 0.0,
+     "mean_n_in": 14.809685904378771,
+     "median_n_in": 3.0,
+     "mean_all_normal_frac": 0.9122573089689835,
+     "median_all_normal_frac": 1.0,
+     "share_all_flows_normal": 0.7179328485223581,
+     "share_less_than_half_flows_normal": 0.01701995977100418,
+     "mean_label_purity": 0.9328405652784074,
+     "share_label_via_out_but_in_flows_mostly_attack": 0.43775100401606426,
+     "hist_all_normal_frac": [
+      20,
+      42,
+      28,
+      17,
+      3,
+      335,
+      433,
+      448,
+      371,
+      4766
+     ]
+    },
+    "tn": {
+     "n": 81998,
+     "share_label_from_in_only": 0.429742188833874,
+     "mean_n_out": 13.300117076026245,
+     "median_n_out": 1.0,
+     "mean_n_in": 16.84687431400766,
+     "median_n_in": 1.0,
+     "mean_all_normal_frac": 0.9214736689261739,
+     "median_all_normal_frac": 1.0,
+     "share_all_flows_normal": 0.8388985097197492,
+     "share_less_than_half_flows_normal": 0.07401400034147175,
+     "mean_label_purity": 0.9975393505175809,
+     "share_label_via_out_but_in_flows_mostly_attack": 0.4878553220143331,
+     "hist_all_normal_frac": [
+      1582,
+      1163,
+      1226,
+      1447,
+      651,
+      1244,
+      1244,
+      1339,
+      1772,
+      70330
+     ]
+    }
+   },
+   "centroid": {
+    "fp": {
+     "n": 6463,
+     "nearest_share": {
+      "Normal": 0.07349528082933622,
+      "DoS_DDoS": 0.08711124864613956,
+      "Botnet_Backdoor": 0.30280055701686526,
+      "Truy_cap_trai_phep": 0.14637165403063593,
+      "Khac": 0.3902212594770231
+     },
+     "mean_dist_to_normal": 4.205344558509616,
+     "mean_dist_to_nearest_attack": 3.28498491879408,
+     "share_closer_to_normal_than_any_attack": 0.07349528082933622
+    },
+    "tn": {
+     "n": 81998,
+     "nearest_share": {
+      "Normal": 0.5077928729969023,
+      "DoS_DDoS": 0.11829556818458987,
+      "Botnet_Backdoor": 0.02870801726871387,
+      "Truy_cap_trai_phep": 0.047659699017049195,
+      "Khac": 0.2975438425327447
+     },
+     "mean_dist_to_normal": 3.8253932982160963,
+     "mean_dist_to_nearest_attack": 3.878116803000674,
+     "share_closer_to_normal_than_any_attack": 0.5077928729969023
+    }
+   },
+   "relabel": {
+    "hien_tai": {
+     "desc": "Hiện tại: đa số flow ra; không có flow ra thì đa số flow nhận",
+     "n_normal": 88461,
+     "n_attack": 33138,
+     "n_fp": 6463,
+     "fpr": 0.07306044471575045,
+     "recall_attack": 0.9612529422415353,
+     "n_nodes_kept": 121599,
+     "n_dropped": 0,
+     "n_label_changed": 0,
+     "share_label_changed": 0.0,
+     "label_counts": {
+      "Normal": 88461,
+      "DoS_DDoS": 16766,
+      "Botnet_Backdoor": 4648,
+      "Truy_cap_trai_phep": 10424,
+      "Khac": 1300
+     }
+    },
+    "tat_ca_flow": {
+     "desc": "Đa số trên mọi flow (ra + nhận)",
+     "n_normal": 83627,
+     "n_attack": 37972,
+     "n_fp": 8188,
+     "fpr": 0.09791096177071998,
+     "recall_attack": 0.7934530706836617,
+     "n_nodes_kept": 121599,
+     "n_dropped": 0,
+     "n_label_changed": 8816,
+     "share_label_changed": 0.0725005962220084,
+     "label_counts": {
+      "Normal": 83627,
+      "DoS_DDoS": 17162,
+      "Botnet_Backdoor": 5475,
+      "Truy_cap_trai_phep": 13949,
+      "Khac": 1386
+     }
+    },
+    "chi_khoi_tao": {
+     "desc": "Chỉ node có flow ra (node chỉ nhận bị bỏ khỏi đánh giá)",
+     "n_normal": 48041,
+     "n_attack": 14285,
+     "n_fp": 1281,
+     "fpr": 0.026664723881684393,
+     "recall_attack": 0.9472873643682184,
+     "n_nodes_kept": 62326,
+     "n_dropped": 59273,
+     "n_label_changed": 0,
+     "share_label_changed": 0.0,
+     "label_counts": {
+      "Normal": 48041,
+      "DoS_DDoS": 6265,
+      "Botnet_Backdoor": 2281,
+      "Truy_cap_trai_phep": 4903,
+      "Khac": 836
+     }
+    },
+    "co_flow_tan_cong": {
+     "desc": "Có ≥ 1 flow tấn công (ra hoặc nhận) thì là tấn công",
+     "n_normal": 73428,
+     "n_attack": 48171,
+     "n_fp": 4640,
+     "fpr": 0.0631911532385466,
+     "recall_attack": 0.6991135745573063,
+     "n_nodes_kept": 121599,
+     "n_dropped": 0,
+     "n_label_changed": 15033,
+     "share_label_changed": 0.12362766141168924,
+     "label_counts": {
+      "Normal": 73428,
+      "DoS_DDoS": 23767,
+      "Botnet_Backdoor": 5729,
+      "Truy_cap_trai_phep": 17089,
+      "Khac": 1586
+     }
+    }
+   }
+  }
+ },
+ "seconds": 348.6
+}
