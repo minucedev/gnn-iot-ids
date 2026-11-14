@@ -45,7 +45,8 @@ def summarize(rows):
         out[model] = {}
         for m in METRICS:
             v = np.array([float(seeds[s][0][m]) for s in sorted(seeds)])
-            out[model][m] = (float(v.mean()), float(v.std(ddof=1)) if len(v) > 1 else 0.0, len(v))
+            sd = float(v.std(ddof=1)) if len(v) > 1 else 0.0
+            out[model][m] = (float(v.mean()), 0.0 if sd < 1e-12 else sd, len(v))     # giá trị giống hệt: std = 0 (bỏ sai số làm tròn)
     return out
 
 
