@@ -34,7 +34,9 @@ class GNN(nn.Module):
                 d = width
         self.head = nn.Linear(d, n_classes)
 
-    def forward(self, x, edge_index, edge_attr=None):
+    def embed(self, x, edge_index, edge_attr=None):
+        """Vector ẩn sau lớp tích chập cuối (sau ELU và dropout), `hidden * heads` chiều mỗi node (64 với cấu hình
+        mặc định). Ở chế độ eval dropout không có tác dụng. `forward` = `head(embed(...))`, trọng số không đổi."""
         if self.bidirectional and edge_index.numel():
             edge_index = torch.cat([edge_index, edge_index.flip(0)], dim=1)
             if edge_attr is not None:
@@ -42,4 +44,7 @@ class GNN(nn.Module):
         for conv in self.convs:
             x = conv(x, edge_index, edge_attr) if self.kind == "gat" else conv(x, edge_index)
             x = F.dropout(F.elu(x), self.dropout, self.training)
-        return self.head(x)
+        return x
+
+    def forward(self, x, edge_index, edge_attr=None):
+        return self.head(self.embed(x, edge_index, edge_attr))
