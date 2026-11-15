@@ -249,3 +249,63 @@ def test_run_hybrid_oofavg_end_to_end_reproducible(tmp_path):
     for x, y in zip(rows, _rows(outs[1][0])):
         for c in ("f1_macro", "fpr", "recall_attack"):
             assert float(x[c]) == pytest.approx(float(y[c]), abs=1e-6)
+
+
+def test_class_proba_rows_sum_to_one_and_keep_order():
+    graphs = _graphs(5)
+    m = M.GNN("gat", n_classes=3).eval()
+    p = H.class_proba(m, graphs, CPU, batch_size=2)
+    assert p.shape == (sum(g.num_nodes for g in graphs), 3)
+    np.testing.assert_allclose(p.sum(1), 1.0, atol=1e-5)
+    ref = np.concatenate([torch.softmax(m(g.x, g.edge_index, g.edge_attr), 1).detach().numpy() for g in graphs])
+    np.testing.assert_allclose(p, ref, atol=1e-5)
+
+
+def test_oof_class_proba_uses_the_fold_model_of_each_group():
+    graphs = _graphs(10)
+    models = [M.GNN("gat", n_classes=3).eval() for _ in range(5)]            # trọng số khác nhau
+    p = H.oof_class_proba(graphs, models, 5, CPU)
+    assert p.shape == (sum(g.num_nodes for g in graphs), 3)
+    off = 0
+    for f, g in enumerate(H.fold_groups(graphs, 5)):
+        sub = [graphs[i] for i in g]
+        n = sum(x.num_nodes for x in sub)
+        np.testing.assert_allclose(p[off:off + n], H.class_proba(models[f], sub, CPU), atol=1e-6)
+        off += n
+
+
+def test_predict_window_stack_matches_batch_features():
+    graphs = _graphs(6)
+    gats = [M.GNN("gat", n_classes=3).eval() for _ in range(3)]
+    x, y = D.node_arrays(graphs)
+    pavg = np.mean([H.class_proba(g, graphs, CPU) for g in gats], axis=0)
+    lgbm = H.fit_lgbm(H.build_features(pavg, x), y, {"n": 5, "l": 4}, 0, 3, n_jobs=1)
+    ref = H.predict_proba(lgbm, H.build_features(pavg, x), 3)[12:18]
+    np.testing.assert_allclose(H.predict_window_stack(gats, lgbm, graphs[2], 3), ref, atol=1e-5)
+    assert H.build_features(pavg, x).shape[1] == 18 + 3
+
+
+def test_run_hybrid_stack_end_to_end_uses_saved_fold_gats(tmp_path):
+    ra, rs = _load_script("run_hybrid_oofavg"), _load_script("run_hybrid_stack")
+    (tmp_path / "data").mkdir()
+    data_dir = _make_dataset(tmp_path / "data")
+    grid = [{"n": 5, "l": 4}, {"n": 8, "l": 6}]
+    ra.run(data_dir, "fake", tmp_path / "oofavg.csv", tmp_path / "oofavg.json", models_dir=tmp_path / "m_fold", k=2,
+           seeds=(42, 43), hp={"train": FAST}, grid=grid)
+    outs = []
+    for tag in ("a", "b"):                                                  # không huấn luyện GAT nên hai lần phải y hệt
+        res, search = tmp_path / f"{tag}.csv", tmp_path / f"{tag}.json"
+        rs.run(data_dir, "fake", res, search, tmp_path / "m_fold", full_dir=tmp_path / "m_fold",
+               fold_search=tmp_path / "oofavg.json", models_dir=tmp_path / f"m_{tag}", k=2, seeds=(42, 43), grid=grid)
+        outs.append((res, search))
+    rows = _rows(outs[0][0])
+    assert {(r["model"], r["seed"], r["split"]) for r in rows} == {("hybrid_gat_lgbm_stack", "42", "val"),
+                                                                 ("hybrid_gat_lgbm_stack", "43", "val")}
+    assert int(rows[0]["n_params"]) > 2 * ev.count_params(M.GNN("gat", n_classes=3))
+    s = json.loads(outs[0][1].read_text(encoding="utf-8"))["hybrid_gat_lgbm_stack"]["seeds"]["42"]
+    assert len(s["search"]) == 2 and len(s["diag"]["val_f1_macro_each_gat"]) == 2
+    assert {p.name for p in (tmp_path / "m_a" / "fake_s42").iterdir()} >= {"gat_fold0.pt", "gat_fold1.pt", "lgbm_stack.pkl",
+                                                                          "meta_stack.json"}
+    for x, y in zip(rows, _rows(outs[1][0])):
+        for c in ("f1_macro", "fpr", "recall_attack", "accuracy"):
+            assert float(x[c]) == pytest.approx(float(y[c]), abs=1e-9)

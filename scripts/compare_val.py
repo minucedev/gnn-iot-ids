@@ -17,7 +17,7 @@ from pathlib import Path
 
 import numpy as np
 
-HYBRID = ("hybrid_gat_lgbm", "hybrid_gat_lgbm_nooof", "hybrid_gat_lgbm_oofavg")
+HYBRID = ("hybrid_gat_lgbm", "hybrid_gat_lgbm_nooof", "hybrid_gat_lgbm_oofavg", "hybrid_gat_lgbm_stack")
 METRICS = {"f1_macro": +1, "fpr": -1, "recall_attack": +1}      # +1: càng cao càng tốt, -1: càng thấp càng tốt
 COLUMNS = ["dataset", "model", "is_hybrid", "n_seeds",
            *[f"{m}_{s}" for m in METRICS for s in ("mean", "std")],

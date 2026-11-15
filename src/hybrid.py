@@ -94,6 +94,21 @@ def oof_embeddings(train_graphs, val_graphs, classes, device, seed, k=5, model_h
     return emb, info
 
 
+def class_proba(model, graphs, device=None, batch_size=256):
+    """Xác suất softmax (số node, K) của GAT cho từng node, theo đúng thứ tự `data.node_arrays`."""
+    device = device or next(model.parameters()).device
+    _, p = T.predict(model, graphs, device, batch_size)
+    return p.astype(np.float32)
+
+
+def oof_class_proba(train_graphs, fold_models, k=5, device=None):
+    """Xác suất out-of-fold cho train: nhóm f lấy xác suất từ `fold_models[f]` (GAT huấn luyện trên các nhóm khác f, cùng
+    cách chia `fold_groups` như `oof_embeddings`). Xác suất có ngữ nghĩa cố định giữa các GAT (cột = lớp), khác embedding."""
+    groups = fold_groups(train_graphs, k)
+    return np.concatenate([class_proba(fold_models[f], [train_graphs[i] for i in g], device)
+                           for f, g in enumerate(groups)])
+
+
 def build_features(emb, x):
     """Ghép 18 đặc trưng node (đã chuẩn hóa) với embedding: [x | emb], 18 + 64 = 82 cột."""
     x = np.asarray(x, dtype=np.float32)
@@ -156,6 +171,13 @@ def lgbm_n_leaves(model):
 
 
 # ---------------------------------------------------------------- suy luận một cửa sổ
+@torch.no_grad()
+def predict_window_stack(gats, lgbm, window, n_classes):
+    """Hybrid stacking: trung bình xác suất lớp của các GAT nhóm → ghép với x → một lần LightGBM."""
+    p = np.mean([torch.softmax(g.eval()(window.x, window.edge_index, window.edge_attr), 1).numpy() for g in gats], axis=0)
+    return predict_proba(lgbm, build_features(p, window.x.numpy()), n_classes)
+
+
 @torch.no_grad()
 def predict_window_ensemble(gats, lgbm, window, n_classes):
     """Hybrid ensemble: embedding từ từng GAT nhóm → ghép với x → một lần LightGBM cho mọi góc → trung bình xác suất."""
