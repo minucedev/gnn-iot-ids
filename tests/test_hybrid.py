@@ -362,3 +362,70 @@ def test_run_hybrid_interleave_end_to_end_names_models_with_il(tmp_path):
     assert [r["model"] for r in _rows(tmp_path / "o.csv")] == ["hybrid_gat_lgbm_oofavg_il"]
     assert [r["model"] for r in _rows(tmp_path / "s.csv")] == ["hybrid_gat_lgbm_stack_il"]
     assert json.loads((tmp_path / "s.json").read_text(encoding="utf-8"))["hybrid_gat_lgbm_stack_il"]["interleave"] == 3
+
+
+def test_neighbor_mean_by_hand_with_offsets_duplicates_and_isolated_nodes():
+    x1 = torch.arange(4 * 18, dtype=torch.float32).reshape(4, 18)
+    # 0→1 và 1→0 (hai chiều, tính một hàng xóm), 1→2, vòng lặp tự thân 2→2 (bỏ), node 3 cô lập
+    g1 = Data(x=x1, edge_index=torch.tensor([[0, 1, 1, 2], [1, 0, 2, 2]]))
+    x2 = torch.arange(100, 100 + 2 * 18, dtype=torch.float32).reshape(2, 18)
+    g2 = Data(x=x2, edge_index=torch.tensor([[0, 0], [1, 1]]))               # cạnh trùng
+    out = H.neighbor_mean([g1, g2])
+    expect = np.stack([x1[1], (x1[0] + x1[2]) / 2, x1[1], torch.zeros(18), x2[1], x2[0]]).astype(np.float32)
+    assert out.shape == (6, 18) and out.dtype == np.float32
+    np.testing.assert_allclose(out, expect, atol=1e-6)
+    assert H.neighbor_mean([Data(x=x1, edge_index=torch.zeros(2, 0, dtype=torch.long))]).sum() == 0
+
+
+def test_oof_embeddings_from_saved_models_match_training_time_embeddings():
+    graphs, val = _graphs(20), _graphs(4, seed=1)
+    emb, models, _, _ = H.oof_ensemble(graphs, val, CLASSES, CPU, 0, k=2, train_hp=FAST, interleave=3)
+    again = H.oof_embeddings_from_models(graphs, models, 2, interleave=3, device=CPU)
+    np.testing.assert_allclose(emb, again, atol=1e-5)
+
+
+def test_load_gat_roundtrip(tmp_path):
+    m = M.GNN("gat", n_classes=3).eval()
+    torch.save(m.state_dict(), tmp_path / "g.pt")
+    loaded = H.load_gat(tmp_path / "g.pt", 3)
+    g = _graphs(1)[0]
+    assert not loaded.training
+    assert torch.allclose(loaded(g.x, g.edge_index, g.edge_attr), m(g.x, g.edge_index, g.edge_attr), atol=1e-6)
+
+
+def test_run_hybrid_ablation_end_to_end_reproduces_saved_hybrid(tmp_path):
+    import pandas as pd
+    ra, rb = _load_script("run_hybrid_oofavg"), _load_script("run_hybrid_ablation")
+    (tmp_path / "data").mkdir()
+    data_dir = _make_dataset(tmp_path / "data")
+    ra.run(data_dir, "fake", tmp_path / "o.csv", tmp_path / "o.json", models_dir=tmp_path / "m", k=2, seeds=(42, 43),
+           hp={"train": FAST}, grid=[{"n": 5, "l": 4}], interleave=3)
+    graphs, _ = D.load_split(data_dir)
+    (tmp_path / "full").mkdir()
+    for seed in (42, 43):                                                    # GAT "toàn train" giả
+        gat, _, _ = H.train_gat(T.strip(graphs["train"]), T.strip(graphs["val"]), CLASSES, CPU, seed, train_hp=FAST)
+        torch.save(gat.state_dict(), tmp_path / "full" / f"fake_gat_s{seed}.pt")
+    out = tmp_path / "out"
+    rb.run(data_dir, "fake", out, tmp_path / "m", tmp_path / "full", k=2, interleave=3, seeds=(42, 43), grid=[{"n": 3, "l": 4}])
+
+    cd = _rows(out / "ablation_cd_fake.csv")
+    assert {(r["model"], r["seed"], r["split"]) for r in cd} == {(m, s, "val") for m in (rb.ABL_NBR, rb.ABL_EMB) for s in ("42", "43")}
+    pareto = pd.read_csv(out / "pareto_raw_fake.csv")
+    assert set(pareto["variant"]) == {"gat2", "gat1", "gatfull"}              # k = 2 nên chỉ có tối đa 2 GAT nhóm
+    assert len(pareto) == 3 * 2 * 2                                           # 3 biến thể × 2 ô LightGBM (lưới + hybrid) × 2 seed
+    one_gat = ev.count_params(M.GNN("gat", n_classes=3))
+    full = pareto[pareto["is_hybrid_full"]]
+    assert set(full["variant"]) == {"gat2"} and len(full) == 2                # đúng 1 điểm hybrid đầy đủ mỗi seed
+    g2 = pareto[(pareto["variant"] == "gat2") & (pareto["seed"] == 42)]
+    g1 = pareto[(pareto["variant"] == "gat1") & (pareto["seed"] == 42)]
+    assert (g2["n_params"].to_numpy() - g1["n_params"].to_numpy() == one_gat).all()      # bớt đúng một GAT
+    assert (pareto["size_kb"] > 0).all() and pareto["p95_ms"].notna().all()
+    assert {"thr", "thr_fpr", "thr_recall_attack", "thr_feasible"} <= set(pareto.columns)
+    assert ((pareto["thr_fpr"] <= 0.0408) | ~pareto["thr_feasible"]).all()
+    assert (out / "models_light" / "fake_s42" / "lgbm_n3_l4.pkl").exists()
+    # hybrid đầy đủ dựng lại từ file đã lưu khớp kết quả lúc huấn luyện
+    saved = {r["seed"]: float(r["f1_macro"]) for r in _rows(tmp_path / "o.csv")}
+    check = json.loads((out / "ref_check_fake.json").read_text(encoding="utf-8"))
+    for seed in ("42", "43"):
+        assert check[seed]["f1_macro"] == pytest.approx(saved[seed], abs=1e-6)
+        assert float(full[full["seed"] == int(seed)]["f1_macro"].iloc[0]) == pytest.approx(saved[seed], abs=1e-6)

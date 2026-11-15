@@ -217,3 +217,38 @@ def predict_window(gat, lgbm, window, n_classes):
     gat.eval()
     emb = gat.embed(window.x, window.edge_index, window.edge_attr).numpy()
     return predict_proba(lgbm, build_features(emb, window.x.numpy()), n_classes)
+
+
+# ---------------------------------------------------------------- ablation (task 5.8) và bản nhẹ
+def oof_embeddings_from_models(train_graphs, fold_models, k=5, interleave=0, device=None):
+    """Embedding out-of-fold của train từ k GAT nhóm ĐÃ huấn luyện: nhóm f lấy embedding từ `fold_models[f]`, cùng cách chia
+    `fold_groups` như `oof_ensemble` nên khớp từng node với embedding lúc huấn luyện hybrid (không huấn luyện lại gì)."""
+    groups = fold_groups(train_graphs, k, interleave)
+    return _scatter([extract_embeddings(fold_models[f], [train_graphs[i] for i in g], device)
+                     for f, g in enumerate(groups)], groups, train_graphs)
+
+
+def load_gat(path, n_classes, in_dim=18, model_hp=None):
+    """Nạp một GAT (cấu hình task 5.3 hoặc `model_hp`) từ file state_dict, ở chế độ eval trên CPU."""
+    model = M.GNN("gat", in_dim=in_dim, n_classes=n_classes, **(model_hp or {}))
+    model.load_state_dict(torch.load(path, map_location="cpu", weights_only=True))
+    return model.eval()
+
+
+def neighbor_mean(graphs):
+    """Trung bình 18 đặc trưng của các node kề, tính tay (không học), hình (số node, số đặc trưng), theo thứ tự node của
+    `data.node_arrays`. Node kề = đầu kia của mọi cạnh, không phân biệt hướng, mỗi hàng xóm tính một lần (cạnh trùng hoặc
+    hai chiều chỉ đếm một), bỏ vòng lặp tự thân. Node không có hàng xóm có trung bình 0 (tức giá trị trung bình của train
+    sau chuẩn hóa)."""
+    sizes = torch.tensor([g.num_nodes for g in graphs], dtype=torch.long)
+    off = torch.cumsum(sizes, 0) - sizes
+    n = int(sizes.sum())
+    x = torch.cat([g.x for g in graphs]).float()
+    ei = torch.cat([g.edge_index.long() + o for g, o in zip(graphs, off.tolist())], dim=1)
+    both = torch.cat([ei, ei.flip(0)], dim=1)
+    both = both[:, both[0] != both[1]]
+    key = torch.unique(both[0] * n + both[1])                    # cặp (nguồn, đích) duy nhất, hai chiều
+    src, dst = key // n, key % n
+    total = torch.zeros(n, x.shape[1]).index_add_(0, dst, x[src])
+    deg = torch.zeros(n).index_add_(0, dst, torch.ones(len(dst)))
+    return (total / deg.clamp(min=1)[:, None]).numpy().astype(np.float32)
