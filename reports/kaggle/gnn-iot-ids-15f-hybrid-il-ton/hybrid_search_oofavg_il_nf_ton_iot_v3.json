@@ -1,0 +1,213 @@
+{
+ "hybrid_gat_lgbm_oofavg_il": {
+  "dataset": "nf_ton_iot_v3",
+  "k": 5,
+  "interleave": 20,
+  "seeds": {
+   "42": {
+    "folds": [
+     {
+      "fold": 0,
+      "n_graphs_held": 8702,
+      "n_nodes_held": 113598,
+      "epochs": 22,
+      "train_s": 78.0,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 1,
+      "n_graphs_held": 8494,
+      "n_nodes_held": 113455,
+      "epochs": 20,
+      "train_s": 70.5,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 2,
+      "n_graphs_held": 8491,
+      "n_nodes_held": 113979,
+      "epochs": 34,
+      "train_s": 119.7,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 3,
+      "n_graphs_held": 9514,
+      "n_nodes_held": 113509,
+      "epochs": 14,
+      "train_s": 48.3,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 4,
+      "n_graphs_held": 9322,
+      "n_nodes_held": 113924,
+      "epochs": 19,
+      "train_s": 66.0,
+      "classes_missing_in_fit": [
+       "Khac"
+      ]
+     }
+    ],
+    "gat_full": {},
+    "search": [
+     {
+      "cfg": {
+       "n": 100,
+       "l": 15
+      },
+      "val_f1_macro": 0.9246645435846539,
+      "seconds": 47.7
+     },
+     {
+      "cfg": {
+       "n": 200,
+       "l": 31
+      },
+      "val_f1_macro": 0.9307536844057437,
+      "seconds": 96.7
+     },
+     {
+      "cfg": {
+       "n": 300,
+       "l": 63
+      },
+      "val_f1_macro": 0.9323199480851427,
+      "seconds": 161.6
+     }
+    ],
+    "diag": {
+     "train_f1_macro": 0.9972075712180519,
+     "val_f1_macro_avg_views": 0.9323199480851427,
+     "val_f1_macro_each_view": [
+      0.9320810006028841,
+      0.9284115636918286,
+      0.9360166762379185,
+      0.9282374180414041,
+      0.9314126187238682
+     ]
+    }
+   },
+   "43": {
+    "folds": [
+     {
+      "fold": 0,
+      "n_graphs_held": 8702,
+      "n_nodes_held": 113598,
+      "epochs": 26,
+      "train_s": 90.2,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 1,
+      "n_graphs_held": 8494,
+      "n_nodes_held": 113455,
+      "epochs": 24,
+      "train_s": 83.3,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 2,
+      "n_graphs_held": 8491,
+      "n_nodes_held": 113979,
+      "epochs": 22,
+      "train_s": 76.2,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 3,
+      "n_graphs_held": 9514,
+      "n_nodes_held": 113509,
+      "epochs": 26,
+      "train_s": 88.2,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 4,
+      "n_graphs_held": 9322,
+      "n_nodes_held": 113924,
+      "epochs": 23,
+      "train_s": 79.0,
+      "classes_missing_in_fit": [
+       "Khac"
+      ]
+     }
+    ],
+    "gat_full": {},
+    "diag": {
+     "train_f1_macro": 0.9971257709183445,
+     "val_f1_macro_avg_views": 0.9319030856805026,
+     "val_f1_macro_each_view": [
+      0.9303910717041369,
+      0.9236792593496007,
+      0.9354303482613469,
+      0.9288597869505619,
+      0.9313063041143775
+     ]
+    }
+   },
+   "44": {
+    "folds": [
+     {
+      "fold": 0,
+      "n_graphs_held": 8702,
+      "n_nodes_held": 113598,
+      "epochs": 25,
+      "train_s": 87.1,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 1,
+      "n_graphs_held": 8494,
+      "n_nodes_held": 113455,
+      "epochs": 40,
+      "train_s": 139.4,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 2,
+      "n_graphs_held": 8491,
+      "n_nodes_held": 113979,
+      "epochs": 40,
+      "train_s": 139.3,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 3,
+      "n_graphs_held": 9514,
+      "n_nodes_held": 113509,
+      "epochs": 25,
+      "train_s": 85.6,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 4,
+      "n_graphs_held": 9322,
+      "n_nodes_held": 113924,
+      "epochs": 22,
+      "train_s": 75.8,
+      "classes_missing_in_fit": [
+       "Khac"
+      ]
+     }
+    ],
+    "gat_full": {},
+    "diag": {
+     "train_f1_macro": 0.9973088669329384,
+     "val_f1_macro_avg_views": 0.9337139219592054,
+     "val_f1_macro_each_view": [
+      0.9340579615559125,
+      0.927721138800651,
+      0.9346301841721026,
+      0.9307989574768721,
+      0.9302984919212566
+     ]
+    }
+   }
+  },
+  "best": {
+   "n": 300,
+   "l": 63
+  }
+ }
+}

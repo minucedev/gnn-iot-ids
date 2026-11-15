@@ -1,0 +1,106 @@
+{
+ "steps_s": {
+  "clone_va_cai_goi": 50.8,
+  "pytest": 68.7,
+  "oofavg_il_nf_ton_iot_v3": 2367.5
+ },
+ "device": "GPU",
+ "gpu": "Tesla T4",
+ "datasets": [
+  "nf_ton_iot_v3"
+ ],
+ "interleave": 20,
+ "commit": "8f13f798bb14bc368bb479608d6e9060d19412fc",
+ "total_s": 2494.2,
+ "peak_ram_gb": 3.39,
+ "gpu_hours": 0.693,
+ "cpu_count": 4,
+ "pytest": "87 passed, 2985 warnings in 64.87s (0:01:04)",
+ "criteria": {
+  "nf_ton_iot_v3": {
+   "oofavg_il": {
+    "du_3_seed_1_dong": true,
+    "chi_split_val": true,
+    "f1_macro_mean": 0.9326,
+    "f1_macro_std": 0.0009,
+    "fpr_mean": 0.0494,
+    "recall_mean": 0.9359,
+    "size_kb_max": 9772.3,
+    "p95_ms_max": 20.108
+   }
+  }
+ },
+ "diag": {
+  "nf_ton_iot_v3|oofavg_il": {
+   "42": {
+    "train_f1_macro": 0.9972075712180519,
+    "val_f1_macro_avg_views": 0.9323199480851427,
+    "val_f1_macro_each_view": [
+     0.9320810006028841,
+     0.9284115636918286,
+     0.9360166762379185,
+     0.9282374180414041,
+     0.9314126187238682
+    ]
+   },
+   "43": {
+    "train_f1_macro": 0.9971257709183445,
+    "val_f1_macro_avg_views": 0.9319030856805026,
+    "val_f1_macro_each_view": [
+     0.9303910717041369,
+     0.9236792593496007,
+     0.9354303482613469,
+     0.9288597869505619,
+     0.9313063041143775
+    ]
+   },
+   "44": {
+    "train_f1_macro": 0.9973088669329384,
+    "val_f1_macro_avg_views": 0.9337139219592054,
+    "val_f1_macro_each_view": [
+     0.9340579615559125,
+     0.927721138800651,
+     0.9346301841721026,
+     0.9307989574768721,
+     0.9302984919212566
+    ]
+   }
+  }
+ },
+ "classes_missing_in_fit": {
+  "nf_ton_iot_v3": {
+   "42": [
+    [],
+    [],
+    [],
+    [],
+    [
+     "Khac"
+    ]
+   ],
+   "43": [
+    [],
+    [],
+    [],
+    [],
+    [
+     "Khac"
+    ]
+   ],
+   "44": [
+    [],
+    [],
+    [],
+    [],
+    [
+     "Khac"
+    ]
+   ]
+  }
+ },
+ "models_hybrid_dirs": [
+  "nf_ton_iot_v3_s42",
+  "nf_ton_iot_v3_s43",
+  "nf_ton_iot_v3_s44"
+ ]
+}
