@@ -42,7 +42,7 @@ def f1_of(y, proba, classes):
 
 
 def run(data_dir, dataset, results_csv, search_json, models_dir=None, k=5, seeds=SEEDS, hp=None, grid=None,
-        verbose=False, interleave=0):
+        verbose=False, interleave=0, full_diag=True):
     model_name = MODEL + ("_il" if interleave > 0 else "")
     hp = {"model": {}, "train": {}, **(hp or {})}
     models_dir = Path(models_dir) if models_dir else Path(results_csv).parent / "models_hybrid"
@@ -68,11 +68,13 @@ def run(data_dir, dataset, results_csv, search_json, models_dir=None, k=5, seeds
         emb_tr, fold_gats, val_embs, folds = H.oof_ensemble(train, val, classes, device, seed, k, hp["model"],
                                                             hp["train"], verbose, interleave=interleave)
         train_s = sum(f["train_s"] for f in folds)
-        full, hist, secs = H.train_gat(train, val, classes, device, seed, hp["model"], hp["train"], verbose)
-        emb_full = H.extract_embeddings(full, val, device)          # chỉ để chẩn đoán, không dùng trong mô hình
+        emb_full, entry_full = None, {}
+        if full_diag:                                                # GAT toàn train chỉ để chẩn đoán, không dùng trong mô hình
+            full, hist, secs = H.train_gat(train, val, classes, device, seed, hp["model"], hp["train"], verbose)
+            emb_full, entry_full = H.extract_embeddings(full, val, device), {"epochs": len(hist), "train_s": round(secs, 1)}
         Ftr = H.build_features(emb_tr, Xtr)
         views = [H.build_features(e, Xva) for e in val_embs]
-        entry = {"folds": folds, "gat_full": {"epochs": len(hist), "train_s": round(secs, 1)}}
+        entry = {"folds": folds, "gat_full": entry_full}
         if cfg is None:                                              # chọn cấu hình một lần, ở seed đầu, chỉ trên val
             cfg, trials = H.search_lgbm(Ftr, ytr, None, yva, classes, seed=seed, grid=grid, val_views=views)
             entry["search"] = trials
@@ -88,9 +90,10 @@ def run(data_dir, dataset, results_csv, search_json, models_dir=None, k=5, seeds
         entry["diag"] = {
             "train_f1_macro": f1_of(ytr, tr_proba, classes),
             "val_f1_macro_avg_views": metrics["f1_macro"],
-            "val_f1_macro_each_view": [f1_of(yva, H.predict_proba(lgbm, v, K), classes) for v in views],
-            "val_f1_macro_full_gat_embedding": f1_of(
-                yva, H.predict_proba(lgbm, H.build_features(emb_full, Xva), K), classes)}
+            "val_f1_macro_each_view": [f1_of(yva, H.predict_proba(lgbm, v, K), classes) for v in views]}
+        if emb_full is not None:
+            entry["diag"]["val_f1_macro_full_gat_embedding"] = f1_of(
+                yva, H.predict_proba(lgbm, H.build_features(emb_full, Xva), K), classes)
 
         cpus = [g.to("cpu").eval() for g in fold_gats]
         torch.set_num_threads(1)
@@ -114,7 +117,7 @@ def run(data_dir, dataset, results_csv, search_json, models_dir=None, k=5, seeds
         d = entry["diag"]
         print(f"[{model_name} seed {seed}] acc {metrics['accuracy']:.4f} F1-macro {metrics['f1_macro']:.4f} "
               f"(train {d['train_f1_macro']:.4f}; từng góc {np.round(d['val_f1_macro_each_view'], 3).tolist()}; "
-              f"embedding GAT toàn train {d['val_f1_macro_full_gat_embedding']:.4f}) FPR {metrics['fpr']:.4f} "
+              f"embedding GAT toàn train {d.get('val_f1_macro_full_gat_embedding', float('nan')):.4f}) FPR {metrics['fpr']:.4f} "
               f"recall_tc {metrics['recall_attack']:.4f} AUC {metrics['roc_auc']:.4f} p95 {lat['p95_ms']:.2f} ms, "
               f"{n_params:,} tham số, {size_kb:.0f} KB, {time.time() - t_seed:.0f} s ({row['commit']})")
         search_path.write_text(json.dumps(search, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -127,7 +130,7 @@ def main():
     opt = dict(a.split("=", 1) for a in sys.argv[1:] if "=" in a)
     data_dir, dataset, results_csv, search_json = pos[:4]
     run(data_dir, dataset, results_csv, search_json, models_dir=opt.get("models"), k=int(opt.get("k", 5)),
-        interleave=int(opt.get("interleave", 0)), hp=json.loads(opt["hp"]) if "hp" in opt else None, verbose=opt.get("verbose") == "1")
+        interleave=int(opt.get("interleave", 0)), full_diag=opt.get("fulldiag", "1") == "1", hp=json.loads(opt["hp"]) if "hp" in opt else None, verbose=opt.get("verbose") == "1")
     return 0
 
 
