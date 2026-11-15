@@ -107,3 +107,12 @@ def test_node_table_matches_concatenation_order():
     t = F.node_table([g1, g2])
     assert t["ip"].tolist() == ["a", "b", "c"] and t["win"].tolist() == [7, 7, 9]
     assert t["gi"].tolist() == [0, 0, 1] and t["y"].tolist() == [0, 1, 2]
+
+
+def test_initiator_mask_uses_zero_value_of_n_out_column():
+    n_out = np.array([0, 3, 0, 1, 12], dtype=float)
+    col = (np.log1p(n_out) - 1.2) / 0.7                      # chuẩn hóa như scaler: giá trị của n_out = 0 là hằng số
+    X = np.stack([col, np.random.default_rng(0).normal(size=5)], 1)
+    zero = col[n_out == 0][0]
+    assert F.initiator_mask(X, zero).tolist() == [False, True, False, True, True]
+    assert F.initiator_mask(X[1:2], zero).tolist() == [True]  # tập không có node n_out = 0 vẫn đúng vì dùng zero_value của train

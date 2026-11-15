@@ -156,3 +156,9 @@ def ip_report(val_nodes, fp_mask, ref_nodes, top=10, all_if_le=30):
         "top": rows(g.head(top)),
         "all": rows(g) if len(g) <= all_if_le else None,
     }
+
+
+def initiator_mask(X, zero_value, eps=1e-4):
+    """Node có khởi tạo ít nhất một flow (n_out > 0). Cột 0 của đặc trưng là log1p(n_out) đã chuẩn hóa nên giá trị của
+    n_out = 0 là hằng số `zero_value` (lấy từ train: giá trị nhỏ nhất của cột 0); n_out ≥ 1 luôn lớn hơn hẳn."""
+    return np.asarray(X)[:, 0] > zero_value + eps

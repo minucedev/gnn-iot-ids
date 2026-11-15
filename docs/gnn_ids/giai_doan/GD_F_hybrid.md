@@ -6,6 +6,8 @@
 
 Đọc trước: [README.md](README.md), task 5.7 trong [../TASKS.md](../TASKS.md), quyết định D9 trong KE_HOACH.md mục 7. **Kiểm tra giờ GPU còn lại** trước khi chạy.
 
+> **Cập nhật 15/11/2026 (D13):** cách chia out-of-fold "5 nhóm khối thời gian liên tiếp" dưới đây thất bại vì nhóm cuối là nơi duy nhất có một số lớp. Thiết kế chính thức: 5 × 20 khối xen kẽ, val = trung bình xác suất qua embedding của 5 GAT nhóm (`scripts/run_hybrid_oofavg.py interleave=20`). Kết quả và nguyên nhân ở TASKS.md mục 5.7; GĐ G, H dùng `models_hybrid/` của notebook `15e` (BoT) và `15f` (ToN).
+
 ## Mục tiêu
 
 Xây mô hình chính theo yêu cầu "mô hình hybrid" của thầy. GAT học ngữ cảnh hàng xóm, LightGBM tận dụng đặc trưng dạng bảng.
