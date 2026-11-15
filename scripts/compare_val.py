@@ -17,7 +17,11 @@ from pathlib import Path
 
 import numpy as np
 
-HYBRID = ("hybrid_gat_lgbm", "hybrid_gat_lgbm_nooof", "hybrid_gat_lgbm_oofavg", "hybrid_gat_lgbm_stack")
+HYBRID_PREFIX = "hybrid_gat_lgbm"
+
+
+def is_hybrid(model):
+    return model.startswith(HYBRID_PREFIX)
 METRICS = {"f1_macro": +1, "fpr": -1, "recall_attack": +1}      # +1: càng cao càng tốt, -1: càng thấp càng tốt
 COLUMNS = ["dataset", "model", "is_hybrid", "n_seeds",
            *[f"{m}_{s}" for m in METRICS for s in ("mean", "std")],
@@ -52,18 +56,18 @@ def summarize(rows):
 
 def compare(rows, dataset):
     summ = summarize(rows)
-    others = {k: v for k, v in summ.items() if k not in HYBRID}
+    others = {k: v for k, v in summ.items() if not is_hybrid(k)}
     if not others:
         raise ValueError("Không có mô hình nào ngoài hybrid để so sánh")
     best = {m: (max if sign > 0 else min)(others, key=lambda k: others[k][m][0]) for m, sign in METRICS.items()}
     out = []
-    for model in sorted(summ, key=lambda k: (k in HYBRID, k)):
+    for model in sorted(summ, key=lambda k: (is_hybrid(k), k)):
         s = summ[model]
-        row = {"dataset": dataset, "model": model, "is_hybrid": model in HYBRID,
+        row = {"dataset": dataset, "model": model, "is_hybrid": is_hybrid(model),
                "n_seeds": s["f1_macro"][2]}
         for m, sign in METRICS.items():
             row[f"{m}_mean"], row[f"{m}_std"] = s[m][0], s[m][1]
-            if model in HYBRID:
+            if is_hybrid(model):
                 b = best[m]
                 diff = sign * (s[m][0] - others[b][m][0])               # > 0: hybrid tốt hơn
                 spread = max(s[m][1], others[b][m][1])

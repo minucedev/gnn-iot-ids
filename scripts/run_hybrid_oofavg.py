@@ -34,7 +34,7 @@ from src import hybrid as H  # noqa: E402
 from src import train as T  # noqa: E402
 
 SEEDS = (42, 43, 44)
-MODEL = "hybrid_gat_lgbm_oofavg"
+MODEL = "hybrid_gat_lgbm_oofavg"          # thêm hậu tố _il khi interleave > 0
 
 
 def f1_of(y, proba, classes):
@@ -42,7 +42,8 @@ def f1_of(y, proba, classes):
 
 
 def run(data_dir, dataset, results_csv, search_json, models_dir=None, k=5, seeds=SEEDS, hp=None, grid=None,
-        verbose=False):
+        verbose=False, interleave=0):
+    model_name = MODEL + ("_il" if interleave > 0 else "")
     hp = {"model": {}, "train": {}, **(hp or {})}
     models_dir = Path(models_dir) if models_dir else Path(results_csv).parent / "models_hybrid"
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -53,19 +54,19 @@ def run(data_dir, dataset, results_csv, search_json, models_dir=None, k=5, seeds
     Xtr, ytr = D.node_arrays(train)
     Xva, yva = D.node_arrays(val)
     window = T.strip([D.sample_window(graphs["val"])])[0]
-    print(f"{dataset} [{MODEL}]: train {len(train):,} đồ thị ({len(ytr):,} node), val {len(val):,}, lớp {classes}, "
+    print(f"{dataset} [{model_name}]: train {len(train):,} đồ thị ({len(ytr):,} node), val {len(val):,}, lớp {classes}, "
           f"thiết bị {device}")
 
     search_path = Path(search_json)
     search = json.loads(search_path.read_text(encoding="utf-8")) if search_path.exists() else {}
-    log = search[MODEL] = {"dataset": dataset, "k": k, "seeds": {}}
+    log = search[model_name] = {"dataset": dataset, "k": k, "interleave": interleave, "seeds": {}}
     cfg, rows = None, []
     for seed in seeds:
         t_seed = time.time()
         out_dir = models_dir / f"{dataset}_s{seed}"
         out_dir.mkdir(parents=True, exist_ok=True)
         emb_tr, fold_gats, val_embs, folds = H.oof_ensemble(train, val, classes, device, seed, k, hp["model"],
-                                                            hp["train"], verbose)
+                                                            hp["train"], verbose, interleave=interleave)
         train_s = sum(f["train_s"] for f in folds)
         full, hist, secs = H.train_gat(train, val, classes, device, seed, hp["model"], hp["train"], verbose)
         emb_full = H.extract_embeddings(full, val, device)          # chỉ để chẩn đoán, không dùng trong mô hình
@@ -98,20 +99,20 @@ def run(data_dir, dataset, results_csv, search_json, models_dir=None, k=5, seeds
         n_params = sum(ev.count_params(g) for g in cpus) + H.lgbm_n_leaves(lgbm)
         size_kb = round(sum(ev.model_size_kb(g) for g in cpus) + ev.model_size_kb(lgbm), 1)
         row = ev.log_result(
-            metrics, dataset=dataset, model=MODEL, task="multiclass", seed=seed, split="val",
+            metrics, dataset=dataset, model=model_name, task="multiclass", seed=seed, split="val",
             n_params=n_params, size_kb=size_kb, train_time_s=round(train_s, 1),
             infer_ms_per_window=round(lat["p95_ms"], 3), path=results_csv)
         rows.append(row)
         for f, g in enumerate(cpus):
             torch.save(g.state_dict(), out_dir / f"gat_fold{f}.pt")
-        with open(out_dir / "lgbm_oofavg.pkl", "wb") as fh:
+        with open(out_dir / ("lgbm_oofavg_il.pkl" if interleave > 0 else "lgbm_oofavg.pkl"), "wb") as fh:
             pickle.dump(lgbm, fh)
-        (out_dir / "meta_oofavg.json").write_text(json.dumps({
-            "model": MODEL, "dataset": dataset, "seed": seed, "lgbm_cfg": cfg, "k": k, "n_cols": int(Ftr.shape[1]),
+        (out_dir / ("meta_oofavg_il.json" if interleave > 0 else "meta_oofavg.json")).write_text(json.dumps({
+            "model": model_name, "dataset": dataset, "seed": seed, "lgbm_cfg": cfg, "k": k, "n_cols": int(Ftr.shape[1]),
             "n_params": n_params, "size_kb": size_kb, "classes": classes}), encoding="utf-8")
         log["seeds"][str(seed)] = entry
         d = entry["diag"]
-        print(f"[{MODEL} seed {seed}] acc {metrics['accuracy']:.4f} F1-macro {metrics['f1_macro']:.4f} "
+        print(f"[{model_name} seed {seed}] acc {metrics['accuracy']:.4f} F1-macro {metrics['f1_macro']:.4f} "
               f"(train {d['train_f1_macro']:.4f}; từng góc {np.round(d['val_f1_macro_each_view'], 3).tolist()}; "
               f"embedding GAT toàn train {d['val_f1_macro_full_gat_embedding']:.4f}) FPR {metrics['fpr']:.4f} "
               f"recall_tc {metrics['recall_attack']:.4f} AUC {metrics['roc_auc']:.4f} p95 {lat['p95_ms']:.2f} ms, "
@@ -126,7 +127,7 @@ def main():
     opt = dict(a.split("=", 1) for a in sys.argv[1:] if "=" in a)
     data_dir, dataset, results_csv, search_json = pos[:4]
     run(data_dir, dataset, results_csv, search_json, models_dir=opt.get("models"), k=int(opt.get("k", 5)),
-        hp=json.loads(opt["hp"]) if "hp" in opt else None, verbose=opt.get("verbose") == "1")
+        interleave=int(opt.get("interleave", 0)), hp=json.loads(opt["hp"]) if "hp" in opt else None, verbose=opt.get("verbose") == "1")
     return 0
 
 

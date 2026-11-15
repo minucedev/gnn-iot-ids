@@ -309,3 +309,56 @@ def test_run_hybrid_stack_end_to_end_uses_saved_fold_gats(tmp_path):
     for x, y in zip(rows, _rows(outs[1][0])):
         for c in ("f1_macro", "fpr", "recall_attack", "accuracy"):
             assert float(x[c]) == pytest.approx(float(y[c]), abs=1e-9)
+
+
+def test_interleaved_folds_cover_everything_and_span_all_periods():
+    graphs = _graphs(60)
+    groups = H.fold_groups(graphs, 5, interleave=4)                          # 20 khối, khối i thuộc nhóm i mod 5
+    assert np.array_equal(np.sort(np.concatenate(groups)), np.arange(60))
+    assert sum(len(g) for g in groups) == 60 and len(set(np.concatenate(groups))) == 60
+    for g in groups:
+        assert np.array_equal(g, np.sort(g))
+        assert g.min() < 60 * 0.25 and g.max() > 60 * 0.75                    # mỗi nhóm trải khắp mọi giai đoạn
+        runs = np.split(g, np.flatnonzero(np.diff(g) > 1) + 1)
+        assert len(runs) >= 4 and all(len(r) >= 2 for r in runs)              # nhưng vẫn gồm các khối liên tiếp
+    contiguous = H.fold_groups(graphs, 5)
+    assert all(np.array_equal(g, np.arange(g[0], g[-1] + 1)) for g in contiguous)   # interleave=0 không đổi
+
+
+def test_interleaved_oof_keeps_train_order_and_never_trains_on_own_group():
+    graphs, val = _graphs(20), _graphs(4, seed=1)
+    seen = []
+
+    def spy(gs, v, classes, device, seed, model_hp, train_hp, verbose):
+        seen.append({id(g) for g in gs})
+        return H.train_gat(gs, v, classes, device, seed, model_hp, train_hp, verbose)
+
+    emb, models, val_embs, info = H.oof_ensemble(graphs, val, CLASSES, CPU, 0, k=2, train_hp=FAST, train_fn=spy,
+                                                 interleave=3)
+    groups = H.fold_groups(graphs, 2, interleave=3)
+    sizes = np.array([g.num_nodes for g in graphs])
+    off = np.r_[0, np.cumsum(sizes)]
+    assert emb.shape[0] == off[-1]
+    for f, held in enumerate(groups):
+        assert not ({id(graphs[i]) for i in held} & seen[f])
+        for i in held[:3]:                                                   # nhúng đúng chỗ, đúng GAT nhóm
+            ref = H.extract_embeddings(models[f], [graphs[i]], CPU)
+            np.testing.assert_allclose(emb[off[i]:off[i + 1]], ref, atol=1e-5)
+    p = H.oof_class_proba(graphs, models, 2, CPU, interleave=3)
+    i0 = groups[1][0]
+    np.testing.assert_allclose(p[off[i0]:off[i0 + 1]], H.class_proba(models[1], [graphs[i0]], CPU), atol=1e-6)
+    assert [x["n_nodes_held"] for x in info] == [int(sizes[g].sum()) for g in groups]
+
+
+def test_run_hybrid_interleave_end_to_end_names_models_with_il(tmp_path):
+    ra, rs = _load_script("run_hybrid_oofavg"), _load_script("run_hybrid_stack")
+    (tmp_path / "data").mkdir()
+    data_dir = _make_dataset(tmp_path / "data")
+    grid = [{"n": 5, "l": 4}]
+    ra.run(data_dir, "fake", tmp_path / "o.csv", tmp_path / "o.json", models_dir=tmp_path / "m", k=2, seeds=(42,),
+           hp={"train": FAST}, grid=grid, interleave=3)
+    rs.run(data_dir, "fake", tmp_path / "s.csv", tmp_path / "s.json", tmp_path / "m", fold_search=tmp_path / "o.json",
+           models_dir=tmp_path / "m2", k=2, seeds=(42,), grid=grid, interleave=3)
+    assert [r["model"] for r in _rows(tmp_path / "o.csv")] == ["hybrid_gat_lgbm_oofavg_il"]
+    assert [r["model"] for r in _rows(tmp_path / "s.csv")] == ["hybrid_gat_lgbm_stack_il"]
+    assert json.loads((tmp_path / "s.json").read_text(encoding="utf-8"))["hybrid_gat_lgbm_stack_il"]["interleave"] == 3

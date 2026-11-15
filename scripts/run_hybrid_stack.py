@@ -34,7 +34,7 @@ from src import models as M  # noqa: E402
 from src import train as T  # noqa: E402
 
 SEEDS = (42, 43, 44)
-MODEL = "hybrid_gat_lgbm_stack"
+MODEL = "hybrid_gat_lgbm_stack"          # thêm hậu tố _il khi interleave > 0
 
 
 def f1_of(y, proba, classes):
@@ -48,7 +48,8 @@ def load_gat(path, in_dim, n_classes, hp):
 
 
 def run(data_dir, dataset, results_csv, search_json, folds_dir, full_dir=None, fold_search=None, models_dir=None, k=5,
-        seeds=SEEDS, hp=None, grid=None):
+        seeds=SEEDS, hp=None, grid=None, interleave=0):
+    model_name = MODEL + ("_il" if interleave > 0 else "")
     hp = {"model": {}, "train": {}, **(hp or {})}
     models_dir = Path(models_dir) if models_dir else Path(results_csv).parent / "models_hybrid"
     cpu = torch.device("cpu")
@@ -60,11 +61,11 @@ def run(data_dir, dataset, results_csv, search_json, folds_dir, full_dir=None, f
     window = T.strip([D.sample_window(graphs["val"])])[0]
     in_dim = Xtr.shape[1]
     fold_json = json.loads(Path(fold_search).read_text(encoding="utf-8")) if fold_search else None
-    print(f"{dataset} [{MODEL}]: train {len(train):,} đồ thị ({len(ytr):,} node), val {len(val):,}, lớp {classes}")
+    print(f"{dataset} [{model_name}]: train {len(train):,} đồ thị ({len(ytr):,} node), val {len(val):,}, lớp {classes}")
 
     search_path = Path(search_json)
     search = json.loads(search_path.read_text(encoding="utf-8")) if search_path.exists() else {}
-    log = search[MODEL] = {"dataset": dataset, "k": k, "seeds": {}}
+    log = search[model_name] = {"dataset": dataset, "k": k, "interleave": interleave, "seeds": {}}
     cfg, rows = None, []
     for seed in seeds:
         t_seed = time.time()
@@ -72,7 +73,7 @@ def run(data_dir, dataset, results_csv, search_json, folds_dir, full_dir=None, f
         out_dir = models_dir / f"{dataset}_s{seed}"
         out_dir.mkdir(parents=True, exist_ok=True)
         gats = [load_gat(src / f"gat_fold{f}.pt", in_dim, K, hp) for f in range(k)]
-        p_tr = H.oof_class_proba(train, gats, k, cpu)
+        p_tr = H.oof_class_proba(train, gats, k, cpu, interleave)
         val_ps = [H.class_proba(g, val, cpu) for g in gats]
         p_va = np.mean(val_ps, axis=0)
         Ftr, Fva = H.build_features(p_tr, Xtr), H.build_features(p_va, Xva)
@@ -100,7 +101,7 @@ def run(data_dir, dataset, results_csv, search_json, folds_dir, full_dir=None, f
             p_full = H.class_proba(load_gat(full, in_dim, K, hp), val, cpu)
             diag["val_f1_macro_full_gat_proba"] = f1_of(yva, H.predict_proba(lgbm, H.build_features(p_full, Xva), K), classes)
         entry["diag"] = diag
-        train_s = lgbm_s + (sum(f["train_s"] for f in fold_json["hybrid_gat_lgbm_oofavg"]["seeds"][str(seed)]["folds"])
+        train_s = lgbm_s + (sum(f["train_s"] for f in fold_json[next(iter(fold_json))]["seeds"][str(seed)]["folds"])
                             if fold_json else 0.0)
 
         torch.set_num_threads(1)
@@ -109,19 +110,20 @@ def run(data_dir, dataset, results_csv, search_json, folds_dir, full_dir=None, f
         n_params = sum(ev.count_params(g) for g in gats) + H.lgbm_n_leaves(lgbm)
         size_kb = round(sum(ev.model_size_kb(g) for g in gats) + ev.model_size_kb(lgbm), 1)
         row = ev.log_result(
-            metrics, dataset=dataset, model=MODEL, task="multiclass", seed=seed, split="val",
+            metrics, dataset=dataset, model=model_name, task="multiclass", seed=seed, split="val",
             n_params=n_params, size_kb=size_kb, train_time_s=round(train_s, 1),
             infer_ms_per_window=round(lat["p95_ms"], 3), path=results_csv)
         rows.append(row)
-        for f in range(k):                                           # gói đủ mô hình trong output cho GĐ G, H
-            shutil.copy(src / f"gat_fold{f}.pt", out_dir / f"gat_fold{f}.pt")
-        with open(out_dir / "lgbm_stack.pkl", "wb") as fh:
+        if src.resolve() != out_dir.resolve():                       # gói đủ mô hình trong output cho GĐ G, H
+            for f in range(k):
+                shutil.copy(src / f"gat_fold{f}.pt", out_dir / f"gat_fold{f}.pt")
+        with open(out_dir / ("lgbm_stack_il.pkl" if interleave > 0 else "lgbm_stack.pkl"), "wb") as fh:
             pickle.dump(lgbm, fh)
-        (out_dir / "meta_stack.json").write_text(json.dumps({
-            "model": MODEL, "dataset": dataset, "seed": seed, "lgbm_cfg": cfg, "k": k, "n_cols": int(Ftr.shape[1]),
+        (out_dir / ("meta_stack_il.json" if interleave > 0 else "meta_stack.json")).write_text(json.dumps({
+            "model": model_name, "dataset": dataset, "seed": seed, "lgbm_cfg": cfg, "k": k, "n_cols": int(Ftr.shape[1]),
             "n_params": n_params, "size_kb": size_kb, "classes": classes}), encoding="utf-8")
         log["seeds"][str(seed)] = entry
-        print(f"[{MODEL} seed {seed}] acc {metrics['accuracy']:.4f} F1-macro {metrics['f1_macro']:.4f} "
+        print(f"[{model_name} seed {seed}] acc {metrics['accuracy']:.4f} F1-macro {metrics['f1_macro']:.4f} "
               f"(train {diag['train_f1_macro']:.4f}; từng GAT {np.round(diag['val_f1_macro_each_gat'], 3).tolist()}; "
               f"GAT đơn trung bình {diag['gat_alone_val_f1_macro_avg']:.4f}) FPR {metrics['fpr']:.4f} "
               f"recall_tc {metrics['recall_attack']:.4f} AUC {metrics['roc_auc']:.4f} p95 {lat['p95_ms']:.2f} ms, "
@@ -137,7 +139,7 @@ def main():
     data_dir, dataset, results_csv, search_json, folds_dir = pos[:5]
     run(data_dir, dataset, results_csv, search_json, folds_dir, full_dir=opt.get("full_dir"),
         fold_search=opt.get("fold_search"), models_dir=opt.get("models"), k=int(opt.get("k", 5)),
-        hp=json.loads(opt["hp"]) if "hp" in opt else None)
+        interleave=int(opt.get("interleave", 0)), hp=json.loads(opt["hp"]) if "hp" in opt else None)
     return 0
 
 

@@ -50,26 +50,51 @@ def extract_embeddings(model, graphs, device=None, batch_size=256):
     return torch.cat(out).numpy().astype(np.float32)
 
 
-def fold_groups(graphs, k=5):
-    """Chia danh sách đồ thị (đã theo thời gian) thành k nhóm liên tiếp có số node xấp xỉ nhau. Trả về k mảng chỉ số."""
+def _contiguous_blocks(graphs, n_blocks):
+    """Chia danh sách đồ thị (đã theo thời gian) thành n_blocks khối liên tiếp có số node xấp xỉ nhau."""
     n = np.array([g.num_nodes for g in graphs], dtype=np.float64)
     c = np.cumsum(n)
-    gid = np.minimum(k - 1, ((c - n / 2) * k / c[-1]).astype(int))          # theo điểm giữa của đồ thị, không giảm
-    groups = [np.flatnonzero(gid == f) for f in range(k)]
-    if any(len(g) == 0 for g in groups):
-        raise ValueError(f"Không chia được {len(graphs)} đồ thị thành {k} nhóm không rỗng")
-    return groups
+    gid = np.minimum(n_blocks - 1, ((c - n / 2) * n_blocks / c[-1]).astype(int))    # theo điểm giữa của đồ thị, không giảm
+    blocks = [np.flatnonzero(gid == f) for f in range(n_blocks)]
+    if any(len(b) == 0 for b in blocks):
+        raise ValueError(f"Không chia được {len(graphs)} đồ thị thành {n_blocks} khối không rỗng")
+    return blocks
+
+
+def fold_groups(graphs, k=5, interleave=0):
+    """Chia đồ thị train thành k nhóm out-of-fold. Trả về k mảng chỉ số đồ thị (tăng dần).
+
+    interleave = 0: k nhóm liên tiếp theo thời gian (đặc tả ban đầu của task 5.7). Trên dữ liệu này cách đó hỏng: mỗi
+    loại tấn công chỉ xuất hiện ở một giai đoạn, nên nhóm cuối là nơi duy nhất có DoS_DDoS (BoT) hoặc Botnet_Backdoor
+    và Khac (ToN); GAT huấn luyện không có nhóm cuối chưa từng thấy các lớp đó (log `classes_missing_in_fit`).
+    interleave = m > 0: cắt train thành k·m khối liên tiếp theo thời gian rồi gán khối i cho nhóm i mod k; mỗi nhóm
+    trải khắp mọi giai đoạn, nên GAT của mọi nhóm đều thấy đủ các lớp, mà vẫn giữ tính liên tiếp trong từng khối."""
+    if interleave <= 0:
+        return _contiguous_blocks(graphs, k)
+    blocks = _contiguous_blocks(graphs, k * interleave)
+    return [np.sort(np.concatenate(blocks[f::k])) for f in range(k)]
+
+
+def _scatter(parts, groups, graphs):
+    """Ghép kết quả theo nhóm (mỗi phần theo thứ tự đồ thị trong nhóm) về thứ tự node của train."""
+    sizes = np.array([g.num_nodes for g in graphs])
+    off = np.r_[0, np.cumsum(sizes)]
+    out = np.empty((int(off[-1]), parts[0].shape[1]), dtype=parts[0].dtype)
+    for part, g in zip(parts, groups):
+        idx = np.concatenate([np.arange(off[i], off[i + 1]) for i in g])
+        out[idx] = part
+    return out
 
 
 def oof_ensemble(train_graphs, val_graphs, classes, device, seed, k=5, model_hp=None, train_hp=None,
-                 verbose=False, train_fn=train_gat):
+                 verbose=False, train_fn=train_gat, interleave=0):
     """Embedding out-of-fold cho train: nhóm f lấy embedding từ GAT huấn luyện trên các nhóm khác f.
 
     Trả về (embedding train hình (số node train, 64) theo thứ tự train, danh sách k GAT của các nhóm (đã eval, trên
     `device`), danh sách k embedding val (mỗi cái từ một GAT nhóm), thông tin từng nhóm). `train_fn` có cùng chữ ký với
     `train_gat` (tiêm để test kiểm tra GAT không thấy nhóm bị giữ lại)."""
-    groups = fold_groups(train_graphs, k)
-    assert np.array_equal(np.concatenate(groups), np.arange(len(train_graphs)))
+    groups = fold_groups(train_graphs, k, interleave)
+    assert np.array_equal(np.sort(np.concatenate(groups)), np.arange(len(train_graphs)))
     parts, models, val_embs, info = [], [], [], []
     for f, held in enumerate(groups):
         rest = np.concatenate([g for j, g in enumerate(groups) if j != f])
@@ -83,14 +108,14 @@ def oof_ensemble(train_graphs, val_graphs, classes, device, seed, k=5, model_hp=
                      "n_nodes_held": int(sum(train_graphs[i].num_nodes for i in held)),
                      "epochs": len(hist), "train_s": round(secs, 1),
                      "classes_missing_in_fit": [classes[c] for c in range(len(classes)) if not (y_fit == c).any()]})
-    return np.concatenate(parts), models, val_embs, info
+    return _scatter(parts, groups, train_graphs), models, val_embs, info
 
 
 def oof_embeddings(train_graphs, val_graphs, classes, device, seed, k=5, model_hp=None, train_hp=None,
-                   verbose=False, train_fn=train_gat):
+                   verbose=False, train_fn=train_gat, interleave=0):
     """Như `oof_ensemble` nhưng chỉ trả về (embedding train, thông tin từng nhóm)."""
     emb, _, _, info = oof_ensemble(train_graphs, val_graphs, classes, device, seed, k, model_hp, train_hp, verbose,
-                                   train_fn)
+                                   train_fn, interleave)
     return emb, info
 
 
@@ -101,12 +126,12 @@ def class_proba(model, graphs, device=None, batch_size=256):
     return p.astype(np.float32)
 
 
-def oof_class_proba(train_graphs, fold_models, k=5, device=None):
+def oof_class_proba(train_graphs, fold_models, k=5, device=None, interleave=0):
     """Xác suất out-of-fold cho train: nhóm f lấy xác suất từ `fold_models[f]` (GAT huấn luyện trên các nhóm khác f, cùng
     cách chia `fold_groups` như `oof_embeddings`). Xác suất có ngữ nghĩa cố định giữa các GAT (cột = lớp), khác embedding."""
-    groups = fold_groups(train_graphs, k)
-    return np.concatenate([class_proba(fold_models[f], [train_graphs[i] for i in g], device)
-                           for f, g in enumerate(groups)])
+    groups = fold_groups(train_graphs, k, interleave)
+    return _scatter([class_proba(fold_models[f], [train_graphs[i] for i in g], device)
+                     for f, g in enumerate(groups)], groups, train_graphs)
 
 
 def build_features(emb, x):
