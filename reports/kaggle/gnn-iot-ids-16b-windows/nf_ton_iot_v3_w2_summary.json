@@ -1,0 +1,122 @@
+{
+ "dataset": "nf_ton_iot_v3",
+ "tag": "nf_ton_iot_v3_w2s2_blocked",
+ "n_graphs": 165774,
+ "fingerprint_sha256": "94300d166b652b664af1c50d87d5dda628194ddfa8977aff6d880b47ab4a1fdc",
+ "checks": [
+  {
+   "name": "Không cửa sổ trùng giữa các tập",
+   "ok": true,
+   "detail": "0 cửa sổ trùng"
+  },
+  {
+   "name": "Gap >= 1 cửa sổ ở mọi ranh giới giữa các tập",
+   "ok": true,
+   "detail": "0 ranh giới vi phạm"
+  },
+  {
+   "name": "Không có NaN hoặc inf trong x và edge_attr",
+   "ok": true,
+   "detail": "0 đồ thị lỗi"
+  },
+  {
+   "name": "x có 18 đặc trưng, edge_attr có 3",
+   "ok": true,
+   "detail": "0 đồ thị sai hình dạng"
+  },
+  {
+   "name": "Chỉ số cạnh nằm trong số node",
+   "ok": true,
+   "detail": "0 đồ thị lỗi"
+  },
+  {
+   "name": "IP và cổng không nằm trong đặc trưng",
+   "ok": true,
+   "detail": "đặc trưng: 18 cột thống kê"
+  },
+  {
+   "name": "Scaler chỉ fit trên train (số mẫu = số node train)",
+   "ok": true,
+   "detail": "scaler 1093940.0 / train 1093940"
+  },
+  {
+   "name": "Đặc trưng train sau chuẩn hóa có trung bình ~0",
+   "ok": true,
+   "detail": "|mean| lớn nhất 1.34e-08"
+  },
+  {
+   "name": "Mỗi lớp chính có >= 100 node train, >= 30 node val và test",
+   "ok": true,
+   "detail": "đủ"
+  },
+  {
+   "name": "Tỉ lệ node train/val/test trong 70/15/15 ± 3 điểm %",
+   "ok": true,
+   "detail": "70.0/15.0/15.0"
+  },
+  {
+   "name": "Tái lập: dựng lại lần 2 cho cùng hash",
+   "ok": true,
+   "detail": "94300d166b652b66 / 94300d166b652b66"
+  }
+ ],
+ "options": {
+  "mode": "blocked",
+  "blocks": 10,
+  "balance_nodes": true,
+  "gap": 1
+ },
+ "clean_log": [
+  {
+   "buoc": "Ban đầu",
+   "so_dong": 27520260
+  },
+  {
+   "buoc": "Bỏ thiếu / vô cực",
+   "so_dong": 27520260
+  },
+  {
+   "buoc": "Bỏ giá trị âm",
+   "so_dong": 27520260
+  },
+  {
+   "buoc": "Bỏ bản ghi trùng lặp",
+   "so_dong": 25661634
+  }
+ ],
+ "split_counts": {
+  "train": {
+   "n_graphs": 108153,
+   "n_nodes": 1093940,
+   "Normal": 620748,
+   "DoS_DDoS": 134882,
+   "Botnet_Backdoor": 70998,
+   "Truy_cap_trai_phep": 267312,
+   "Khac": 0
+  },
+  "val": {
+   "n_graphs": 27903,
+   "n_nodes": 234311,
+   "Normal": 158346,
+   "DoS_DDoS": 29825,
+   "Botnet_Backdoor": 12602,
+   "Truy_cap_trai_phep": 31871,
+   "Khac": 1667
+  },
+  "test": {
+   "n_graphs": 29718,
+   "n_nodes": 234394,
+   "Normal": 155534,
+   "DoS_DDoS": 44367,
+   "Botnet_Backdoor": 12583,
+   "Truy_cap_trai_phep": 20505,
+   "Khac": 1405
+  }
+ },
+ "files": {
+  "graph_stats.csv": 210,
+  "scaler.pkl": 848,
+  "graphs_nf_ton_iot_v3_w2s2_blocked.pt": 415610219,
+  "split.json": 3040077
+ }
+}
