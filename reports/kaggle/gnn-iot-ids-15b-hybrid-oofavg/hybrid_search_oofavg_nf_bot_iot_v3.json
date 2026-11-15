@@ -1,0 +1,224 @@
+{
+ "hybrid_gat_lgbm_oofavg": {
+  "dataset": "nf_bot_iot_v3",
+  "k": 5,
+  "seeds": {
+   "42": {
+    "folds": [
+     {
+      "fold": 0,
+      "n_graphs_held": 1892,
+      "n_nodes_held": 9964,
+      "epochs": 17,
+      "train_s": 13.0,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 1,
+      "n_graphs_held": 1896,
+      "n_nodes_held": 9962,
+      "epochs": 22,
+      "train_s": 16.2,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 2,
+      "n_graphs_held": 1891,
+      "n_nodes_held": 9967,
+      "epochs": 27,
+      "train_s": 20.0,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 3,
+      "n_graphs_held": 2227,
+      "n_nodes_held": 9965,
+      "epochs": 40,
+      "train_s": 28.6,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 4,
+      "n_graphs_held": 1814,
+      "n_nodes_held": 9962,
+      "epochs": 12,
+      "train_s": 9.1,
+      "classes_missing_in_fit": [
+       "DoS_DDoS"
+      ]
+     }
+    ],
+    "gat_full": {
+     "epochs": 20,
+     "train_s": 17.8
+    },
+    "search": [
+     {
+      "cfg": {
+       "n": 100,
+       "l": 15
+      },
+      "val_f1_macro": 0.8680436155384482,
+      "seconds": 3.0
+     },
+     {
+      "cfg": {
+       "n": 200,
+       "l": 31
+      },
+      "val_f1_macro": 0.6278713624533063,
+      "seconds": 7.4
+     },
+     {
+      "cfg": {
+       "n": 300,
+       "l": 63
+      },
+      "val_f1_macro": 0.6797267398668859,
+      "seconds": 14.3
+     }
+    ],
+    "diag": {
+     "train_f1_macro": 0.9011235944879941,
+     "val_f1_macro_avg_views": 0.8680436155384482,
+     "val_f1_macro_each_view": [
+      0.5590139118160159,
+      0.8292497204659388,
+      0.7670062918099275,
+      0.5007944633346265,
+      0.935102272967632
+     ],
+     "val_f1_macro_full_gat_embedding": 0.7556353352103896
+    }
+   },
+   "43": {
+    "folds": [
+     {
+      "fold": 0,
+      "n_graphs_held": 1892,
+      "n_nodes_held": 9964,
+      "epochs": 16,
+      "train_s": 11.7,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 1,
+      "n_graphs_held": 1896,
+      "n_nodes_held": 9962,
+      "epochs": 25,
+      "train_s": 18.5,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 2,
+      "n_graphs_held": 1891,
+      "n_nodes_held": 9967,
+      "epochs": 16,
+      "train_s": 11.8,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 3,
+      "n_graphs_held": 2227,
+      "n_nodes_held": 9965,
+      "epochs": 34,
+      "train_s": 24.0,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 4,
+      "n_graphs_held": 1814,
+      "n_nodes_held": 9962,
+      "epochs": 10,
+      "train_s": 7.4,
+      "classes_missing_in_fit": [
+       "DoS_DDoS"
+      ]
+     }
+    ],
+    "gat_full": {
+     "epochs": 38,
+     "train_s": 33.0
+    },
+    "diag": {
+     "train_f1_macro": 0.8991604211366145,
+     "val_f1_macro_avg_views": 0.7858958220983089,
+     "val_f1_macro_each_view": [
+      0.5190820406263852,
+      0.7634762878680288,
+      0.7016871055705086,
+      0.5587991506038387,
+      0.9343554510431216
+     ],
+     "val_f1_macro_full_gat_embedding": 0.7369053430717027
+    }
+   },
+   "44": {
+    "folds": [
+     {
+      "fold": 0,
+      "n_graphs_held": 1892,
+      "n_nodes_held": 9964,
+      "epochs": 23,
+      "train_s": 16.8,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 1,
+      "n_graphs_held": 1896,
+      "n_nodes_held": 9962,
+      "epochs": 23,
+      "train_s": 16.8,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 2,
+      "n_graphs_held": 1891,
+      "n_nodes_held": 9967,
+      "epochs": 36,
+      "train_s": 26.2,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 3,
+      "n_graphs_held": 2227,
+      "n_nodes_held": 9965,
+      "epochs": 20,
+      "train_s": 14.1,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 4,
+      "n_graphs_held": 1814,
+      "n_nodes_held": 9962,
+      "epochs": 16,
+      "train_s": 11.7,
+      "classes_missing_in_fit": [
+       "DoS_DDoS"
+      ]
+     }
+    ],
+    "gat_full": {
+     "epochs": 36,
+     "train_s": 31.3
+    },
+    "diag": {
+     "train_f1_macro": 0.9004629759487873,
+     "val_f1_macro_avg_views": 0.5737651037005569,
+     "val_f1_macro_each_view": [
+      0.3995272356622464,
+      0.5781417820760827,
+      0.618120634200376,
+      0.3816389824653803,
+      0.9337213381722336
+     ],
+     "val_f1_macro_full_gat_embedding": 0.5575912363417196
+    }
+   }
+  },
+  "best": {
+   "n": 100,
+   "l": 15
+  }
+ }
+}

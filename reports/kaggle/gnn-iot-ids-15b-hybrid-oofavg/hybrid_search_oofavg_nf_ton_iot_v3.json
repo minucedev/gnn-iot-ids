@@ -1,0 +1,227 @@
+{
+ "hybrid_gat_lgbm_oofavg": {
+  "dataset": "nf_ton_iot_v3",
+  "k": 5,
+  "seeds": {
+   "42": {
+    "folds": [
+     {
+      "fold": 0,
+      "n_graphs_held": 4170,
+      "n_nodes_held": 113690,
+      "epochs": 11,
+      "train_s": 42.8,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 1,
+      "n_graphs_held": 5197,
+      "n_nodes_held": 113690,
+      "epochs": 23,
+      "train_s": 90.3,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 2,
+      "n_graphs_held": 8829,
+      "n_nodes_held": 113700,
+      "epochs": 26,
+      "train_s": 92.2,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 3,
+      "n_graphs_held": 9758,
+      "n_nodes_held": 113687,
+      "epochs": 11,
+      "train_s": 37.9,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 4,
+      "n_graphs_held": 16569,
+      "n_nodes_held": 113698,
+      "epochs": 27,
+      "train_s": 79.6,
+      "classes_missing_in_fit": [
+       "Botnet_Backdoor",
+       "Khac"
+      ]
+     }
+    ],
+    "gat_full": {
+     "epochs": 40,
+     "train_s": 169.4
+    },
+    "search": [
+     {
+      "cfg": {
+       "n": 100,
+       "l": 15
+      },
+      "val_f1_macro": 0.6699875403279385,
+      "seconds": 43.9
+     },
+     {
+      "cfg": {
+       "n": 200,
+       "l": 31
+      },
+      "val_f1_macro": 0.6703134249449283,
+      "seconds": 97.1
+     },
+     {
+      "cfg": {
+       "n": 300,
+       "l": 63
+      },
+      "val_f1_macro": 0.670776306514482,
+      "seconds": 161.0
+     }
+    ],
+    "diag": {
+     "train_f1_macro": 0.9958791601432667,
+     "val_f1_macro_avg_views": 0.670776306514482,
+     "val_f1_macro_each_view": [
+      0.6617416834463117,
+      0.6600690068082783,
+      0.6685220274065112,
+      0.6543976759113095,
+      0.9079954049159865
+     ],
+     "val_f1_macro_full_gat_embedding": 0.6407736602985155
+    }
+   },
+   "43": {
+    "folds": [
+     {
+      "fold": 0,
+      "n_graphs_held": 4170,
+      "n_nodes_held": 113690,
+      "epochs": 25,
+      "train_s": 95.3,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 1,
+      "n_graphs_held": 5197,
+      "n_nodes_held": 113690,
+      "epochs": 32,
+      "train_s": 121.0,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 2,
+      "n_graphs_held": 8829,
+      "n_nodes_held": 113700,
+      "epochs": 23,
+      "train_s": 81.3,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 3,
+      "n_graphs_held": 9758,
+      "n_nodes_held": 113687,
+      "epochs": 13,
+      "train_s": 45.0,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 4,
+      "n_graphs_held": 16569,
+      "n_nodes_held": 113698,
+      "epochs": 31,
+      "train_s": 90.7,
+      "classes_missing_in_fit": [
+       "Botnet_Backdoor",
+       "Khac"
+      ]
+     }
+    ],
+    "gat_full": {
+     "epochs": 17,
+     "train_s": 71.5
+    },
+    "diag": {
+     "train_f1_macro": 0.996114012728317,
+     "val_f1_macro_avg_views": 0.6695071333517068,
+     "val_f1_macro_each_view": [
+      0.5935042408155713,
+      0.6580099869400371,
+      0.6642634615156442,
+      0.6385715108237063,
+      0.8724770284177419
+     ],
+     "val_f1_macro_full_gat_embedding": 0.6283886669544778
+    }
+   },
+   "44": {
+    "folds": [
+     {
+      "fold": 0,
+      "n_graphs_held": 4170,
+      "n_nodes_held": 113690,
+      "epochs": 17,
+      "train_s": 65.2,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 1,
+      "n_graphs_held": 5197,
+      "n_nodes_held": 113690,
+      "epochs": 24,
+      "train_s": 90.1,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 2,
+      "n_graphs_held": 8829,
+      "n_nodes_held": 113700,
+      "epochs": 18,
+      "train_s": 63.7,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 3,
+      "n_graphs_held": 9758,
+      "n_nodes_held": 113687,
+      "epochs": 15,
+      "train_s": 51.8,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 4,
+      "n_graphs_held": 16569,
+      "n_nodes_held": 113698,
+      "epochs": 14,
+      "train_s": 40.6,
+      "classes_missing_in_fit": [
+       "Botnet_Backdoor",
+       "Khac"
+      ]
+     }
+    ],
+    "gat_full": {
+     "epochs": 21,
+     "train_s": 88.6
+    },
+    "diag": {
+     "train_f1_macro": 0.9959363684232374,
+     "val_f1_macro_avg_views": 0.6770887312259384,
+     "val_f1_macro_each_view": [
+      0.5981762859260231,
+      0.6603224368355487,
+      0.6685343514705387,
+      0.6415606537910712,
+      0.9054615300984743
+     ],
+     "val_f1_macro_full_gat_embedding": 0.6365858738340238
+    }
+   }
+  },
+  "best": {
+   "n": 300,
+   "l": 63
+  }
+ }
+}

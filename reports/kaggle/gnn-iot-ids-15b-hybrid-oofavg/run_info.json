@@ -1,0 +1,120 @@
+{
+ "steps_s": {
+  "clone_va_cai_goi": 57.2,
+  "pytest": 59.8,
+  "oofavg_nf_bot_iot_v3": 386.9,
+  "oofavg_nf_ton_iot_v3": 2459.6
+ },
+ "device": "GPU",
+ "gpu": "Tesla T4",
+ "commit": "f63efc1628c1115d0cac9cb37c6fe35eef46c77b",
+ "total_s": 2974.0,
+ "peak_ram_gb": 3.36,
+ "gpu_hours": 0.826,
+ "cpu_count": 4,
+ "pytest": "80 passed, 1993 warnings in 55.90s",
+ "criteria": {
+  "nf_bot_iot_v3": {
+   "du_3_seed_1_dong": true,
+   "chi_split_val": true,
+   "f1_macro_mean": 0.7426,
+   "fpr_mean": 0.2345,
+   "size_kb_max": 775.7,
+   "p95_ms_max": 11.571
+  },
+  "nf_ton_iot_v3": {
+   "du_3_seed_1_dong": true,
+   "chi_split_val": true,
+   "f1_macro_mean": 0.6725,
+   "fpr_mean": 0.0445,
+   "size_kb_max": 9302.4,
+   "p95_ms_max": 20.758
+  }
+ },
+ "diag": {
+  "nf_bot_iot_v3": {
+   "42": {
+    "train_f1_macro": 0.9011235944879941,
+    "val_f1_macro_avg_views": 0.8680436155384482,
+    "val_f1_macro_each_view": [
+     0.5590139118160159,
+     0.8292497204659388,
+     0.7670062918099275,
+     0.5007944633346265,
+     0.935102272967632
+    ],
+    "val_f1_macro_full_gat_embedding": 0.7556353352103896
+   },
+   "43": {
+    "train_f1_macro": 0.8991604211366145,
+    "val_f1_macro_avg_views": 0.7858958220983089,
+    "val_f1_macro_each_view": [
+     0.5190820406263852,
+     0.7634762878680288,
+     0.7016871055705086,
+     0.5587991506038387,
+     0.9343554510431216
+    ],
+    "val_f1_macro_full_gat_embedding": 0.7369053430717027
+   },
+   "44": {
+    "train_f1_macro": 0.9004629759487873,
+    "val_f1_macro_avg_views": 0.5737651037005569,
+    "val_f1_macro_each_view": [
+     0.3995272356622464,
+     0.5781417820760827,
+     0.618120634200376,
+     0.3816389824653803,
+     0.9337213381722336
+    ],
+    "val_f1_macro_full_gat_embedding": 0.5575912363417196
+   }
+  },
+  "nf_ton_iot_v3": {
+   "42": {
+    "train_f1_macro": 0.9958791601432667,
+    "val_f1_macro_avg_views": 0.670776306514482,
+    "val_f1_macro_each_view": [
+     0.6617416834463117,
+     0.6600690068082783,
+     0.6685220274065112,
+     0.6543976759113095,
+     0.9079954049159865
+    ],
+    "val_f1_macro_full_gat_embedding": 0.6407736602985155
+   },
+   "43": {
+    "train_f1_macro": 0.996114012728317,
+    "val_f1_macro_avg_views": 0.6695071333517068,
+    "val_f1_macro_each_view": [
+     0.5935042408155713,
+     0.6580099869400371,
+     0.6642634615156442,
+     0.6385715108237063,
+     0.8724770284177419
+    ],
+    "val_f1_macro_full_gat_embedding": 0.6283886669544778
+   },
+   "44": {
+    "train_f1_macro": 0.9959363684232374,
+    "val_f1_macro_avg_views": 0.6770887312259384,
+    "val_f1_macro_each_view": [
+     0.5981762859260231,
+     0.6603224368355487,
+     0.6685343514705387,
+     0.6415606537910712,
+     0.9054615300984743
+    ],
+    "val_f1_macro_full_gat_embedding": 0.6365858738340238
+   }
+  }
+ },
+ "models_hybrid_dirs": [
+  "nf_bot_iot_v3_s42",
+  "nf_bot_iot_v3_s43",
+  "nf_bot_iot_v3_s44",
+  "nf_ton_iot_v3_s42",
+  "nf_ton_iot_v3_s43",
+  "nf_ton_iot_v3_s44"
+ ]
+}
