@@ -1,0 +1,163 @@
+{
+ "steps_s": {
+  "clone_va_cai_goi": 54.7,
+  "pytest": 53.2,
+  "hybrid_nf_ton_iot_v3_oof1": 2066.9,
+  "hybrid_nf_ton_iot_v3_oof0": 825.3,
+  "hybrid_nf_bot_iot_v3_oof1": 369.6,
+  "hybrid_nf_bot_iot_v3_oof0": 46.9,
+  "compare_val": 2.3
+ },
+ "device": "GPU",
+ "gpu": "Tesla T4",
+ "commit": "603d9292fa0d523b30ff6a8b01483cd8b648c1c6",
+ "total_s": 3427.3,
+ "peak_ram_gb": 2.78,
+ "gpu_hours": 0.952,
+ "cpu_count": 4,
+ "pytest": "76 passed, 1161 warnings in 49.33s",
+ "criteria": {
+  "nf_ton_iot_v3": {
+   "du_2_mo_hinh_x_3_seed_moi_cap_1_dong": true,
+   "chi_split_val": true,
+   "co_n_params_size_do_tre": true,
+   "size_kb_max": 9364.3,
+   "so_lan_thu_le_20": true,
+   "co_oof_k5": true
+  },
+  "nf_bot_iot_v3": {
+   "du_2_mo_hinh_x_3_seed_moi_cap_1_dong": true,
+   "chi_split_val": true,
+   "co_n_params_size_do_tre": true,
+   "size_kb_max": 5543.5,
+   "so_lan_thu_le_20": true,
+   "co_oof_k5": true
+  }
+ },
+ "summary": {
+  "nf_ton_iot_v3": {
+   "hybrid_gat_lgbm": {
+    "f1_macro_mean": 0.6471374728972195,
+    "f1_macro_std": 0.008036508445017129,
+    "fpr_mean": 0.06356473474186365,
+    "fpr_std": 0.0031379887765948795,
+    "recall_attack_mean": 0.8457963667089142,
+    "f1_macro_best_model": "mlp",
+    "f1_macro_diff_vs_best": -0.29100846498996435,
+    "f1_macro_beats_2std": false,
+    "fpr_best_model": "mlp",
+    "fpr_diff_vs_best": -0.03864865512387869,
+    "fpr_beats_2std": false
+   },
+   "hybrid_gat_lgbm_nooof": {
+    "f1_macro_mean": 0.9115852035479038,
+    "f1_macro_std": 0.03532608224399292,
+    "fpr_mean": 0.07241232482864389,
+    "fpr_std": 0.036586810949546175,
+    "recall_attack_mean": 0.9513448810026756,
+    "f1_macro_best_model": "mlp",
+    "f1_macro_diff_vs_best": -0.026560734339279968,
+    "f1_macro_beats_2std": false,
+    "fpr_best_model": "mlp",
+    "fpr_diff_vs_best": -0.04749624521065893,
+    "fpr_beats_2std": false
+   },
+   "diag_train_vs_val_f1": {
+    "hybrid_gat_lgbm": {
+     "42": {
+      "train_f1_macro": 0.9783044666352194,
+      "val_f1_macro": 0.6378869189015146
+     },
+     "43": {
+      "train_f1_macro": 0.9776869334849004,
+      "val_f1_macro": 0.6523998574733061
+     },
+     "44": {
+      "train_f1_macro": 0.9794323087172564,
+      "val_f1_macro": 0.6511256423168377
+     }
+    },
+    "hybrid_gat_lgbm_nooof": {
+     "42": {
+      "train_f1_macro": 0.9959123227808186,
+      "val_f1_macro": 0.933758995462646
+     },
+     "43": {
+      "train_f1_macro": 0.9557338609388528,
+      "val_f1_macro": 0.870847434065447
+     },
+     "44": {
+      "train_f1_macro": 0.9957609148634076,
+      "val_f1_macro": 0.9301491811156188
+     }
+    }
+   }
+  },
+  "nf_bot_iot_v3": {
+   "hybrid_gat_lgbm": {
+    "f1_macro_mean": 0.7141067067769705,
+    "f1_macro_std": 0.17096210138312992,
+    "fpr_mean": 0.24194653872515418,
+    "fpr_std": 0.02142631807037777,
+    "recall_attack_mean": 0.8937035115032002,
+    "f1_macro_best_model": "lightgbm",
+    "f1_macro_diff_vs_best": -0.22469508830598306,
+    "f1_macro_beats_2std": false,
+    "fpr_best_model": "lightgbm",
+    "fpr_diff_vs_best": -0.04523646333104864,
+    "fpr_beats_2std": false
+   },
+   "hybrid_gat_lgbm_nooof": {
+    "f1_macro_mean": 0.9351353360815993,
+    "f1_macro_std": 0.0003140033050386296,
+    "fpr_mean": 0.19659584190084534,
+    "fpr_std": 0.0005234836297641996,
+    "recall_attack_mean": 0.9821830133194949,
+    "f1_macro_best_model": "lightgbm",
+    "f1_macro_diff_vs_best": -0.0036664590013543163,
+    "f1_macro_beats_2std": false,
+    "fpr_best_model": "lightgbm",
+    "fpr_diff_vs_best": 0.00011423349326020182,
+    "fpr_beats_2std": false
+   },
+   "diag_train_vs_val_f1": {
+    "hybrid_gat_lgbm": {
+     "42": {
+      "train_f1_macro": 0.9294498288048348,
+      "val_f1_macro": 0.8815524457863028
+     },
+     "43": {
+      "train_f1_macro": 0.9292910485916887,
+      "val_f1_macro": 0.7209348365768374
+     },
+     "44": {
+      "train_f1_macro": 0.9279842444993779,
+      "val_f1_macro": 0.5398328379677714
+     }
+    },
+    "hybrid_gat_lgbm_nooof": {
+     "42": {
+      "train_f1_macro": 0.8912607379574172,
+      "val_f1_macro": 0.9347793387101143
+     },
+     "43": {
+      "train_f1_macro": 0.8915734980410006,
+      "val_f1_macro": 0.9353728954859157
+     },
+     "44": {
+      "train_f1_macro": 0.8915019799905669,
+      "val_f1_macro": 0.9352537740487676
+     }
+    }
+   }
+  }
+ },
+ "models_hybrid_dirs": [
+  "nf_bot_iot_v3_s42",
+  "nf_bot_iot_v3_s43",
+  "nf_bot_iot_v3_s44",
+  "nf_ton_iot_v3_s42",
+  "nf_ton_iot_v3_s43",
+  "nf_ton_iot_v3_s44"
+ ]
+}

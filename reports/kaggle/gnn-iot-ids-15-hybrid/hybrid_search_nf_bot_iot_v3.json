@@ -1,0 +1,275 @@
+{
+ "hybrid_gat_lgbm": {
+  "dataset": "nf_bot_iot_v3",
+  "k": 5,
+  "seeds": {
+   "42": {
+    "gat": {
+     "train_s": 14.7,
+     "epochs": 16,
+     "best_val_f1_macro": 0.9321144076238755
+    },
+    "folds": [
+     {
+      "fold": 0,
+      "n_graphs_held": 1892,
+      "n_nodes_held": 9964,
+      "epochs": 23,
+      "train_s": 16.8,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 1,
+      "n_graphs_held": 1896,
+      "n_nodes_held": 9962,
+      "epochs": 20,
+      "train_s": 14.6,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 2,
+      "n_graphs_held": 1891,
+      "n_nodes_held": 9967,
+      "epochs": 27,
+      "train_s": 19.7,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 3,
+      "n_graphs_held": 2227,
+      "n_nodes_held": 9965,
+      "epochs": 27,
+      "train_s": 19.0,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 4,
+      "n_graphs_held": 1814,
+      "n_nodes_held": 9962,
+      "epochs": 12,
+      "train_s": 9.1,
+      "classes_missing_in_fit": [
+       "DoS_DDoS"
+      ]
+     }
+    ],
+    "search": [
+     {
+      "cfg": {
+       "n": 100,
+       "l": 15
+      },
+      "val_f1_macro": 0.881417197155954,
+      "seconds": 3.0
+     },
+     {
+      "cfg": {
+       "n": 200,
+       "l": 31
+      },
+      "val_f1_macro": 0.8639426895149026,
+      "seconds": 7.0
+     },
+     {
+      "cfg": {
+       "n": 300,
+       "l": 63
+      },
+      "val_f1_macro": 0.8815524457863028,
+      "seconds": 13.4
+     }
+    ],
+    "diag": {
+     "train_f1_macro": 0.9294498288048348,
+     "val_f1_macro": 0.8815524457863028
+    }
+   },
+   "43": {
+    "gat": {
+     "train_s": 23.8,
+     "epochs": 27,
+     "best_val_f1_macro": 0.9346360117062732
+    },
+    "folds": [
+     {
+      "fold": 0,
+      "n_graphs_held": 1892,
+      "n_nodes_held": 9964,
+      "epochs": 11,
+      "train_s": 8.1,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 1,
+      "n_graphs_held": 1896,
+      "n_nodes_held": 9962,
+      "epochs": 13,
+      "train_s": 9.7,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 2,
+      "n_graphs_held": 1891,
+      "n_nodes_held": 9967,
+      "epochs": 17,
+      "train_s": 12.4,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 3,
+      "n_graphs_held": 2227,
+      "n_nodes_held": 9965,
+      "epochs": 25,
+      "train_s": 17.6,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 4,
+      "n_graphs_held": 1814,
+      "n_nodes_held": 9962,
+      "epochs": 10,
+      "train_s": 7.5,
+      "classes_missing_in_fit": [
+       "DoS_DDoS"
+      ]
+     }
+    ],
+    "diag": {
+     "train_f1_macro": 0.9292910485916887,
+     "val_f1_macro": 0.7209348365768374
+    }
+   },
+   "44": {
+    "gat": {
+     "train_s": 17.6,
+     "epochs": 20,
+     "best_val_f1_macro": 0.9321992990873124
+    },
+    "folds": [
+     {
+      "fold": 0,
+      "n_graphs_held": 1892,
+      "n_nodes_held": 9964,
+      "epochs": 23,
+      "train_s": 16.9,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 1,
+      "n_graphs_held": 1896,
+      "n_nodes_held": 9962,
+      "epochs": 23,
+      "train_s": 17.3,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 2,
+      "n_graphs_held": 1891,
+      "n_nodes_held": 9967,
+      "epochs": 30,
+      "train_s": 22.4,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 3,
+      "n_graphs_held": 2227,
+      "n_nodes_held": 9965,
+      "epochs": 30,
+      "train_s": 21.3,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 4,
+      "n_graphs_held": 1814,
+      "n_nodes_held": 9962,
+      "epochs": 16,
+      "train_s": 11.8,
+      "classes_missing_in_fit": [
+       "DoS_DDoS"
+      ]
+     }
+    ],
+    "diag": {
+     "train_f1_macro": 0.9279842444993779,
+     "val_f1_macro": 0.5398328379677714
+    }
+   }
+  },
+  "best": {
+   "n": 300,
+   "l": 63
+  }
+ },
+ "hybrid_gat_lgbm_nooof": {
+  "dataset": "nf_bot_iot_v3",
+  "k": null,
+  "seeds": {
+   "42": {
+    "gat": {
+     "train_s": 14.7,
+     "epochs": 16,
+     "best_val_f1_macro": 0.9321144076238755
+    },
+    "folds": [],
+    "search": [
+     {
+      "cfg": {
+       "n": 100,
+       "l": 15
+      },
+      "val_f1_macro": 0.9347793387101143,
+      "seconds": 2.8
+     },
+     {
+      "cfg": {
+       "n": 200,
+       "l": 31
+      },
+      "val_f1_macro": 0.9218726034426887,
+      "seconds": 6.4
+     },
+     {
+      "cfg": {
+       "n": 300,
+       "l": 63
+      },
+      "val_f1_macro": 0.9071721115408483,
+      "seconds": 13.3
+     }
+    ],
+    "diag": {
+     "train_f1_macro": 0.8912607379574172,
+     "val_f1_macro": 0.9347793387101143
+    }
+   },
+   "43": {
+    "gat": {
+     "train_s": 23.8,
+     "epochs": 27,
+     "best_val_f1_macro": 0.9346360117062732
+    },
+    "folds": [],
+    "diag": {
+     "train_f1_macro": 0.8915734980410006,
+     "val_f1_macro": 0.9353728954859157
+    }
+   },
+   "44": {
+    "gat": {
+     "train_s": 17.6,
+     "epochs": 20,
+     "best_val_f1_macro": 0.9321992990873124
+    },
+    "folds": [],
+    "diag": {
+     "train_f1_macro": 0.8915019799905669,
+     "val_f1_macro": 0.9352537740487676
+    }
+   }
+  },
+  "best": {
+   "n": 100,
+   "l": 15
+  }
+ }
+}

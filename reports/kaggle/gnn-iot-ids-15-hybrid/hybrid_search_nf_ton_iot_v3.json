@@ -1,0 +1,278 @@
+{
+ "hybrid_gat_lgbm": {
+  "dataset": "nf_ton_iot_v3",
+  "k": 5,
+  "seeds": {
+   "42": {
+    "gat": {
+     "train_s": 154.3,
+     "epochs": 35,
+     "best_val_f1_macro": 0.9178434164569457
+    },
+    "folds": [
+     {
+      "fold": 0,
+      "n_graphs_held": 4170,
+      "n_nodes_held": 113690,
+      "epochs": 24,
+      "train_s": 95.3,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 1,
+      "n_graphs_held": 5197,
+      "n_nodes_held": 113690,
+      "epochs": 27,
+      "train_s": 105.9,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 2,
+      "n_graphs_held": 8829,
+      "n_nodes_held": 113700,
+      "epochs": 19,
+      "train_s": 69.5,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 3,
+      "n_graphs_held": 9758,
+      "n_nodes_held": 113687,
+      "epochs": 16,
+      "train_s": 56.9,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 4,
+      "n_graphs_held": 16569,
+      "n_nodes_held": 113698,
+      "epochs": 25,
+      "train_s": 75.7,
+      "classes_missing_in_fit": [
+       "Botnet_Backdoor",
+       "Khac"
+      ]
+     }
+    ],
+    "search": [
+     {
+      "cfg": {
+       "n": 100,
+       "l": 15
+      },
+      "val_f1_macro": 0.6378869189015146,
+      "seconds": 43.3
+     },
+     {
+      "cfg": {
+       "n": 200,
+       "l": 31
+      },
+      "val_f1_macro": 0.6323891613026058,
+      "seconds": 92.3
+     },
+     {
+      "cfg": {
+       "n": 300,
+       "l": 63
+      },
+      "val_f1_macro": 0.6365061431006167,
+      "seconds": 154.1
+     }
+    ],
+    "diag": {
+     "train_f1_macro": 0.9783044666352194,
+     "val_f1_macro": 0.6378869189015146
+    }
+   },
+   "43": {
+    "gat": {
+     "train_s": 72.7,
+     "epochs": 17,
+     "best_val_f1_macro": 0.9013067071749405
+    },
+    "folds": [
+     {
+      "fold": 0,
+      "n_graphs_held": 4170,
+      "n_nodes_held": 113690,
+      "epochs": 26,
+      "train_s": 102.6,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 1,
+      "n_graphs_held": 5197,
+      "n_nodes_held": 113690,
+      "epochs": 27,
+      "train_s": 104.2,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 2,
+      "n_graphs_held": 8829,
+      "n_nodes_held": 113700,
+      "epochs": 19,
+      "train_s": 68.9,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 3,
+      "n_graphs_held": 9758,
+      "n_nodes_held": 113687,
+      "epochs": 26,
+      "train_s": 92.1,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 4,
+      "n_graphs_held": 16569,
+      "n_nodes_held": 113698,
+      "epochs": 21,
+      "train_s": 63.0,
+      "classes_missing_in_fit": [
+       "Botnet_Backdoor",
+       "Khac"
+      ]
+     }
+    ],
+    "diag": {
+     "train_f1_macro": 0.9776869334849004,
+     "val_f1_macro": 0.6523998574733061
+    }
+   },
+   "44": {
+    "gat": {
+     "train_s": 121.3,
+     "epochs": 28,
+     "best_val_f1_macro": 0.9043575317078227
+    },
+    "folds": [
+     {
+      "fold": 0,
+      "n_graphs_held": 4170,
+      "n_nodes_held": 113690,
+      "epochs": 24,
+      "train_s": 95.1,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 1,
+      "n_graphs_held": 5197,
+      "n_nodes_held": 113690,
+      "epochs": 24,
+      "train_s": 93.1,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 2,
+      "n_graphs_held": 8829,
+      "n_nodes_held": 113700,
+      "epochs": 34,
+      "train_s": 122.8,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 3,
+      "n_graphs_held": 9758,
+      "n_nodes_held": 113687,
+      "epochs": 15,
+      "train_s": 52.8,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 4,
+      "n_graphs_held": 16569,
+      "n_nodes_held": 113698,
+      "epochs": 15,
+      "train_s": 45.3,
+      "classes_missing_in_fit": [
+       "Botnet_Backdoor",
+       "Khac"
+      ]
+     }
+    ],
+    "diag": {
+     "train_f1_macro": 0.9794323087172564,
+     "val_f1_macro": 0.6511256423168377
+    }
+   }
+  },
+  "best": {
+   "n": 100,
+   "l": 15
+  }
+ },
+ "hybrid_gat_lgbm_nooof": {
+  "dataset": "nf_ton_iot_v3",
+  "k": null,
+  "seeds": {
+   "42": {
+    "gat": {
+     "train_s": 154.3,
+     "epochs": 35,
+     "best_val_f1_macro": 0.9178434164569457
+    },
+    "folds": [],
+    "search": [
+     {
+      "cfg": {
+       "n": 100,
+       "l": 15
+      },
+      "val_f1_macro": 0.9256733964948608,
+      "seconds": 40.3
+     },
+     {
+      "cfg": {
+       "n": 200,
+       "l": 31
+      },
+      "val_f1_macro": 0.9299978139975796,
+      "seconds": 85.7
+     },
+     {
+      "cfg": {
+       "n": 300,
+       "l": 63
+      },
+      "val_f1_macro": 0.933758995462646,
+      "seconds": 144.7
+     }
+    ],
+    "diag": {
+     "train_f1_macro": 0.9959123227808186,
+     "val_f1_macro": 0.933758995462646
+    }
+   },
+   "43": {
+    "gat": {
+     "train_s": 72.7,
+     "epochs": 17,
+     "best_val_f1_macro": 0.9013067071749405
+    },
+    "folds": [],
+    "diag": {
+     "train_f1_macro": 0.9557338609388528,
+     "val_f1_macro": 0.870847434065447
+    }
+   },
+   "44": {
+    "gat": {
+     "train_s": 121.3,
+     "epochs": 28,
+     "best_val_f1_macro": 0.9043575317078227
+    },
+    "folds": [],
+    "diag": {
+     "train_f1_macro": 0.9957609148634076,
+     "val_f1_macro": 0.9301491811156188
+    }
+   }
+  },
+  "best": {
+   "n": 300,
+   "l": 63
+  }
+ }
+}

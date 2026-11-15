@@ -577,7 +577,7 @@ Thêm ngày 12/11/2026 theo yêu cầu "mô hình hybrid, lý do chọn" của t
 
 **Lý do chọn** (ghi vào báo cáo): số liệu sơ bộ cho thấy mô hình cây mạnh trên đặc trưng dạng bảng nhưng không thấy hàng xóm; GNN thấy cấu trúc mạng nhưng FPR cao. Embedding GAT mang thông tin cấu trúc mà 18 đặc trưng không có; LightGBM tận dụng tốt đặc trưng dạng bảng và cho xác suất dễ hiệu chỉnh ngưỡng.
 
-- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 14/11 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** Đang làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 14/11 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** Mô hình, Thuật toán & đánh giá
 - **Đầu vào:** GAT đã huấn luyện (5.3) cho mỗi bộ và mỗi seed; đồ thị và `split.json` (1.6, 1.8); `src/evaluate.py`
 - **Đầu ra:** `src/hybrid.py` (trích embedding, ghép đặc trưng, huấn luyện LightGBM); `scripts/run_hybrid.py`; notebook Kaggle; dòng kết quả `model=hybrid_gat_lgbm` (split=val) trong `results.csv`; `tests/test_hybrid.py`
@@ -588,6 +588,14 @@ Thêm ngày 12/11/2026 theo yêu cầu "mô hình hybrid, lý do chọn" của t
   4. Đếm "kích thước" của hybrid: số tham số GAT + số lá của LightGBM, kèm kích thước file; độ trễ mỗi cửa sổ gồm cả bước GAT và bước LightGBM.
   5. 3 seed (42, 43, 44) trên cả 2 bộ; ghi thời gian chạy GPU vào dòng Kết quả.
 - **Phụ thuộc:** 5.3, 1.8
+- **Kết quả:** (14–15/11/2026, GĐ F) Notebook `gnn-iot-ids-15-hybrid` bản 1, Kaggle **GPU Tesla T4**, clone commit `603d929`, pytest 76 passed. Tổng 3427 s = **0,952 giờ GPU** (ToN: out-of-fold 2067 s + không out-of-fold 825 s; BoT: 370 s + 47 s), RAM đỉnh 2,78 GB. Kéo về [reports/kaggle/gnn-iot-ids-15-hybrid/](../../reports/kaggle/gnn-iot-ids-15-hybrid/): `results_hybrid_<bộ>.csv`, `hybrid_search_<bộ>.json`, `compare_val_<bộ>.csv`, `run_info.json`; `models_hybrid/` (6 thư mục `<bộ>_s<seed>/`) ở lại trên Kaggle cho GĐ G, H. Chỉ `split=val`, không đọc test; cấu hình LightGBM chọn trên val ở seed 42 (3 lần thử, cùng không gian với baseline).
+  - **Tiêu chí kỹ thuật 1–5 đạt:** không rò rỉ (GAT, LightGBM chỉ học trên train; val chỉ chọn epoch GAT và cấu hình LightGBM); có cả `hybrid_gat_lgbm` (out-of-fold, K = 5) và `hybrid_gat_lgbm_nooof`, mỗi (mô hình, seed) đúng 1 dòng, 3 seed × 2 bộ; `test_hybrid.py` qua trên Kaggle; có số tham số (GAT + lá LightGBM), kích thước file, độ trễ p95 CPU 1 luồng gồm cả hai bước (2,9–5,7 ms mỗi cửa sổ).
+  - **Hybrid KHÔNG vượt mô hình tốt nhất, ở cả hai bộ** (mean ± std 3 seed, val; cột `*_beats_2std` đều `False`):
+    - NF-ToN-IoT-v3: hybrid out-of-fold F1-macro **0,647 ± 0,008**, FPR 6,36%, recall 84,6%; không out-of-fold F1 **0,912 ± 0,035** (seed 43 chỉ 0,871), FPR 7,24%, recall 95,1%. Tốt nhất trong `compare_val`: MLP F1 0,938 (xem lưu ý số baseline bên dưới); GAT đơn 0,908.
+    - NF-BoT-IoT-v3: out-of-fold F1 **0,714 ± 0,171** (3 seed: 0,882 / 0,721 / 0,540), FPR 24,2%, recall 89,4%; không out-of-fold F1 **0,935 ± 0,0003**, FPR 19,66% ± 0,05, recall 98,2%. Tốt nhất: LightGBM F1 0,9388, FPR 19,67%. Không out-of-fold thấp hơn LightGBM 0,0037 F1 và FPR bằng nhau (hơn 0,0001), tức **ngang, không hơn**; hơn GAT đơn 0,9320 một chút.
+  - **Out-of-fold làm hybrid TỆ HƠN rất nhiều, ngược với kỳ vọng.** Chẩn đoán trong `hybrid_search`: out-of-fold train F1 0,978 nhưng val 0,64–0,65 (ToN); BoT train 0,93 nhưng val 0,54–0,88. Giải thích khả dĩ (**chưa kiểm chứng**): mỗi nhóm out-of-fold lấy embedding từ một GAT khác (khởi tạo và dữ liệu khác), các không gian embedding không căn chỉnh với nhau, LightGBM học từ hỗn hợp 5 không gian rồi bị đánh giá trên embedding của một GAT thứ sáu (huấn luyện trên toàn bộ train). Bản không out-of-fold không bị lệch này nên giữ được F1 gần GAT. Bản không out-of-fold có train F1 0,996 ở ToN nhưng val vẫn 0,93 (seed 42), nên "học vẹt" không phải vấn đề lớn như dự kiến ở mục Rủi ro.
+  - **Lưu ý số baseline trong `compare_val_nf_ton_iot_v3.csv`:** các mô hình baseline ToN ở đó (LightGBM 0,935, MLP 0,938, XGBoost 0,933) **cao hơn** số trong `results_baselines_nf_ton_iot_v3.csv` đã lưu ở repo (LightGBM 0,898, MLP 0,910, XGBoost 0,897), dù notebook 05 bản 2 trên Kaggle cho file cùng kích thước 6412 B với bản repo; số GNN thì khớp. Chưa tìm ra nguyên nhân (nghi file do Kaggle mount từ 05 khác bản tải qua API). Kết luận "không vượt" không đổi theo cả hai bộ số (so với bản repo, tốt nhất là GraphSAGE 0,9146 và hybrid không out-of-fold 0,9116 ± 0,035), nhưng **không dùng bảng ToN trong `compare_val` cho báo cáo cho tới khi giải quyết** (làm lại bằng file baseline trong repo ở GĐ H).
+  - **Trạng thái giữ `Đang làm`, chưa `Xong`:** kết quả âm và có nguyên nhân khả dĩ sửa được; chờ Phúc quyết hướng (xem LO_TRINH_KAGGLE.md dòng F). Chưa chỉnh gì theo test.
 
 ### 5.8 Ablation hybrid và minh chứng hơn baseline
 
