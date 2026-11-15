@@ -1,0 +1,61 @@
+{
+ "dataset": "nf_ton_iot_v3",
+ "classes": [
+  "Normal",
+  "DoS_DDoS",
+  "Botnet_Backdoor",
+  "Truy_cap_trai_phep",
+  "Khac"
+ ],
+ "lightgbm_cfg": {
+  "n_estimators": 300,
+  "num_leaves": 63
+ },
+ "n_train": 568465,
+ "n_val": 121599,
+ "train_initiator_share": 0.4424318119849067,
+ "val_initiator_share": 0.5125535571838584,
+ "n_val_non_initiator": 59273,
+ "class_counts_val_all": {
+  "Normal": 88461,
+  "DoS_DDoS": 16766,
+  "Botnet_Backdoor": 4648,
+  "Truy_cap_trai_phep": 10424,
+  "Khac": 1300
+ },
+ "class_counts_val_initiators": {
+  "Normal": 48041,
+  "DoS_DDoS": 6265,
+  "Botnet_Backdoor": 2281,
+  "Truy_cap_trai_phep": 4903,
+  "Khac": 836
+ },
+ "old_trained_all_eval_all_val": {
+  "accuracy": 0.9187986743312034,
+  "f1_macro": 0.8983589660745612,
+  "fpr": 0.0792100473655057,
+  "recall_attack": 0.9553081054982195,
+  "roc_auc": 0.9848022834981642
+ },
+ "old_trained_all_eval_initiator_val": {
+  "accuracy": 0.9740397265988512,
+  "f1_macro": 0.967418726440848,
+  "fpr": 0.01099061218542495,
+  "recall_attack": 0.9437871893594679,
+  "roc_auc": 0.9924788218137411
+ },
+ "new_trained_initiator_eval_initiator_val": {
+  "accuracy": 0.975082630042037,
+  "f1_macro": 0.9678789662413761,
+  "fpr": 0.010095543390021024,
+  "recall_attack": 0.9484074203710186,
+  "roc_auc": 0.9920621617559094
+ },
+ "new_classes_in_train": [
+  "Normal",
+  "DoS_DDoS",
+  "Botnet_Backdoor",
+  "Truy_cap_trai_phep",
+  "Khac"
+ ]
+}

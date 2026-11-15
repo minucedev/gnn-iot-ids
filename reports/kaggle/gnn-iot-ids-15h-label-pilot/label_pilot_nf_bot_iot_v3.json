@@ -1,0 +1,53 @@
+{
+ "dataset": "nf_bot_iot_v3",
+ "classes": [
+  "Normal",
+  "DoS_DDoS",
+  "Truy_cap_trai_phep"
+ ],
+ "lightgbm_cfg": {
+  "n_estimators": 200,
+  "num_leaves": 31
+ },
+ "n_train": 49820,
+ "n_val": 10626,
+ "train_initiator_share": 0.7773183460457648,
+ "val_initiator_share": 0.7553171466214944,
+ "n_val_non_initiator": 2600,
+ "class_counts_val_all": {
+  "Normal": 2918,
+  "DoS_DDoS": 996,
+  "Truy_cap_trai_phep": 6712
+ },
+ "class_counts_val_initiators": {
+  "Normal": 1807,
+  "DoS_DDoS": 627,
+  "Truy_cap_trai_phep": 5592
+ },
+ "old_trained_all_eval_all_val": {
+  "accuracy": 0.9358178053830227,
+  "f1_macro": 0.9388017950829536,
+  "fpr": 0.19671007539410554,
+  "recall_attack": 0.9875454073689673,
+  "roc_auc": 0.9170470991747088
+ },
+ "old_trained_all_eval_initiator_val": {
+  "accuracy": 0.9309743334163967,
+  "f1_macro": 0.9232277130814716,
+  "fpr": 0.26840066408411734,
+  "recall_attack": 0.9901913490914938,
+  "roc_auc": 0.8906051158182884
+ },
+ "new_trained_initiator_eval_initiator_val": {
+  "accuracy": 0.9293545975579367,
+  "f1_macro": 0.9209004494096491,
+  "fpr": 0.27006087437742116,
+  "recall_attack": 0.9879401833092137,
+  "roc_auc": 0.8894282325447668
+ },
+ "new_classes_in_train": [
+  "Normal",
+  "DoS_DDoS",
+  "Truy_cap_trai_phep"
+ ]
+}

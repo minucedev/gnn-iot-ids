@@ -1,0 +1,9 @@
+{
+ "device": "CPU",
+ "commit": "2c600be7946f66ff57a22b7d65c297941c1ee226",
+ "pytest": "10 passed, 3 warnings in 21.04s",
+ "seconds_nf_ton_iot_v3": 136.8,
+ "seconds_nf_bot_iot_v3": 19.8,
+ "total_s": 266.9,
+ "peak_ram_gb": 1.24
+}
