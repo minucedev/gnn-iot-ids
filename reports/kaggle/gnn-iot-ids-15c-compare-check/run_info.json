@@ -1,7 +1,7 @@
 {
  "device": "CPU",
- "commit": "6a7b921f84e4a6f01d222aa39072cf1b46005b48",
- "total_s": 3.7,
+ "commit": "240849b2cfed6fe01da82ae8cfb21157462797c7",
+ "total_s": 4.1,
  "mount_equals_repo": {
   "nf_ton_iot_v3|baseline": [
    false
