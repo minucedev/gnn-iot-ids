@@ -61,26 +61,37 @@ def fold_groups(graphs, k=5):
     return groups
 
 
-def oof_embeddings(train_graphs, val_graphs, classes, device, seed, k=5, model_hp=None, train_hp=None,
-                   verbose=False, train_fn=train_gat):
+def oof_ensemble(train_graphs, val_graphs, classes, device, seed, k=5, model_hp=None, train_hp=None,
+                 verbose=False, train_fn=train_gat):
     """Embedding out-of-fold cho train: nhóm f lấy embedding từ GAT huấn luyện trên các nhóm khác f.
 
-    Trả về (embedding hình (số node train, 64) theo thứ tự train, danh sách thông tin từng nhóm). `train_fn` có
-    cùng chữ ký với `train_gat` (tiêm để test kiểm tra GAT không thấy nhóm bị giữ lại)."""
+    Trả về (embedding train hình (số node train, 64) theo thứ tự train, danh sách k GAT của các nhóm (đã eval, trên
+    `device`), danh sách k embedding val (mỗi cái từ một GAT nhóm), thông tin từng nhóm). `train_fn` có cùng chữ ký với
+    `train_gat` (tiêm để test kiểm tra GAT không thấy nhóm bị giữ lại)."""
     groups = fold_groups(train_graphs, k)
     assert np.array_equal(np.concatenate(groups), np.arange(len(train_graphs)))
-    parts, info = [], []
+    parts, models, val_embs, info = [], [], [], []
     for f, held in enumerate(groups):
         rest = np.concatenate([g for j, g in enumerate(groups) if j != f])
         model, hist, secs = train_fn([train_graphs[i] for i in rest], val_graphs, classes, device, seed,
                                      model_hp, train_hp, verbose)
         parts.append(extract_embeddings(model, [train_graphs[i] for i in held], device))
+        val_embs.append(extract_embeddings(model, val_graphs, device))
+        models.append(model.eval())
         y_fit = torch.cat([train_graphs[i].y for i in rest]).numpy()
         info.append({"fold": f, "n_graphs_held": int(len(held)),
                      "n_nodes_held": int(sum(train_graphs[i].num_nodes for i in held)),
                      "epochs": len(hist), "train_s": round(secs, 1),
                      "classes_missing_in_fit": [classes[c] for c in range(len(classes)) if not (y_fit == c).any()]})
-    return np.concatenate(parts), info
+    return np.concatenate(parts), models, val_embs, info
+
+
+def oof_embeddings(train_graphs, val_graphs, classes, device, seed, k=5, model_hp=None, train_hp=None,
+                   verbose=False, train_fn=train_gat):
+    """Như `oof_ensemble` nhưng chỉ trả về (embedding train, thông tin từng nhóm)."""
+    emb, _, _, info = oof_ensemble(train_graphs, val_graphs, classes, device, seed, k, model_hp, train_hp, verbose,
+                                   train_fn)
+    return emb, info
 
 
 def build_features(emb, x):
@@ -113,8 +124,17 @@ def predict_proba(model, X, n_classes):
     return full
 
 
-def search_lgbm(Xtr, ytr, Xva, yva, classes, seed=42, grid=None):
-    """Chọn cấu hình LightGBM trên val theo F1-macro các lớp có mặt. Trả về (cấu hình tốt nhất, log các lần thử)."""
+def predict_proba_views(model, views, n_classes):
+    """Trung bình xác suất của cùng các node qua nhiều "góc nhìn" đặc trưng (mỗi góc là một mảng (n, cột), cùng n).
+    Ghép các góc thành một lần gọi LightGBM rồi lấy trung bình, bằng trung bình của từng lần gọi riêng."""
+    n = len(views[0])
+    p = predict_proba(model, np.vstack(views), n_classes)
+    return p.reshape(len(views), n, n_classes).mean(0)
+
+
+def search_lgbm(Xtr, ytr, Xva, yva, classes, seed=42, grid=None, val_views=None):
+    """Chọn cấu hình LightGBM trên val theo F1-macro các lớp có mặt. Trả về (cấu hình tốt nhất, log các lần thử).
+    `val_views`: danh sách nhiều mảng đặc trưng val (ensemble các GAT nhóm); có thì dự đoán val là trung bình xác suất."""
     grid = LGBM_GRID if grid is None else grid
     if len(grid) > MAX_TRIALS:
         raise ValueError(f"Tối đa {MAX_TRIALS} lần thử, nhận {len(grid)}")
@@ -122,7 +142,8 @@ def search_lgbm(Xtr, ytr, Xva, yva, classes, seed=42, grid=None):
     for cfg in grid:
         t0 = time.time()
         m = fit_lgbm(Xtr, ytr, cfg, seed, len(classes))
-        pred = predict_proba(m, Xva, len(classes)).argmax(1)
+        p = predict_proba_views(m, val_views, len(classes)) if val_views else predict_proba(m, Xva, len(classes))
+        pred = p.argmax(1)
         f1 = ev.compute_metrics(yva, pred, class_names=classes, macro_labels=T.MACRO_CODES)["f1_macro"]
         log.append({"cfg": dict(cfg), "val_f1_macro": f1, "seconds": round(time.time() - t0, 1)})
     best = max(range(len(grid)), key=lambda i: log[i]["val_f1_macro"])
@@ -135,6 +156,14 @@ def lgbm_n_leaves(model):
 
 
 # ---------------------------------------------------------------- suy luận một cửa sổ
+@torch.no_grad()
+def predict_window_ensemble(gats, lgbm, window, n_classes):
+    """Hybrid ensemble: embedding từ từng GAT nhóm → ghép với x → một lần LightGBM cho mọi góc → trung bình xác suất."""
+    x = window.x.numpy()
+    views = [build_features(g.eval().embed(window.x, window.edge_index, window.edge_attr).numpy(), x) for g in gats]
+    return predict_proba_views(lgbm, views, n_classes)
+
+
 @torch.no_grad()
 def predict_window(gat, lgbm, window, n_classes):
     """Cả hai bước của hybrid cho một đồ thị cửa sổ (dùng để đo độ trễ): embedding GAT → ghép → LightGBM."""

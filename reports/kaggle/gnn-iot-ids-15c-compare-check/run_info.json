@@ -1,0 +1,19 @@
+{
+ "device": "CPU",
+ "commit": "724ff8338ac3d849932791477c223033f2e4c698",
+ "total_s": 3.4,
+ "mount_equals_repo": {
+  "nf_ton_iot_v3|baseline": [
+   false
+  ],
+  "nf_ton_iot_v3|gnn": [
+   false
+  ],
+  "nf_bot_iot_v3|baseline": [
+   false
+  ],
+  "nf_bot_iot_v3|gnn": [
+   false
+  ]
+ }
+}

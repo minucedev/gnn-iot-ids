@@ -193,3 +193,59 @@ def test_run_hybrid_end_to_end_both_modes_val_only_reproducible(tmp_path):
         assert (x["model"], x["seed"]) == (y["model"], y["seed"])
         for c in ("f1_macro", "fpr", "recall_attack", "accuracy"):
             assert float(x[c]) == pytest.approx(float(y[c]), abs=1e-6)
+
+
+def test_predict_proba_views_is_mean_of_separate_calls():
+    graphs = _graphs(6)
+    x, y = D.node_arrays(graphs)
+    lgbm = H.fit_lgbm(x, y, {"n": 5, "l": 4}, 0, 3, n_jobs=1)
+    views = [x, x + 0.5, x - 0.5]
+    ref = np.mean([H.predict_proba(lgbm, v, 3) for v in views], axis=0)
+    np.testing.assert_allclose(H.predict_proba_views(lgbm, views, 3), ref, atol=1e-9)
+
+
+def test_oof_ensemble_returns_fold_models_and_their_own_val_embeddings():
+    graphs, val = _graphs(10), _graphs(4, seed=1)
+    emb, models, val_embs, info = H.oof_ensemble(graphs, val, CLASSES, CPU, 0, k=5, train_hp=FAST)
+    assert len(models) == len(val_embs) == len(info) == 5
+    assert emb.shape == (sum(g.num_nodes for g in graphs), 64)
+    for m, e in zip(models, val_embs):                                  # mỗi embedding val đến từ đúng GAT nhóm đó
+        np.testing.assert_allclose(e, H.extract_embeddings(m, val, CPU), atol=1e-6)
+    assert not np.allclose(val_embs[0], val_embs[1])                    # các GAT nhóm khác nhau cho không gian khác nhau
+    emb2, _ = H.oof_embeddings(graphs, val, CLASSES, CPU, 0, k=5, train_hp=FAST)
+    np.testing.assert_allclose(emb, emb2, atol=1e-5)                    # wrapper cũ không đổi
+
+
+def test_predict_window_ensemble_matches_batch_views():
+    graphs = _graphs(6)
+    gats = [M.GNN("gat", n_classes=3).eval() for _ in range(3)]
+    x, y = D.node_arrays(graphs)
+    lgbm = H.fit_lgbm(H.build_features(H.extract_embeddings(gats[0], graphs, CPU), x), y, {"n": 5, "l": 4}, 0, 3, n_jobs=1)
+    w = graphs[2]
+    one = H.predict_window_ensemble(gats, lgbm, w, 3)
+    views = [H.build_features(H.extract_embeddings(g, graphs, CPU), x)[12:18] for g in gats]
+    np.testing.assert_allclose(one, H.predict_proba_views(lgbm, views, 3), atol=1e-6)
+
+
+def test_run_hybrid_oofavg_end_to_end_reproducible(tmp_path):
+    ra = _load_script("run_hybrid_oofavg")
+    (tmp_path / "data").mkdir()
+    data_dir = _make_dataset(tmp_path / "data")
+    grid = [{"n": 5, "l": 4}, {"n": 8, "l": 6}]
+    outs = []
+    for tag in ("a", "b"):
+        res, search = tmp_path / f"{tag}.csv", tmp_path / f"{tag}.json"
+        ra.run(data_dir, "fake", res, search, models_dir=tmp_path / f"m_{tag}", k=2, seeds=(42, 43),
+               hp={"train": FAST}, grid=grid)
+        outs.append((res, search))
+    rows = _rows(outs[0][0])
+    assert {(r["model"], r["seed"], r["split"]) for r in rows} == {("hybrid_gat_lgbm_oofavg", "42", "val"),
+                                                                 ("hybrid_gat_lgbm_oofavg", "43", "val")}
+    one_gat = ev.count_params(M.GNN("gat", n_classes=3))
+    assert int(rows[0]["n_params"]) > 2 * one_gat                       # k = 2 GAT + lá LightGBM
+    s = json.loads(outs[0][1].read_text(encoding="utf-8"))["hybrid_gat_lgbm_oofavg"]["seeds"]["42"]
+    assert len(s["diag"]["val_f1_macro_each_view"]) == 2 and "val_f1_macro_full_gat_embedding" in s["diag"]
+    assert len(s["search"]) == 2
+    for x, y in zip(rows, _rows(outs[1][0])):
+        for c in ("f1_macro", "fpr", "recall_attack"):
+            assert float(x[c]) == pytest.approx(float(y[c]), abs=1e-6)
