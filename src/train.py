@@ -1,6 +1,7 @@
 """Vòng huấn luyện và dự đoán chung cho các mô hình GNN (task 5.1).
 
-- Mất mát: cross-entropy có trọng số lớp cân bằng (lớp vắng mặt trong train có trọng số 0).
+- Mất mát: cross-entropy có trọng số lớp cân bằng (lớp vắng mặt trong train có trọng số 0). Tùy chọn `loss="focal"`
+  (task 5.4): focal loss (1 - p_t)^gamma · CE với cùng trọng số lớp, chuẩn hóa bằng tổng trọng số như `F.cross_entropy`.
 - Chọn epoch tốt nhất theo F1-macro trên val (dừng sớm), không bao giờ nhìn vào test. F1-macro lấy trung bình
   các lớp có mã trong `MACRO_CODES` (0-3, bỏ Khac mã 4 theo D5) và có mặt trong val: NF-ToN-IoT-v3 là 4 lớp,
   NF-BoT-IoT-v3 chỉ 3 lớp (không có Botnet_Backdoor, mã 3 tự bị bỏ).
@@ -65,9 +66,20 @@ def val_f1(model, graphs, device, class_names):
     return ev.compute_metrics(y, p.argmax(1), p, class_names=class_names, macro_labels=MACRO_CODES)["f1_macro"]
 
 
+def focal_loss(logits, y, weight, gamma=2.0):
+    """Focal loss nhiều lớp có trọng số lớp: sum(w_y · (1 - p_y)^gamma · (-log p_y)) / sum(w_y). gamma = 0 trùng cross-entropy."""
+    logp = F.log_softmax(logits, dim=1).gather(1, y[:, None]).squeeze(1)
+    fl = (1.0 - logp.exp()).pow(gamma) * (-logp)
+    w = weight[y]
+    return (w * fl).sum() / w.sum()
+
+
 def fit(model, train_graphs, val_graphs, class_names, device, seed, lr=5e-3, weight_decay=1e-4,
-        epochs=40, patience=6, batch_size=128, verbose=True):
-    """Huấn luyện, trả về (model với trọng số tốt nhất, lịch sử, thời gian huấn luyện giây)."""
+        epochs=40, patience=6, batch_size=128, verbose=True, loss="ce", focal_gamma=2.0):
+    """Huấn luyện, trả về (model với trọng số tốt nhất, lịch sử, thời gian huấn luyện giây).
+    `loss`: "ce" (mặc định, cross-entropy có trọng số lớp) hoặc "focal"."""
+    if loss not in ("ce", "focal"):
+        raise ValueError(f"loss phải là 'ce' hoặc 'focal', nhận {loss!r}")
     set_seed(seed)
     model = model.to(device)
     y_train = torch.cat([g.y for g in train_graphs]).numpy()
@@ -85,10 +97,12 @@ def fit(model, train_graphs, val_graphs, class_names, device, seed, lr=5e-3, wei
         for b in loader:
             b = b.to(device)
             opt.zero_grad()
-            loss = F.cross_entropy(model(b.x, b.edge_index, b.edge_attr), b.y, weight=w)
-            loss.backward()
+            logits = model(b.x, b.edge_index, b.edge_attr)
+            batch_loss = (F.cross_entropy(logits, b.y, weight=w) if loss == "ce"
+                          else focal_loss(logits, b.y, w, focal_gamma))
+            batch_loss.backward()
             opt.step()
-            total += loss.item() * b.num_nodes
+            total += batch_loss.item() * b.num_nodes
         f1, val_loss = val_scores(model, val_graphs, device, class_names, cw)
         history.append({"epoch": epoch, "train_loss": total / len(y_train), "val_loss": val_loss, "val_f1_macro": f1})
         if verbose:

@@ -47,3 +47,48 @@ def test_bidirectional_adds_reverse_edges():
 def test_bad_kind():
     with pytest.raises(ValueError):
         M.GNN("mlp")
+
+
+def test_default_state_dict_unchanged_by_new_options():
+    keys = set(M.GNN("gat").state_dict())
+    assert not any(k.startswith(("norms", "skips")) for k in keys)             # tùy chọn mới tắt: không thêm khóa nào
+    assert any("lin_edge" in k for k in keys)
+    assert set(M.GNN("gat", residual=False, layer_norm=False, use_edge=True).state_dict()) == keys
+
+
+def test_no_edge_features_removes_lin_edge_and_ignores_edge_attr():
+    m = M.GNN("gat", use_edge=False).eval()
+    assert not any("lin_edge" in k for k in m.state_dict())
+    x, ei, ea = _graph()
+    assert torch.allclose(m(x, ei, ea), m(x, ei, None), atol=1e-6)             # edge_attr bị bỏ qua
+    assert ev.count_params(m) == ev.count_params(M.GNN("gat")) - 2 * 3 * 64    # mỗi lớp bớt lin_edge 3 × 64
+
+
+def test_residual_layernorm_forward_and_param_count():
+    x, ei, ea = _graph()
+    m = M.GNN("gat", residual=True, layer_norm=True, n_classes=5).eval()
+    out = m(x, ei, ea)
+    assert tuple(out.shape) == (10, 5) and torch.isfinite(out).all()
+    # LayerNorm 2 lớp: 2 × (64 + 64); đường tắt: lớp 1 chiếu 18 → 64 không bias, lớp 2 là phép đồng nhất
+    assert ev.count_params(m) == ev.count_params(M.GNN("gat")) + 2 * 128 + 18 * 64
+    assert tuple(m.embed(x, ei, ea).shape) == (10, 64)
+
+
+@pytest.mark.parametrize("kw", [{"residual": True}, {"layer_norm": True}])
+def test_residual_and_layernorm_each_alone_run(kw):
+    x, ei, ea = _graph()
+    assert torch.isfinite(M.GNN("gat", **kw).eval()(x, ei, ea)).all()
+
+
+def test_attention_rows_sum_to_one_and_do_not_change_state():
+    x, ei, ea = _graph(n=10, e=25)
+    m = M.GNN("gat", n_classes=5)                                              # cố ý để chế độ train
+    attn = m.attention(x, ei, ea)
+    assert m.training                                                          # trả lại chế độ cũ
+    assert len(attn) == 2
+    for edge_index, alpha in attn:
+        assert alpha.shape == (edge_index.shape[1], 4)
+        total = torch.zeros(10, 4).index_add_(0, edge_index[1], alpha)         # mỗi node nhận: tổng alpha theo head = 1
+        assert torch.allclose(total, torch.ones(10, 4), atol=1e-5)
+    with pytest.raises(ValueError):
+        M.GNN("gcn").attention(x, ei, ea)

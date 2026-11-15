@@ -89,3 +89,23 @@ def test_write_curves_marks_first_best_epoch(tmp_path):
     assert list(rows[0]) == rg.CURVE_COLUMNS
     assert len(rows) == 6
     assert [r["is_best"] for r in rows[:3]] == ["0", "1", "0"]
+
+
+def test_focal_loss_gamma_zero_is_weighted_cross_entropy_and_downweights_easy_nodes():
+    g = torch.Generator().manual_seed(0)
+    logits, y = torch.randn(12, 3, generator=g), torch.randint(0, 3, (12,), generator=g)
+    w = torch.tensor([0.5, 1.0, 2.0])
+    ce = F.cross_entropy(logits, y, weight=w)
+    assert torch.allclose(T.focal_loss(logits, y, w, 0.0), ce, atol=1e-6)
+    assert T.focal_loss(logits, y, w, 2.0) < ce                                # (1 - p)^2 < 1 làm giảm mất mát
+    confident = torch.tensor([[10.0, -10, -10]])                              # node dễ: mất mát focal gần 0
+    assert T.focal_loss(confident, torch.tensor([0]), w, 2.0).item() < 1e-6
+
+
+def test_fit_with_focal_loss_runs_and_rejects_unknown_loss():
+    graphs = T.strip(_graphs())
+    _, history, _ = T.fit(M.GNN("gat", n_classes=3), graphs, graphs, CLASSES_3, torch.device("cpu"), seed=0, epochs=2,
+                          patience=2, batch_size=3, verbose=False, loss="focal")
+    assert len(history) == 2 and np.isfinite([h["train_loss"] for h in history]).all()
+    with pytest.raises(ValueError):
+        T.fit(M.GNN("gat", n_classes=3), graphs, graphs, CLASSES_3, torch.device("cpu"), seed=0, loss="hinge")
