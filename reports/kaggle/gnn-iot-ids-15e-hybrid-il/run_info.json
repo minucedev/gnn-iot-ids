@@ -1,0 +1,173 @@
+{
+ "steps_s": {
+  "clone_va_cai_goi": 68.4,
+  "pytest": 62.6,
+  "oofavg_il_nf_bot_iot_v3": 498.1,
+  "stack_il_nf_bot_iot_v3": 35.7
+ },
+ "device": "CPU",
+ "gpu": null,
+ "datasets": [
+  "nf_bot_iot_v3"
+ ],
+ "interleave": 20,
+ "commit": "e91a3dd79d86d8f9783c000875d39f7cfcc0c86b",
+ "total_s": 668.8,
+ "peak_ram_gb": 0.76,
+ "gpu_hours": 0,
+ "cpu_count": 4,
+ "pytest": "87 passed, 2985 warnings in 58.50s",
+ "criteria": {
+  "nf_bot_iot_v3": {
+   "oofavg_il": {
+    "du_3_seed_1_dong": true,
+    "chi_split_val": true,
+    "f1_macro_mean": 0.9357,
+    "f1_macro_std": 0.0019,
+    "fpr_mean": 0.2045,
+    "recall_mean": 0.9869,
+    "size_kb_max": 776.4,
+    "p95_ms_max": 8.672
+   },
+   "stack_il": {
+    "du_3_seed_1_dong": true,
+    "chi_split_val": true,
+    "f1_macro_mean": 0.8899,
+    "f1_macro_std": 0.0807,
+    "fpr_mean": 0.1709,
+    "recall_mean": 0.882,
+    "size_kb_max": 771.1,
+    "p95_ms_max": 8.699
+   }
+  }
+ },
+ "diag": {
+  "nf_bot_iot_v3|oofavg_il": {
+   "42": {
+    "train_f1_macro": 0.893380358835226,
+    "val_f1_macro_avg_views": 0.9360419917970786,
+    "val_f1_macro_each_view": [
+     0.9189336695065462,
+     0.9215763049614293,
+     0.9175869542427105,
+     0.6936547909877092,
+     0.9083142022778056
+    ],
+    "val_f1_macro_full_gat_embedding": 0.9198256714580465
+   },
+   "43": {
+    "train_f1_macro": 0.8923983777279055,
+    "val_f1_macro_avg_views": 0.9336537393279412,
+    "val_f1_macro_each_view": [
+     0.9187333281872467,
+     0.9220798672408627,
+     0.9310035428295872,
+     0.6816036602103329,
+     0.9081278662550768
+    ],
+    "val_f1_macro_full_gat_embedding": 0.8933972810159908
+   },
+   "44": {
+    "train_f1_macro": 0.8932995016371668,
+    "val_f1_macro_avg_views": 0.9374158043356123,
+    "val_f1_macro_each_view": [
+     0.9198113763728344,
+     0.925631527976449,
+     0.9263257711074605,
+     0.6808757969241627,
+     0.9118349779005306
+    ],
+    "val_f1_macro_full_gat_embedding": 0.9363978162776041
+   }
+  },
+  "nf_bot_iot_v3|stack_il": {
+   "42": {
+    "train_f1_macro": 0.8860119587578947,
+    "val_f1_macro": 0.933711085399125,
+    "val_f1_macro_each_gat": [
+     0.92857758038989,
+     0.9299399440898196,
+     0.9379855605239057,
+     0.7136050257197953,
+     0.9190823538896944
+    ],
+    "gat_alone_val_f1_macro_each_gat": [
+     0.9317809200088982,
+     0.9264010255954805,
+     0.9305761997213674,
+     0.9318881616824454,
+     0.9299381804651533
+    ],
+    "gat_alone_val_f1_macro_avg": 0.9306710091718998
+   },
+   "43": {
+    "train_f1_macro": 0.8879456459020854,
+    "val_f1_macro": 0.796810080079373,
+    "val_f1_macro_each_gat": [
+     0.9305842095317498,
+     0.9351325542303851,
+     0.9317294297447468,
+     0.7512049764710373,
+     0.9118220933327444
+    ],
+    "gat_alone_val_f1_macro_each_gat": [
+     0.9344374378065856,
+     0.9261804578501507,
+     0.93468455449852,
+     0.9301263787144265,
+     0.9286830308311433
+    ],
+    "gat_alone_val_f1_macro_avg": 0.9312096790765504
+   },
+   "44": {
+    "train_f1_macro": 0.8863938187388779,
+    "val_f1_macro": 0.939295485883178,
+    "val_f1_macro_each_gat": [
+     0.9365681733292427,
+     0.93400182414624,
+     0.9390641904394816,
+     0.753197886383183,
+     0.9170007605141102
+    ],
+    "gat_alone_val_f1_macro_each_gat": [
+     0.9331002257999753,
+     0.9286391501503358,
+     0.9325607202230266,
+     0.9324930662266278,
+     0.9266136396659848
+    ],
+    "gat_alone_val_f1_macro_avg": 0.9315322345237762
+   }
+  }
+ },
+ "classes_missing_in_fit": {
+  "nf_bot_iot_v3": {
+   "42": [
+    [],
+    [],
+    [],
+    [],
+    []
+   ],
+   "43": [
+    [],
+    [],
+    [],
+    [],
+    []
+   ],
+   "44": [
+    [],
+    [],
+    [],
+    [],
+    []
+   ]
+  }
+ },
+ "models_hybrid_dirs": [
+  "nf_bot_iot_v3_s42",
+  "nf_bot_iot_v3_s43",
+  "nf_bot_iot_v3_s44"
+ ]
+}

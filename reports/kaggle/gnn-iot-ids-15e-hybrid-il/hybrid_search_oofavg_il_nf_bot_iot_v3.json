@@ -1,0 +1,219 @@
+{
+ "hybrid_gat_lgbm_oofavg_il": {
+  "dataset": "nf_bot_iot_v3",
+  "k": 5,
+  "interleave": 20,
+  "seeds": {
+   "42": {
+    "folds": [
+     {
+      "fold": 0,
+      "n_graphs_held": 1965,
+      "n_nodes_held": 9973,
+      "epochs": 20,
+      "train_s": 19.8,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 1,
+      "n_graphs_held": 1950,
+      "n_nodes_held": 9955,
+      "epochs": 12,
+      "train_s": 12.4,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 2,
+      "n_graphs_held": 1904,
+      "n_nodes_held": 9980,
+      "epochs": 18,
+      "train_s": 19.1,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 3,
+      "n_graphs_held": 1908,
+      "n_nodes_held": 9954,
+      "epochs": 26,
+      "train_s": 27.4,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 4,
+      "n_graphs_held": 1993,
+      "n_nodes_held": 9958,
+      "epochs": 27,
+      "train_s": 28.6,
+      "classes_missing_in_fit": []
+     }
+    ],
+    "gat_full": {
+     "epochs": 23,
+     "train_s": 28.4
+    },
+    "search": [
+     {
+      "cfg": {
+       "n": 100,
+       "l": 15
+      },
+      "val_f1_macro": 0.9360419917970786,
+      "seconds": 4.1
+     },
+     {
+      "cfg": {
+       "n": 200,
+       "l": 31
+      },
+      "val_f1_macro": 0.9353117899745712,
+      "seconds": 9.6
+     },
+     {
+      "cfg": {
+       "n": 300,
+       "l": 63
+      },
+      "val_f1_macro": 0.9356817551780127,
+      "seconds": 19.5
+     }
+    ],
+    "diag": {
+     "train_f1_macro": 0.893380358835226,
+     "val_f1_macro_avg_views": 0.9360419917970786,
+     "val_f1_macro_each_view": [
+      0.9189336695065462,
+      0.9215763049614293,
+      0.9175869542427105,
+      0.6936547909877092,
+      0.9083142022778056
+     ],
+     "val_f1_macro_full_gat_embedding": 0.9198256714580465
+    }
+   },
+   "43": {
+    "folds": [
+     {
+      "fold": 0,
+      "n_graphs_held": 1965,
+      "n_nodes_held": 9973,
+      "epochs": 24,
+      "train_s": 26.3,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 1,
+      "n_graphs_held": 1950,
+      "n_nodes_held": 9955,
+      "epochs": 13,
+      "train_s": 14.5,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 2,
+      "n_graphs_held": 1904,
+      "n_nodes_held": 9980,
+      "epochs": 40,
+      "train_s": 44.3,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 3,
+      "n_graphs_held": 1908,
+      "n_nodes_held": 9954,
+      "epochs": 21,
+      "train_s": 22.9,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 4,
+      "n_graphs_held": 1993,
+      "n_nodes_held": 9958,
+      "epochs": 16,
+      "train_s": 17.1,
+      "classes_missing_in_fit": []
+     }
+    ],
+    "gat_full": {
+     "epochs": 21,
+     "train_s": 27.7
+    },
+    "diag": {
+     "train_f1_macro": 0.8923983777279055,
+     "val_f1_macro_avg_views": 0.9336537393279412,
+     "val_f1_macro_each_view": [
+      0.9187333281872467,
+      0.9220798672408627,
+      0.9310035428295872,
+      0.6816036602103329,
+      0.9081278662550768
+     ],
+     "val_f1_macro_full_gat_embedding": 0.8933972810159908
+    }
+   },
+   "44": {
+    "folds": [
+     {
+      "fold": 0,
+      "n_graphs_held": 1965,
+      "n_nodes_held": 9973,
+      "epochs": 24,
+      "train_s": 26.0,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 1,
+      "n_graphs_held": 1950,
+      "n_nodes_held": 9955,
+      "epochs": 15,
+      "train_s": 16.3,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 2,
+      "n_graphs_held": 1904,
+      "n_nodes_held": 9980,
+      "epochs": 25,
+      "train_s": 27.4,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 3,
+      "n_graphs_held": 1908,
+      "n_nodes_held": 9954,
+      "epochs": 25,
+      "train_s": 27.1,
+      "classes_missing_in_fit": []
+     },
+     {
+      "fold": 4,
+      "n_graphs_held": 1993,
+      "n_nodes_held": 9958,
+      "epochs": 16,
+      "train_s": 17.3,
+      "classes_missing_in_fit": []
+     }
+    ],
+    "gat_full": {
+     "epochs": 21,
+     "train_s": 27.4
+    },
+    "diag": {
+     "train_f1_macro": 0.8932995016371668,
+     "val_f1_macro_avg_views": 0.9374158043356123,
+     "val_f1_macro_each_view": [
+      0.9198113763728344,
+      0.925631527976449,
+      0.9263257711074605,
+      0.6808757969241627,
+      0.9118349779005306
+     ],
+     "val_f1_macro_full_gat_embedding": 0.9363978162776041
+    }
+   }
+  },
+  "best": {
+   "n": 100,
+   "l": 15
+  }
+ }
+}
