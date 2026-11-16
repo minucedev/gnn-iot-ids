@@ -486,7 +486,7 @@ RF trên đặc trưng NetFlow gốc, để đối chiếu với các bài báo.
 
 2 lớp.
 
-- **Trạng thái:** Đang làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 5 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** Xong · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 5 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** Mô hình, Thuật toán & đánh giá
 - **Đầu vào:** `train_gnn.py`
 - **Đầu ra:** `src/models/gcn.py`, `sage.py`; kết quả `split=val` trong `results.csv`
@@ -497,12 +497,13 @@ RF trên đặc trưng NetFlow gốc, để đối chiếu với các bài báo.
   4. Có đường loss và F1 trên val theo epoch.
 - **Phụ thuộc:** 5.1
 - **Kết quả:** (12/11/2026) gcn, sage × 3 seed, `split=val`: NF-ToN-IoT-v3 đủ 6 dòng (GĐ A), NF-BoT-IoT-v3 đủ 6 dòng (GĐ E); chi tiết số tham số, đường học và lưu ý ở dòng Kết quả của [5.3](#53-mô-hình-chính-gat-nhẹ-multi-head). Tiêu chí 1, 2 đạt cho cả hai bộ; tiêu chí 4 đạt cho NF-BoT-IoT-v3, chưa có cho NF-ToN-IoT-v3; tiêu chí 3 chưa làm (chưa tinh chỉnh, chưa có log).
+- **Kết quả GĐ G (16/11/2026, GĐ G, bù tiêu chí 3 và 4):** tiêu chí 1, 2 như trên; **tiêu chí 3 đạt:** log tinh chỉnh trên val, 3 seed, chỉ val, mỗi mô hình ≤ 20 lần thử (GCN 6, GraphSAGE 6: độ rộng 32, 64, 128 × 2, 3 lớp; GAT 10, xem 5.5), cả hai bộ, trong `tuning_gnn.csv` ([reports/kaggle/gnn-iot-ids-16c-aggregate/](../../reports/kaggle/gnn-iot-ids-16c-aggregate/)); chạy ở notebook `gnn-iot-ids-16g-tuning-ton` (ToN, CPU, 7244 s, commit `ad92f6a`, pytest 110 passed), `gnn-iot-ids-16a-ablation-bot` (BoT, CPU, 2900 s) và `gnn-iot-ids-16-ablation` (GAT ToN, GPU). Cấu hình mặc định gần tốt nhất: F1-macro val tốt nhất ToN GCN 0,8797 (hidden 16, 3 lớp; mặc định 0,8726), GraphSAGE 0,9152 (hidden 32, 3 lớp, 71.173 tham số; mặc định 0,9146); BoT GCN 0,9147 (mặc định), GraphSAGE 0,9353 (hidden 32, 3 lớp). **Tiêu chí 4 đạt cho ToN:** đường loss train, loss val, F1-macro val theo epoch của mọi lần chạy (kể cả cấu hình mặc định) ở `curves_grid_nf_ton_iot_v3.csv` trong [16g](../../reports/kaggle/gnn-iot-ids-16g-tuning-ton/) và [16](../../reports/kaggle/gnn-iot-ids-16-ablation/). **Cả bốn tiêu chí đạt trên cả hai bộ → `Xong`.**
 
 ### 5.3 Mô hình chính: GAT nhẹ multi-head
 
 Có đặc trưng cạnh.
 
-- **Trạng thái:** Đang làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 5 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** Xong (có ghi chú: FPR val và recall tấn công không đạt ngưỡng, có phân tích) · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 5 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** Mô hình, Thuật toán & đánh giá
 - **Đầu vào:** `train_gnn.py`; kết quả 5.2 và 4.1
 - **Đầu ra:** `src/models/gat_lite.py` (GATv2Conv, `edge_dim=3`, 2 lớp, 4 head, hidden ≤ 32); checkpoint; bảng đếm tham số theo từng lớp
@@ -528,10 +529,16 @@ Có đặc trưng cạnh.
     - **Đề xuất cần Phúc quyết (chưa làm gì):** với ToN, nguyên nhân chính của FPR là node chỉ nhận flow (không khởi tạo) bị đoán là tấn công; chỉ gán nhãn node khởi tạo sẽ đưa FPR xuống 1–3% nhưng đổi định nghĩa nhiệm vụ (bỏ gần một nửa số node) và kéo theo phải dựng lại đồ thị, chạy lại mọi mô hình ở cả hai bộ. Đây chỉ là con số phản thực tế, chưa huấn luyện lại. Cách gán nhãn của dữ liệu **chưa bị đổi**; BoT không đổi được gì bằng cách này.
   - **Thí nghiệm đổi nhãn "chỉ node có khởi tạo flow" (15/11/2026, notebook `gnn-iot-ids-15h-label-pilot` bản 1, CPU, commit `2c600be`, 267 s, 0 giờ GPU; [reports/kaggle/gnn-iot-ids-15h-label-pilot/](../../reports/kaggle/gnn-iot-ids-15h-label-pilot/)):** huấn luyện lại LightGBM (cấu hình tốt nhất của baseline_search, seed 42) chỉ trên node train có khởi tạo flow và đánh giá trên node val có khởi tạo; mặt nạ suy từ đặc trưng `n_out`, không đổi dữ liệu. **NF-ToN-IoT-v3** (val: 62.326/121.599 node có khởi tạo = 51,3%, 59.273 node chỉ nhận bị bỏ; trong số 33.138 node tấn công của val chỉ 14.285 có khởi tạo, 18.853 là node chỉ nhận bị gán nhãn tấn công từ flow nhận): LightGBM cũ (huấn luyện trên mọi node) đánh giá trên cùng node có khởi tạo đã cho F1-macro 0,9674, FPR **1,10%**, recall 94,4%; LightGBM huấn luyện lại chỉ trên node có khởi tạo cho F1-macro 0,9679, FPR **1,01%**, recall 94,8%. Trên mọi node val, LightGBM cũ có F1-macro 0,8984, FPR 7,92%. **NF-BoT-IoT-v3** (75,5% node val có khởi tạo): LightGBM cũ trên node có khởi tạo FPR 26,8%, huấn luyện lại 27,0% (trên mọi node: 19,67%), tức đổi nhãn làm FPR xấu đi. **Kết luận: FPR giảm ở ToN là do thu hẹp phạm vi đánh giá, không phải do mô hình tốt hơn.** Huấn luyện lại chỉ trên node có khởi tạo gần như không đổi gì (FPR 1,10% → 1,01%); mô hình cũ đã phân loại tốt các node có khởi tạo, chỗ yếu là các node chỉ nhận (nạn nhân, máy chủ). Đổi nhãn nghĩa là hệ thống ngừng phát hiện 57% node tấn công của val (18.853/33.138, các node nạn nhân) và đổi định nghĩa bài toán, kéo theo dựng lại đồ thị và chạy lại mọi mô hình ở cả hai bộ (khoảng 1–1,5 giờ GPU nữa) mà BoT còn xấu đi. **Quyết định (Claude đề xuất, theo yêu cầu chi phí thấp của Phúc): KHÔNG đổi cách gán nhãn.** Thay vào đó, GĐ H báo cáo thêm số liệu theo tầng (node có khởi tạo và node chỉ nhận) tính từ chính dự đoán đã có, không huấn luyện lại, để nêu rõ FPR 1% ở node khởi tạo và điểm yếu ở node chỉ nhận.
   - CIC và NF-ToN-IoT-v2 đủ gcn, sage, gat × 3 seed, chỉ làm phụ lục (D8).
+  - **Phần còn thiếu đã bù (16/11/2026, GĐ G, notebook `gnn-iot-ids-16d-ablation-ton` và `gnn-iot-ids-16a-ablation-bot`, CPU, commit `ad92f6a`):**
+    - **Tiêu chí 1 đạt:** bảng đếm tham số theo từng lớp ([16d](../../reports/kaggle/gnn-iot-ids-16d-ablation-ton/): `gat_param_table_nf_ton_iot_v3.csv`, `gat_param_summary_nf_ton_iot_v3.json`; BoT ở [16a](../../reports/kaggle/gnn-iot-ids-16a-ablation-bot/)). ToN **11.717 tham số** = lớp GAT 1 (`convs.0`) 2.752 + lớp GAT 2 (`convs.1`) 8.640 + đầu phân loại (`head`) 325; mỗi lớp GAT gồm `lin_l`, `lin_r` (hai ma trận chiếu), `lin_edge` (đặc trưng cạnh, 3 → 64), `att` và `bias`. File 50,6 KB (≤ 1 MB). BoT 11.587 tham số, 50,1 KB.
+    - **Tiêu chí 2:** val ToN (3 seed) accuracy 92,18% (đạt ≥ 91%), FPR 8,44% (**không đạt ≤ 4,08%**), recall tấn công 95,98% (đạt ≥ 95%); BoT accuracy 93,1%, FPR 21,03% (không đạt), recall 98,49%. Phân tích FPR đã có từ GĐ F (notebook 15a, ở trên), nên điều kiện "phải có phân tích trước khi sang 5.4" đạt. Sau hiệu chỉnh ngưỡng trên val (task 5.8), FPR về 4,08% nhưng recall tụt còn 89,0% (ToN) và 34,9% (BoT).
+    - **Tiêu chí 3 đạt:** std accuracy giữa 3 seed ToN 0,726 điểm %, BoT 0,054 điểm % (≤ 1,5).
+    - **Tiêu chí 4 đạt:** trọng số attention của 2 cửa sổ val mẫu, GAT seed 42, `attention_samples_nf_ton_iot_v3.json` (21,5 KB): cửa sổ 311226701 (15 node, 20 cạnh, mọi node DoS_DDoS, đoán đúng 15/15) và cửa sổ 311267371 (12 node, 13 cạnh, 10 node Truy_cap_trai_phep và 2 node Normal, đoán đúng 12/12). Mỗi cửa sổ lưu IP, nhãn, dự đoán và với từng lớp GAT cạnh (gồm cạnh ngược và vòng lặp tự thân đúng như `forward`) cùng hệ số attention từng head (tổng theo node nhận bằng 1). Nhóm "Truy_cap_trai_phep" gồm dò quét (scanning) theo ánh xạ nhãn, nhưng đồ thị chỉ lưu nhãn nhóm nên chưa phân biệt dò quét với tấn công cùng nhóm; GĐ H vẽ hình từ file này. BoT có file tương ứng ở 16a.
+    - **Trạng thái `Xong` có ghi chú:** mọi tiêu chí kiểm tra được, tiêu chí 2 chỉ đạt về accuracy và recall (FPR không đạt, có phân tích).
 
 ### 5.4 Phiên bản cải tiến của GAT nhẹ
 
-- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 6 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** Xong (có ghi chú: không bản nào được công nhận, báo cáo là thử nghiệm thất bại) · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 6 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** Mô hình, Thuật toán & đánh giá
 - **Đầu vào:** `gat_lite.py`, kết quả 5.3
 - **Đầu ra:** Ít nhất 1 bản cải tiến, chọn trong: focal loss hoặc class-balanced loss; residual + LayerNorm; đặc trưng thời gian (ghép embedding cửa sổ trước); quantization INT8 hoặc pruning
@@ -541,12 +548,21 @@ Có đặc trưng cạnh.
 
   Nếu không đạt thì vẫn báo cáo là thử nghiệm thất bại.
 - **Phụ thuộc:** 5.3
+- **Kết quả (16/11/2026, GĐ G, notebook `gnn-iot-ids-16-ablation` bản 3, Kaggle GPU Tesla T4, commit `5031ab5`, pytest 109 passed (bỏ qua 1 test tái lập hai lần chạy không ổn định trên GPU; test đó pass trên CPU ở 16t, 110 passed), 3841 s = 1,067 giờ GPU, RAM đỉnh 2,02 GB; [reports/kaggle/gnn-iot-ids-16c-aggregate/](../../reports/kaggle/gnn-iot-ids-16c-aggregate/): `improved_gat.csv`):** trên NF-ToN-IoT-v3, val, 3 seed, so với GAT cấu hình chính (F1-macro 0,9065 ± 0,0019, recall Botnet_Backdoor 0,9994, 11.717 tham số). Đã thử 3 bản (đều chỉ đổi một yếu tố hoặc cặp yếu tố so với cấu hình chính), chưa thử đặc trưng thời gian và quantization/pruning (task cho phép chọn một số trong danh sách):
+
+  | Bản | F1-macro | Δ so với chính | Recall Botnet_Backdoor | Tham số | Tiêu chí 1 (> 2 std) | Tiêu chí 2 (giảm ≥ 30% tham số hoặc độ trễ, F1 giảm ≤ 1 điểm %) |
+  |---|---|---|---|---|---|---|
+  | focal loss (γ = 2) | 0,8940 ± 0,0007 | −0,0125 | 0,9994 (−0,0001) | 11.717 | không | không (không giảm tham số) |
+  | residual + LayerNorm | 0,9113 ± 0,0027 | +0,0048 | 0,9987 (−0,0007) | 13.125 (+12%) | **không**: +0,0048 < 2 × 0,0027 = 0,0054 | không (tham số tăng) |
+  | focal + residual + LayerNorm | 0,8992 ± 0,0063 | −0,0073 | 0,9989 (−0,0006) | 13.125 | không | không |
+
+  **Kết luận: không bản nào đạt tiêu chí của 5.4 → không công nhận, báo cáo là thử nghiệm thất bại; không đưa vào hybrid** (không cần báo Phúc để quyết đưa vào hybrid). Residual + LayerNorm gần đạt (tăng F1-macro 0,0048, chưa tới 2 lần std 0,0054 với std = max của hai bên, quy ước `compare_val.py`). Recall Botnet_Backdoor đã gần 1 nên không còn chỗ để tăng. Quan sát ngoài tiêu chí (không tính là cải tiến theo 5.4): một số cấu hình của ablation 5.5 thỏa điều kiện "giảm ≥ 30% tham số mà F1-macro giảm ≤ 1 điểm %" (1 lớp: −74% tham số, F1 −0,0023; hidden 8: −67%, −0,0050; 2 head: −67%, −0,0092), nhưng đó là cấu hình ablation chứ không phải bản cải tiến đề xuất, và chưa được kiểm trong hybrid; nêu ra để Phúc quyết có coi là bản GAT nhẹ hơn hay không. Ngưỡng của 3 bản vẫn được ghi trong `thresholds.json` với `accepted_by_5_4 = false`.
 
 ### 5.5 Ablation
 
 Số head, số lớp, hidden, đặc trưng cạnh, kích thước cửa sổ.
 
-- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 6 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** Xong · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 6 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** Thuật toán & đánh giá
 - **Đầu vào:** `gat_lite.py`; các đồ thị W = 1, 2, 5, 10 giây từ 1.6
 - **Đầu ra:** Bảng ablation và 5 biểu đồ: head ∈ {1, 2, 4, 8}, lớp ∈ {1, 2, 3}, hidden ∈ {8, 16, 32, 64}, có/không `edge_attr`, W ∈ {1, 2, 5, 10} giây
@@ -557,6 +573,17 @@ Số head, số lớp, hidden, đặc trưng cạnh, kích thước cửa sổ.
   4. Mỗi biểu đồ có cả F1-macro và số tham số hoặc độ trễ (2 trục).
   5. Có kết luận cấu hình chính đã hợp lý chưa.
 - **Phụ thuộc:** 5.3, 1.6
+- **Kết quả (16/11/2026, GĐ G; [reports/kaggle/gnn-iot-ids-16c-aggregate/](../../reports/kaggle/gnn-iot-ids-16c-aggregate/): `ablation_gat.csv`, `ablation_gat_conclusion.json`, 5 hình `gd5_ablation_gat_{heads,layers,hidden,edge,window}.png`):** NF-ToN-IoT-v3, val, 3 seed, đổi một yếu tố mỗi lần, mỗi hình có F1-macro (± std) ở trên và số tham số (hoặc độ trễ p95 với cửa sổ) ở dưới. Lưới GAT chạy ở `gnn-iot-ids-16-ablation` (GPU, 10 cấu hình × 3 seed, 1,067 giờ GPU); các đồ thị W = 1, 2, 10 giây dựng ở `gnn-iot-ids-16b-windows` (CPU, 1421 s, RAM đỉnh 18,79 GB, mọi kiểm tra đạt, [reports/kaggle/gnn-iot-ids-16b-windows/](../../reports/kaggle/gnn-iot-ids-16b-windows/)) và huấn luyện ở `gnn-iot-ids-16f-windows-gat` (GPU, 1713 s = 0,476 giờ). Cách chia của W = 1, 2, 10: `blocked`, 10 khối, theo node, gap 1, như W = 5; số node val khác nhau giữa các W nên F1 giữa các W so sánh được ở mức gần đúng.
+
+  | Yếu tố | Giá trị → F1-macro val (số tham số) |
+  |---|---|
+  | head | 1: 0,8537 (1.397) · 2: 0,8973 (3.813) · **4 (chính): 0,9065 ± 0,0019 (11.717)** · 8: **0,9153 ± 0,0036 (39.813)** |
+  | số lớp | 1: 0,9042 (3.077) · **2 (chính): 0,9065** · 3: 0,9034 ± 0,0089 (20.357) |
+  | độ rộng mỗi head | 8: 0,9015 (3.813) · **16 (chính): 0,9065** · 32: 0,9078 (39.813) · 64: 0,9074 (145.157, vượt 100K) |
+  | đặc trưng cạnh | **có (chính): 0,9065 (11.717)** · không: 0,9076 ± 0,0067 (11.333) |
+  | cửa sổ (giây) | 1: 0,9011 · 2: 0,8985 · **5 (chính): 0,9065** · 10: 0,8866 ± 0,0078 (cùng 11.717 tham số; p95 1,9–2,1 ms) |
+
+  **Kết luận về cấu hình chính (hidden 16, 4 head, 2 lớp, có đặc trưng cạnh, W = 5 s):** hợp lý ở số lớp (3 lớp không tốt hơn, 1 lớp kém 0,0023 nhưng ít hơn 74% tham số), độ rộng (32 và 64 chỉ hơn trong sai số), cửa sổ (5 giây tốt nhất trong 4 mức; W = 2 và 1 thấp hơn, W = 10 thấp nhất) và đặc trưng cạnh (có hay không đều trong sai số, nên đặc trưng cạnh **không** được dữ liệu ủng hộ rõ rệt). **Chưa tối ưu ở số head:** 8 head cao hơn 4 head 0,0089 (lớn hơn 2 lần std) với 39.813 tham số (vẫn ≤ 100K). Mình không đổi cấu hình chính vì hybrid (D13) và mọi kết quả khác đã dựng trên nó; đây là điểm Phúc quyết (xem `freeze_list.md` mục 4).
 
 ### 5.6 Các bộ còn lại và tổng quát hóa giữa các bộ
 
@@ -612,7 +639,7 @@ Thêm ngày 12/11/2026 theo yêu cầu "mô hình hybrid, lý do chọn" của t
 
 Thêm ngày 12/11/2026 theo yêu cầu "cần minh chứng hybrid cao hơn các mô hình baseline (ML, DL, …)" của thầy.
 
-- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 15/11 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** Xong (có ghi chú: hybrid vượt baseline ở ToN, ngang ở BoT; embedding GAT không hơn đặc trưng hàng xóm tính tay) · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 15/11 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** Thuật toán & đánh giá, Baseline
 - **Đầu vào:** Kết quả 4.1 (LR, RF, XGBoost, LightGBM, MLP), 5.2–5.3 (GCN, GraphSAGE, GAT), 5.7 (hybrid)
 - **Đầu ra:** Bảng ablation 5 dòng trên val của cả 2 bộ:
@@ -629,6 +656,22 @@ Thêm ngày 12/11/2026 theo yêu cầu "cần minh chứng hybrid cao hơn các 
   3. Hybrid được coi là "cao hơn" khi F1-macro vượt baseline tốt nhất **hơn 2 lần std** trên val; ở 6.1 kèm McNemar p < 0,05 trên test. Không đạt thì ghi rõ ở dòng Kết quả và trong báo cáo, không chỉnh theo tập test.
   4. Có biểu đồ cột F1-macro và FPR cho mọi mô hình, có thanh sai số, và vạch ngưỡng 4,08%.
 - **Phụ thuộc:** 4.1, 5.2, 5.3, 5.7
+- **Kết quả (16/11/2026, GĐ G; [reports/kaggle/gnn-iot-ids-16c-aggregate/](../../reports/kaggle/gnn-iot-ids-16c-aggregate/): `ablation_hybrid_<bộ>.csv`, `pareto_hybrid_<bộ>.csv`, `light_choice_<bộ>.json`, `compare_models_<bộ>.csv`, `thresholds.json`, hình `gd5_ablation_hybrid_<bộ>.png`, `gd5_pareto_<bộ>.png`, `gd5_compare_<bộ>.png`).** Notebook: `gnn-iot-ids-16a-ablation-bot` (BoT, CPU, 2900 s), `16d-ablation-ton` (ToN, CPU, 3747 s), `16e-thresholds-ton` (ngưỡng baseline và GNN ToN, CPU, 1548 s), tổng hợp `16c-aggregate` (CPU); tất cả clone commit `ad92f6a`, pytest 110 passed, 0 giờ GPU. Chỉ val, 3 seed. Hybrid đầy đủ dựng lại từ file đã lưu cho F1 khớp kết quả 15e/15f (ToN 0,93232 seed 42; BoT 0,93604 seed 42).
+  - **Ablation 5 phương án, F1-macro val (FPR):**
+
+    | Phương án | NF-ToN-IoT-v3 | NF-BoT-IoT-v3 |
+    |---|---|---|
+    | (a) LightGBM, 18 đặc trưng (GĐ D) | 0,8984 ± 0,0001 (7,94%) | 0,9388 (19,67%) |
+    | (b) GAT đơn (GĐ A/E) | 0,9079 ± 0,0069 (8,44%) | 0,9320 ± 0,0009 (21,03%) |
+    | (c) LightGBM + trung bình đặc trưng hàng xóm (tính tay) | **0,9342 ± 0,0003 (5,00%)** | 0,9335 (19,91%) |
+    | (d) LightGBM chỉ embedding GAT | 0,9182 ± 0,0186 (5,99%) | 0,9351 ± 0,0009 (20,41%) |
+    | (e) Hybrid đầy đủ (GĐ F) | 0,9326 ± 0,0009 (4,94%) | 0,9357 ± 0,0019 (20,45%) |
+
+  - **Embedding GAT có giúp hơn đặc trưng hàng xóm tính tay không (c so với e): KHÔNG.** ToN: (e) − (c) = −0,0016 (hybrid thấp hơn một chút, trong sai số; FPR 4,94% so với 5,00%); BoT: +0,0022 (trong sai số; `e_beats_c_2std = false` cả hai bộ). Cả (c) lẫn (e) hơn xa (a) và (b) ở ToN (+0,034 và +0,025 cho (e) so với (a) và (b)), tức lợi thế của hybrid đến từ thông tin hàng xóm, không rõ phần nào do embedding học được. (d) (chỉ embedding) kém hơn (e) ở ToN (−0,0144) và không ổn định giữa seed (std 0,0186). Với tiêu chí 3 (hơn baseline > 2 std): hybrid hơn baseline tốt nhất ở ToN (5.7, không đổi); ở BoT ngang (5.7, không đổi).
+  - **Đường Pareto hybrid nhẹ** (số GAT dùng khi suy luận 5, 3, 2, 1 hoặc 1 GAT huấn luyện trên toàn train, × LightGBM n_estimators {25, 50, 100} × num_leaves {7, 15, 31}, cộng cấu hình của bản chính; 50 điểm ToN, 45 điểm BoT; kích thước là max trên 3 seed). **ToN: có bản đạt cả ≤ 100.000 tham số và ≤ 1 MB (37/50 điểm).** Bản F1 cao nhất đạt ngưỡng: 2 GAT nhóm + LightGBM (n=100, l=15), 30.934 tham số, 986 KB, F1-macro 0,9181 ± 0,0035 (**−1,45 điểm %** so với bản đầy đủ 0,9326), FPR 6,68% (**+1,73 điểm %** so với 4,94%), p95 6,9 ms (bản đầy đủ 27,6 ms); **bản nhỏ nhất**: 1 GAT + LightGBM (n=25, l=7), 12.592 tham số, 172 KB, F1-macro 0,9002 (−3,24 điểm %), FPR 8,30%. Ở ToN, dùng một GAT huấn luyện trên toàn train (`gatfull`) tệ hơn dùng một GAT nhóm 0,8–3,6 điểm % và không ổn định giữa seed (nhiều điểm có thanh sai số lớn), vì LightGBM học trên embedding out-of-fold của các GAT khác; nên **không dùng `gatfull`** ở ToN (ở BoT chúng ngang nhau). Phần lớn kích thước nằm ở LightGBM (9,6 MB ở bản chính). **BoT: bản đầy đủ đã đạt ngưỡng nhẹ (62.435 tham số, 777 KB)**, không cần giảm; bản nhỏ nhất 12.112 tham số, 126 KB (F1-macro 0,9286, −0,71 điểm %, FPR +2,17 điểm %).
+  - **Hiệu chỉnh ngưỡng (FPR val ≤ 4,08%, recall cao nhất), mọi mô hình sẽ chạy test, 3 seed:** `thresholds.json`, đủ baseline (5), GNN đơn (gcn, sage, gat), hybrid đầy đủ, hybrid nhẹ (và 3 bản cải tiến GAT, không công nhận), mỗi (bộ, mô hình, seed) có ngưỡng, F1-macro, FPR, recall tấn công trước và sau. Mọi mô hình đều đưa được FPR val về ≤ 4,08% (không có trường hợp không có ngưỡng khả thi), nhưng **không mô hình nào đạt recall ≥ 95% cùng lúc**: ToN, recall sau hiệu chỉnh: hybrid đầy đủ 91,9%, hybrid nhẹ 90,2%, SAGE 91,7%, XGBoost 90,0%, LightGBM 89,9%, GAT 89,0%, MLP 88,8%, random forest 87,8%, GCN 70,5%, logreg 65,9% (F1-macro hybrid đầy đủ 0,9326 → 0,9362); BoT: recall sau chỉ 29–38% mọi mô hình (F1-macro rơi 0,93 → khoảng 0,65), do dữ liệu (phân tích 15a). Baseline huấn luyện lại trên train cho F1 val khớp kết quả cũ, lệch tối đa 0,0003 (xgboost ToN).
+  - **Biểu đồ cột F1-macro và FPR của mọi mô hình có vạch 4,08% và thanh sai số** ở `gd5_compare_<bộ>.png` (FPR trước và sau hiệu chỉnh).
+  - **Trạng thái `Xong` có ghi chú:** đủ 5 phương án × 2 bộ, ngưỡng đủ, biểu đồ đủ; ghi chú: embedding GAT không hơn đặc trưng hàng xóm tính tay, hybrid chỉ vượt baseline ở ToN, và ngưỡng 4,08% không đi cùng recall ≥ 95%.
 
 ## GĐ6 Đánh giá tổng hợp
 
