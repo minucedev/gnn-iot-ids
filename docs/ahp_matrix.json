@@ -1,0 +1,51 @@
+{
+  "goal": "Chọn mô hình triển khai trên gateway IoT (IDS nhận lưu lượng NetFlow, cửa sổ 5 giây)",
+  "context": "IDS chạy trên gateway IoT có tài nguyên yếu; báo động giả làm người vận hành bỏ qua cảnh báo, kể cả cảnh báo thật.",
+  "scale": "Saaty 1-9: a_ij = tiêu chí hàng i quan trọng hơn tiêu chí cột j bao nhiêu lần; a_ji = 1/a_ij",
+  "criteria": [
+    {"id": "f1_macro", "label": "F1-macro"},
+    {"id": "fpr", "label": "FPR"},
+    {"id": "recall_attack", "label": "Recall tấn công"},
+    {"id": "latency_p95", "label": "Độ trễ p95"},
+    {"id": "size", "label": "Kích thước mô hình"}
+  ],
+  "pairs": [
+    {"i": "f1_macro", "j": "fpr", "value": "1/3",
+     "reason": "Báo động giả làm người vận hành quen bỏ qua cảnh báo, kể cả cảnh báo thật; FPR đo thẳng điều đó, còn F1-macro chỉ là chỉ số gộp."},
+    {"i": "f1_macro", "j": "recall_attack", "value": "1",
+     "reason": "F1-macro đã gồm recall từng lớp, còn recall tấn công là mục đích chính của IDS, nên hai tiêu chí ngang nhau."},
+    {"i": "f1_macro", "j": "latency_p95", "value": "3",
+     "reason": "Chất lượng phân loại quan trọng hơn khi độ trễ của mọi phương án đã đạt chỉ tiêu p95 <= 1 s."},
+    {"i": "f1_macro", "j": "size", "value": "2",
+     "reason": "Đề tài là 'lightweight' và thiết bị yếu nên kích thước quan trọng, nhưng F1-macro vẫn nhỉnh hơn."},
+    {"i": "fpr", "j": "recall_attack", "value": "2",
+     "reason": "Bỏ sót tấn công là rủi ro cốt lõi nên FPR chỉ hơn mức vừa phải; ngưỡng hiệu chỉnh đã giữ FPR val <= 4,08%."},
+    {"i": "fpr", "j": "latency_p95", "value": "5",
+     "reason": "Mọi phương án đều nhanh hơn chỉ tiêu 1 s rất nhiều (random forest chậm nhất, khoảng 26 ms), độ trễ ít khi quyết định chất lượng cảnh báo."},
+    {"i": "fpr", "j": "size", "value": "4",
+     "reason": "Gateway yếu giới hạn dung lượng, nhưng báo động giả làm hỏng giá trị của hệ thống nhiều hơn."},
+    {"i": "recall_attack", "j": "latency_p95", "value": "3",
+     "reason": "Cùng lý do với cặp F1-macro và độ trễ: phát hiện đúng quan trọng hơn khi độ trễ đã đạt chỉ tiêu."},
+    {"i": "recall_attack", "j": "size", "value": "2",
+     "reason": "Cùng lý do với cặp F1-macro và kích thước: kích thước quan trọng vì thiết bị yếu nhưng phát hiện tấn công vẫn nhỉnh hơn."},
+    {"i": "latency_p95", "j": "size", "value": "1/2",
+     "reason": "Kích thước quyết định mô hình có nạp và chạy được trên thiết bị yếu hay không; độ trễ của mọi phương án đều dưới 1 s."}
+  ],
+  "matrix": [
+    [1, 0.3333333333333333, 1, 3, 2],
+    [3, 1, 2, 5, 4],
+    [1, 0.5, 1, 3, 2],
+    [0.3333333333333333, 0.2, 0.3333333333333333, 1, 0.5],
+    [0.5, 0.25, 0.5, 2, 1]
+  ],
+  "normalization": {
+    "default": "per_criterion",
+    "per_criterion": {"f1_macro": "minmax", "fpr": "minmax", "recall_attack": "minmax", "latency_p95": "log_minmax", "size": "log_minmax"},
+    "note": "Độ trễ và kích thước trải nhiều bậc độ lớn (kích thước từ 46 KB đến gần 494 MB) nên lấy log10 trước khi min-max; min-max tuyến tính thuần làm kích thước mất khả năng phân biệt. src/ahp.py ghi thêm xếp hạng khi đổi sang min-max thuần và sang tỉ lệ min/x để kiểm độ bền."
+  },
+  "approved": {
+    "by": "Nguyễn Minh Phúc",
+    "date": "2026-11-16",
+    "note": "Duyệt nguyên đề xuất của Claude (ma trận 5x5 và cách chuẩn hóa); chưa nhờ Phong, Tấn chấm thêm nên chưa có ma trận gộp. Ma trận được đề xuất trước khi xem điểm phương án."
+  }
+}
