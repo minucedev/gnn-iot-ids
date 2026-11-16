@@ -1,0 +1,29 @@
+{
+ "steps_s": {
+  "clone_va_cai_goi": 87.5,
+  "pytest": 93.3,
+  "gnn_grid_tuning": 7057.8
+ },
+ "device": "CPU",
+ "gpu": null,
+ "commit": "ad92f6a6515f75d5f79c6f702f3066640f4af189",
+ "total_s": 7244.0,
+ "peak_ram_gb": 1.14,
+ "gpu_hours": 0,
+ "cpu_count": 4,
+ "pytest": "110 passed, 4295 warnings in 88.15s (0:01:28)",
+ "dataset": "nf_ton_iot_v3",
+ "data": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-04-build-graphs/processed/nf_ton_iot_v3",
+ "grid": {
+  "rows": 36,
+  "configs": {
+   "gcn": 6,
+   "sage": 6
+  },
+  "seeds": [
+   42,
+   43,
+   44
+  ]
+ }
+}
