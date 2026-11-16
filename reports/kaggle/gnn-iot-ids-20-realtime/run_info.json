@@ -1,0 +1,220 @@
+{
+ "steps_s": {
+  "clone_va_cai_goi": 80.0,
+  "pytest": 41.6,
+  "detector_hybrid_gat_lgbm_oofavg_il": 1727.5,
+  "eval_hybrid_gat_lgbm_oofavg_il": 4.6,
+  "detector_hybrid_light": 1567.6,
+  "eval_hybrid_light": 4.7
+ },
+ "device": "CPU",
+ "gpu": null,
+ "smoke": false,
+ "seed": 42,
+ "commit": "196064afecc31dc955838a4180506fc402c248e5",
+ "total_s": 3433.2,
+ "peak_ram_gb": 19.48,
+ "gpu_hours": 0,
+ "cpu_count": 4,
+ "pytest": "38 passed, 3 warnings in 36.62s",
+ "config": {
+  "dataset": "nf_ton_iot_v3",
+  "split": "test",
+  "flows_csv": "/kaggle/input/datasets/athena21/netflow-v3-datasets/NF-ToN-IoT-v3.csv",
+  "expect_commit": "196064a",
+  "thresholds": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-16c-aggregate/thresholds.json",
+  "thresholds_c": {
+   "nf_ton_iot_v3": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-16h-c-threshold/thresholds_c_nf_ton_iot_v3.json"
+  },
+  "datasets": {
+   "nf_ton_iot_v3": {
+    "data": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-04-build-graphs/processed/nf_ton_iot_v3",
+    "ckpt": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-07-train-gnn/ckpt",
+    "folds": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-15f-hybrid-il-ton/models_hybrid",
+    "light": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-16d-ablation-ton/models_light",
+    "baseline_search": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-05-baselines/baseline_search_nf_ton_iot_v3.json",
+    "ablation_search": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-16d-ablation-ton/ablation_search_nf_ton_iot_v3.json",
+    "gnn_csv": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-07-train-gnn/results_gnn_nf_ton_iot_v3.csv",
+    "hybrid_csv": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-15f-hybrid-il-ton/results_hybrid_oofavg_il_nf_ton_iot_v3.csv"
+   }
+  }
+ },
+ "models": [
+  "hybrid_gat_lgbm_oofavg_il",
+  "hybrid_light"
+ ],
+ "ahp_recommended": "hybrid_gat_lgbm_oofavg_il",
+ "summary_hybrid_gat_lgbm_oofavg_il": {
+  "dataset": "nf_ton_iot_v3",
+  "split": "test",
+  "model": "hybrid_gat_lgbm_oofavg_il",
+  "seed": 42,
+  "threshold": 0.7232829402243393,
+  "n_params": 144560,
+  "size_kb": 9746.0,
+  "classes": [
+   "Normal",
+   "DoS_DDoS",
+   "Botnet_Backdoor",
+   "Truy_cap_trai_phep",
+   "Khac"
+  ],
+  "window_sec": 5,
+  "n_windows": 11449,
+  "n_flows": 2409446,
+  "warmup_windows": 50,
+  "restrict": "test",
+  "speedup": null,
+  "reference": true,
+  "n_ref_windows": 11449,
+  "n_ref_windows_not_streamed": 0,
+  "frozen_style_p95_ms": 24.44321534999574,
+  "stream_seconds": 1416.1,
+  "total_seconds": 1717.1,
+  "ram_start_mb": 3762.01953125,
+  "ram_end_mb": 1946.0703125,
+  "env": {
+   "cpu_model": "Intel(R) Xeon(R) CPU @ 2.20GHz",
+   "cpu_count": 4,
+   "cpu_usable": 4,
+   "ram_total_gb": 31.35,
+   "cgroup_memory_limit_gb": 30.0,
+   "os": "Linux-6.18.55+-x86_64-with-glibc2.39",
+   "python": "3.13.18",
+   "torch": "2.11.0+cpu",
+   "numpy": "2.4.6",
+   "pandas": "3.1.0",
+   "sklearn": "1.9.1",
+   "lightgbm": "4.7.0",
+   "torch_geometric": "2.8.1",
+   "torch_threads": 1
+  }
+ },
+ "summary_hybrid_light": {
+  "dataset": "nf_ton_iot_v3",
+  "split": "test",
+  "model": "hybrid_light",
+  "seed": 42,
+  "threshold": 0.8474152024848911,
+  "n_params": 30934,
+  "size_kb": 985.6,
+  "classes": [
+   "Normal",
+   "DoS_DDoS",
+   "Botnet_Backdoor",
+   "Truy_cap_trai_phep",
+   "Khac"
+  ],
+  "window_sec": 5,
+  "n_windows": 11449,
+  "n_flows": 2409446,
+  "warmup_windows": 50,
+  "restrict": "test",
+  "speedup": null,
+  "reference": true,
+  "n_ref_windows": 11449,
+  "n_ref_windows_not_streamed": 0,
+  "frozen_style_p95_ms": 7.0319408997875135,
+  "stream_seconds": 1291.7,
+  "total_seconds": 1554.6,
+  "ram_start_mb": 3790.84375,
+  "ram_end_mb": 1677.75390625,
+  "env": {
+   "cpu_model": "Intel(R) Xeon(R) CPU @ 2.20GHz",
+   "cpu_count": 4,
+   "cpu_usable": 4,
+   "ram_total_gb": 31.35,
+   "cgroup_memory_limit_gb": 30.0,
+   "os": "Linux-6.18.55+-x86_64-with-glibc2.39",
+   "python": "3.13.18",
+   "torch": "2.11.0+cpu",
+   "numpy": "2.4.6",
+   "pandas": "3.1.0",
+   "sklearn": "1.9.1",
+   "lightgbm": "4.7.0",
+   "torch_geometric": "2.8.1",
+   "torch_threads": 1
+  }
+ },
+ "cpu": "Intel(R) Xeon(R) CPU @ 2.20GHz",
+ "result": {
+  "p95_total_ms": 136.0285449001367,
+  "p95_build_ms": 108.23684220007408,
+  "p95_infer_ms": 29.534829299939254,
+  "n_windows_measured": 11399,
+  "ram": {
+   "ram_first_window_mb": 3804.21875,
+   "ram_last_window_mb": 1937.86328125,
+   "ram_max_mb": 3804.69140625,
+   "ram_early_median_mb": 1730.0859375,
+   "ram_late_median_mb": 1927.0234375,
+   "growth_late_vs_early": 0.11383105066132004,
+   "slope_mb_per_1000_windows_second_half": 17.142757221203738,
+   "tolerance": 0.1,
+   "stable": false,
+   "definition": "trung vị RSS 1144 cửa sổ ngay sau warm-up so với 1144 cửa sổ cuối"
+  },
+  "online_vs_offline": {
+   "n_windows_compared": 11449,
+   "n_windows_without_reference": 0,
+   "n_nodes": 121770,
+   "feature_max_abs_diff_x": 0.0,
+   "feature_max_abs_diff_edge_attr": 0.0,
+   "feature_tol": 1e-06,
+   "windows_structure_mismatch": 0,
+   "pred_agreement_threshold": 1.0,
+   "pred_agreement_argmax": 1.0,
+   "n_node_mismatch_threshold": 0,
+   "n_node_mismatch_argmax": 0,
+   "windows_with_mismatch_threshold": 0,
+   "max_abs_diff_proba": 0.00012324404708735637,
+   "features_ok": true,
+   "pred_ok": true
+  },
+  "false_alarms": {
+   "n_windows_normal_only": 3774,
+   "hours_normal_only": 5.241666666666666,
+   "n_false_alerts": 79,
+   "false_alerts_per_hour": 15.07154213036566,
+   "windows_with_false_alert": 51,
+   "windows_with_false_alert_per_hour": 9.72972972972973,
+   "node_fpr_in_normal_only_windows": 0.0022588208383370503,
+   "note": "cảnh báo = node bị báo tấn công; đoạn chỉ có Normal = cửa sổ không có node tấn công nào"
+  },
+  "detection": {
+   "episode_gap_s": 60.0,
+   "n_episodes": 27,
+   "n_detected": 13,
+   "n_undetected": 14,
+   "detection_median_s": 5.1127596793674,
+   "detection_p95_s": 204.00240402147858,
+   "detection_max_s": 234.1129565455558,
+   "per_class": {
+    "DoS_DDoS": {
+     "n_episodes": 4,
+     "n_detected": 4,
+     "median_s": 4.947539128945721,
+     "max_s": 5.1127596793674
+    },
+    "Botnet_Backdoor": {
+     "n_episodes": 5,
+     "n_detected": 4,
+     "median_s": 12.92708316300002,
+     "max_s": 72.72725979303505
+    },
+    "Truy_cap_trai_phep": {
+     "n_episodes": 5,
+     "n_detected": 2,
+     "median_s": 5.100104685583119,
+     "max_s": 5.13748461199998
+    },
+    "Khac": {
+     "n_episodes": 13,
+     "n_detected": 3,
+     "median_s": 183.92870233876056,
+     "max_s": 234.1129565455558
+    }
+   }
+  }
+ }
+}

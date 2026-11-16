@@ -1,0 +1,8 @@
+/usr/local/lib/python3.13/dist-packages/pandas/core/arrays/masked.py:63: UserWarning: Pandas requires version '1.5.0' or newer of 'bottleneck' (version '1.4.2' currently installed).
+  from pandas.core import (
+[detector] nf_ton_iot_v3 mô hình hybrid_light seed 42, RAM 541 MB
+[detector] ngưỡng đóng băng 0.847415, 30,934 tham số, 985.6 KB
+[detector] dự đoán offline 121,770 node trong 5 s
+[detector] đọc và làm sạch flow: 2,409,446 flow trong 225 s, RAM 4389 MB
+[detector] RAM trước khi phát lại: 3791 MB
+[detector] xong: 11,449 cửa sổ, 2,409,446 flow trong 1292 s; p95 tổng 120.9 ms

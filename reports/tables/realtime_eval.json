@@ -1,0 +1,469 @@
+{
+ "model": "hybrid_gat_lgbm_oofavg_il",
+ "seed": 42,
+ "dataset": "nf_ton_iot_v3",
+ "split": "test",
+ "threshold": 0.7232829402243393,
+ "n_params": 144560,
+ "size_kb": 9746.0,
+ "n_windows": 11449,
+ "n_flows": 2409446,
+ "n_ref_windows": 11449,
+ "n_ref_windows_not_streamed": 0,
+ "online_vs_offline": {
+  "n_windows_compared": 11449,
+  "n_windows_without_reference": 0,
+  "n_nodes": 121770,
+  "feature_max_abs_diff_x": 0.0,
+  "feature_max_abs_diff_edge_attr": 0.0,
+  "feature_tol": 1e-06,
+  "windows_structure_mismatch": 0,
+  "pred_agreement_threshold": 1.0,
+  "pred_agreement_argmax": 1.0,
+  "n_node_mismatch_threshold": 0,
+  "n_node_mismatch_argmax": 0,
+  "windows_with_mismatch_threshold": 0,
+  "max_abs_diff_proba": 0.00012324404708735637,
+  "features_ok": true,
+  "pred_ok": true
+ },
+ "false_alarms": {
+  "n_windows_normal_only": 3774,
+  "hours_normal_only": 5.241666666666666,
+  "n_false_alerts": 79,
+  "false_alerts_per_hour": 15.07154213036566,
+  "windows_with_false_alert": 51,
+  "windows_with_false_alert_per_hour": 9.72972972972973,
+  "node_fpr_in_normal_only_windows": 0.0022588208383370503,
+  "note": "cảnh báo = node bị báo tấn công; đoạn chỉ có Normal = cửa sổ không có node tấn công nào"
+ },
+ "detection": {
+  "episode_gap_s": 60.0,
+  "n_episodes": 27,
+  "n_detected": 13,
+  "n_undetected": 14,
+  "detection_median_s": 5.1127596793674,
+  "detection_p95_s": 204.00240402147858,
+  "detection_max_s": 234.1129565455558,
+  "per_class": {
+   "DoS_DDoS": {
+    "n_episodes": 4,
+    "n_detected": 4,
+    "median_s": 4.947539128945721,
+    "max_s": 5.1127596793674
+   },
+   "Botnet_Backdoor": {
+    "n_episodes": 5,
+    "n_detected": 4,
+    "median_s": 12.92708316300002,
+    "max_s": 72.72725979303505
+   },
+   "Truy_cap_trai_phep": {
+    "n_episodes": 5,
+    "n_detected": 2,
+    "median_s": 5.100104685583119,
+    "max_s": 5.13748461199998
+   },
+   "Khac": {
+    "n_episodes": 13,
+    "n_detected": 3,
+    "median_s": 183.92870233876056,
+    "max_s": 234.1129565455558
+   }
+  },
+  "episodes": [
+   {
+    "class_code": 1,
+    "start_ts": 1556136555.16,
+    "end_ts": 1556143155.0,
+    "n_windows": 1320,
+    "n_true_nodes": 16838,
+    "detected": true,
+    "first_alert_window": 311227311,
+    "detection_s": 4.96084428616939,
+    "class": "DoS_DDoS"
+   },
+   {
+    "class_code": 1,
+    "start_ts": 1556204355.1,
+    "end_ts": 1556204675.0,
+    "n_windows": 64,
+    "n_true_nodes": 248,
+    "detected": true,
+    "first_alert_window": 311240871,
+    "detection_s": 5.1127596793674,
+    "class": "DoS_DDoS"
+   },
+   {
+    "class_code": 1,
+    "start_ts": 1556204743.696,
+    "end_ts": 1556206340.0,
+    "n_windows": 304,
+    "n_true_nodes": 1180,
+    "detected": true,
+    "first_alert_window": 311240948,
+    "detection_s": 1.4492752058179121,
+    "class": "DoS_DDoS"
+   },
+   {
+    "class_code": 1,
+    "start_ts": 1556241105.181,
+    "end_ts": 1556245990.0,
+    "n_windows": 954,
+    "n_true_nodes": 2906,
+    "detected": true,
+    "first_alert_window": 311248221,
+    "detection_s": 4.934233971722051,
+    "class": "DoS_DDoS"
+   },
+   {
+    "class_code": 2,
+    "start_ts": 1556436599.094,
+    "end_ts": 1556436895.0,
+    "n_windows": 30,
+    "n_true_nodes": 57,
+    "detected": true,
+    "first_alert_window": 311287323,
+    "detection_s": 21.02067208491053,
+    "class": "Botnet_Backdoor"
+   },
+   {
+    "class_code": 2,
+    "start_ts": 1556437291.354,
+    "end_ts": 1556437410.0,
+    "n_windows": 8,
+    "n_true_nodes": 12,
+    "detected": false,
+    "first_alert_window": null,
+    "detection_s": null,
+    "class": "Botnet_Backdoor"
+   },
+   {
+    "class_code": 2,
+    "start_ts": 1556437602.389,
+    "end_ts": 1556438175.0,
+    "n_windows": 91,
+    "n_true_nodes": 129,
+    "detected": true,
+    "first_alert_window": 311287534,
+    "detection_s": 72.72725979303505,
+    "class": "Botnet_Backdoor"
+   },
+   {
+    "class_code": 2,
+    "start_ts": 1556465315.68,
+    "end_ts": 1556471535.0,
+    "n_windows": 1240,
+    "n_true_nodes": 2909,
+    "detected": true,
+    "first_alert_window": 311293063,
+    "detection_s": 4.433762385242744,
+    "class": "Botnet_Backdoor"
+   },
+   {
+    "class_code": 2,
+    "start_ts": 1556499290.281,
+    "end_ts": 1556504915.0,
+    "n_windows": 1125,
+    "n_true_nodes": 1906,
+    "detected": true,
+    "first_alert_window": 311299858,
+    "detection_s": 4.833494241089511,
+    "class": "Botnet_Backdoor"
+   },
+   {
+    "class_code": 3,
+    "start_ts": 1556058815.454,
+    "end_ts": 1556058820.0,
+    "n_windows": 1,
+    "n_true_nodes": 2,
+    "detected": false,
+    "first_alert_window": null,
+    "detection_s": null,
+    "class": "Truy_cap_trai_phep"
+   },
+   {
+    "class_code": 3,
+    "start_ts": 1556059415.79,
+    "end_ts": 1556059420.0,
+    "n_windows": 1,
+    "n_true_nodes": 2,
+    "detected": false,
+    "first_alert_window": null,
+    "detection_s": null,
+    "class": "Truy_cap_trai_phep"
+   },
+   {
+    "class_code": 3,
+    "start_ts": 1556060842.239,
+    "end_ts": 1556060845.0,
+    "n_windows": 1,
+    "n_true_nodes": 1,
+    "detected": false,
+    "first_alert_window": null,
+    "detection_s": null,
+    "class": "Truy_cap_trai_phep"
+   },
+   {
+    "class_code": 3,
+    "start_ts": 1556303445.043,
+    "end_ts": 1556311075.0,
+    "n_windows": 1526,
+    "n_true_nodes": 6444,
+    "detected": true,
+    "first_alert_window": 311260689,
+    "detection_s": 5.062724759166258,
+    "class": "Truy_cap_trai_phep"
+   },
+   {
+    "class_code": 3,
+    "start_ts": 1556344690.0,
+    "end_ts": 1556348545.0,
+    "n_windows": 768,
+    "n_true_nodes": 2474,
+    "detected": true,
+    "first_alert_window": 311268938,
+    "detection_s": 5.13748461199998,
+    "class": "Truy_cap_trai_phep"
+   },
+   {
+    "class_code": 4,
+    "start_ts": 1556428982.853,
+    "end_ts": 1556429195.0,
+    "n_windows": 24,
+    "n_true_nodes": 30,
+    "detected": false,
+    "first_alert_window": null,
+    "detection_s": null,
+    "class": "Khac"
+   },
+   {
+    "class_code": 4,
+    "start_ts": 1556429474.831,
+    "end_ts": 1556429475.0,
+    "n_windows": 1,
+    "n_true_nodes": 2,
+    "detected": false,
+    "first_alert_window": null,
+    "detection_s": null,
+    "class": "Khac"
+   },
+   {
+    "class_code": 4,
+    "start_ts": 1556431523.073,
+    "end_ts": 1556431525.0,
+    "n_windows": 1,
+    "n_true_nodes": 2,
+    "detected": false,
+    "first_alert_window": null,
+    "detection_s": null,
+    "class": "Khac"
+   },
+   {
+    "class_code": 4,
+    "start_ts": 1556543765.206,
+    "end_ts": 1556543820.0,
+    "n_windows": 6,
+    "n_true_nodes": 12,
+    "detected": false,
+    "first_alert_window": null,
+    "detection_s": null,
+    "class": "Khac"
+   },
+   {
+    "class_code": 4,
+    "start_ts": 1556543903.964,
+    "end_ts": 1556544780.0,
+    "n_windows": 80,
+    "n_true_nodes": 170,
+    "detected": false,
+    "first_alert_window": null,
+    "detection_s": null,
+    "class": "Khac"
+   },
+   {
+    "class_code": 4,
+    "start_ts": 1556544965.602,
+    "end_ts": 1556545260.0,
+    "n_windows": 32,
+    "n_true_nodes": 71,
+    "detected": false,
+    "first_alert_window": null,
+    "detection_s": null,
+    "class": "Khac"
+   },
+   {
+    "class_code": 4,
+    "start_ts": 1556545966.811,
+    "end_ts": 1556546105.0,
+    "n_windows": 8,
+    "n_true_nodes": 15,
+    "detected": false,
+    "first_alert_window": null,
+    "detection_s": null,
+    "class": "Khac"
+   },
+   {
+    "class_code": 4,
+    "start_ts": 1556546216.67,
+    "end_ts": 1556546230.0,
+    "n_windows": 2,
+    "n_true_nodes": 6,
+    "detected": false,
+    "first_alert_window": null,
+    "detection_s": null,
+    "class": "Khac"
+   },
+   {
+    "class_code": 4,
+    "start_ts": 1556546406.187,
+    "end_ts": 1556546660.0,
+    "n_windows": 13,
+    "n_true_nodes": 24,
+    "detected": true,
+    "first_alert_window": 311309317,
+    "detection_s": 183.92870233876056,
+    "class": "Khac"
+   },
+   {
+    "class_code": 4,
+    "start_ts": 1556546856.147,
+    "end_ts": 1556546950.0,
+    "n_windows": 5,
+    "n_true_nodes": 11,
+    "detected": false,
+    "first_alert_window": null,
+    "detection_s": null,
+    "class": "Khac"
+   },
+   {
+    "class_code": 4,
+    "start_ts": 1556547106.013,
+    "end_ts": 1556547580.0,
+    "n_windows": 39,
+    "n_true_nodes": 264,
+    "detected": true,
+    "first_alert_window": 311309467,
+    "detection_s": 234.1129565455558,
+    "class": "Khac"
+   },
+   {
+    "class_code": 4,
+    "start_ts": 1556547846.355,
+    "end_ts": 1556548580.0,
+    "n_windows": 30,
+    "n_true_nodes": 57,
+    "detected": true,
+    "first_alert_window": 311309605,
+    "detection_s": 183.7624502059266,
+    "class": "Khac"
+   },
+   {
+    "class_code": 4,
+    "start_ts": 1556548985.214,
+    "end_ts": 1556548990.0,
+    "n_windows": 1,
+    "n_true_nodes": 2,
+    "detected": false,
+    "first_alert_window": null,
+    "detection_s": null,
+    "class": "Khac"
+   }
+  ]
+ },
+ "node_level_online": {
+  "n_nodes": 121770,
+  "n_normal": 85996,
+  "n_attack": 35774,
+  "fpr": 0.019163682031722407,
+  "recall_attack": 0.9681891876782021
+ },
+ "ram": {
+  "ram_first_window_mb": 3804.21875,
+  "ram_last_window_mb": 1937.86328125,
+  "ram_max_mb": 3804.69140625,
+  "ram_early_median_mb": 1730.0859375,
+  "ram_late_median_mb": 1927.0234375,
+  "growth_late_vs_early": 0.11383105066132004,
+  "slope_mb_per_1000_windows_second_half": 17.142757221203738,
+  "tolerance": 0.1,
+  "stable": false,
+  "definition": "trung vị RSS 1144 cửa sổ ngay sau warm-up so với 1144 cửa sổ cuối"
+ },
+ "targets": [
+  {
+   "chi_tieu": "Độ trễ p95 end-to-end ≤ 1 s mỗi cửa sổ",
+   "nguong": "≤ 1000 ms",
+   "gia_tri": 136.0285449001367,
+   "dat": true,
+   "ghi_chu": "11399 cửa sổ sau warm-up, 1 luồng; nguồn: task 8.3"
+  },
+  {
+   "chi_tieu": "Đặc trưng online khớp offline",
+   "nguong": "max |sai khác| < 1e-06",
+   "gia_tri": 0.0,
+   "dat": true,
+   "ghi_chu": "11449 cửa sổ; nguồn: task 8.1"
+  },
+  {
+   "chi_tieu": "Dự đoán online khớp offline",
+   "nguong": "≥ 99.9% node",
+   "gia_tri": 1.0,
+   "dat": true,
+   "ghi_chu": "nguồn: task 8.2"
+  },
+  {
+   "chi_tieu": "RAM không tăng theo thời gian chạy",
+   "nguong": "±10%",
+   "gia_tri": 0.11383105066132004,
+   "dat": false,
+   "ghi_chu": "trung vị RSS 1144 cửa sổ ngay sau warm-up so với 1144 cửa sổ cuối; nguồn: task 8.1"
+  },
+  {
+   "chi_tieu": "Tổng tham số ≤ 100.000",
+   "nguong": "≤ 100.000",
+   "gia_tri": 144560,
+   "dat": false,
+   "ghi_chu": "KE_HOACH mục 3"
+  },
+  {
+   "chi_tieu": "Kích thước file mô hình ≤ 1 MB",
+   "nguong": "≤ 1024 KB",
+   "gia_tri": 9746.0,
+   "dat": false,
+   "ghi_chu": "KE_HOACH mục 3"
+  },
+  {
+   "chi_tieu": "FPR nhị phân mức node (online)",
+   "nguong": "≤ 4.08%",
+   "gia_tri": 0.019163682031722407,
+   "dat": true,
+   "ghi_chu": "ngưỡng đã đóng băng; KE_HOACH mục 3"
+  },
+  {
+   "chi_tieu": "Recall tấn công mức node (online)",
+   "nguong": "≥ 95%",
+   "gia_tri": 0.9681891876782021,
+   "dat": true,
+   "ghi_chu": "KE_HOACH mục 3"
+  },
+  {
+   "chi_tieu": "Cảnh báo giả mỗi giờ (đoạn chỉ có Normal)",
+   "nguong": "chưa có chỉ tiêu trong KE_HOACH",
+   "gia_tri": 15.07154213036566,
+   "dat": null,
+   "ghi_chu": "3774 cửa sổ Normal-only (5.242 giờ dữ liệu); Phúc chốt ngưỡng khi viết báo cáo"
+  },
+  {
+   "chi_tieu": "Thời gian phát hiện mỗi đợt tấn công (median, max)",
+   "nguong": "chưa có chỉ tiêu trong KE_HOACH",
+   "gia_tri": {
+    "median_s": 5.1127596793674,
+    "max_s": 234.1129565455558,
+    "n_undetected": 14
+   },
+   "dat": null,
+   "ghi_chu": "27 đợt (gộp cách nhau ≤ 60 s); Phúc chốt ngưỡng khi viết báo cáo"
+  }
+ ]
+}

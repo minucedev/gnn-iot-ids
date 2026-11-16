@@ -740,7 +740,7 @@ Thêm ngày 12/11/2026 theo yêu cầu "cần minh chứng hybrid cao hơn các 
 
 ### 7.1 Cây phân cấp AHP và ma trận so sánh cặp
 
-- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 7 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** Xong (có ghi chú) · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 7 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** AHP
 - **Đầu vào:** Quyết định D6; lý thuyết 3.3
 - **Đầu ra:** Cây: mục tiêu "chọn mô hình triển khai trên gateway IoT" → 5 tiêu chí (F1-macro, FPR, recall tấn công, độ trễ, số tham số hoặc bộ nhớ) → các phương án (mọi mô hình ở 6.1); ma trận 5×5
@@ -749,10 +749,11 @@ Thêm ngày 12/11/2026 theo yêu cầu "cần minh chứng hybrid cao hơn các 
   2. CR của từng ma trận cá nhân và của ma trận gộp đều < 0,10. Nếu vượt thì chấm lại, có ghi log.
   3. Có lý do bằng lời cho từng cặp so sánh.
 - **Phụ thuộc:** 0.2
+- **Kết quả:** (16/11/2026) Ma trận 5×5 ở [docs/ahp_matrix.json](../ahp_matrix.json), 10 cặp, mỗi cặp có một câu lý do. **Claude đề xuất, Phúc duyệt nguyên đề xuất ngày 16/11 (không sửa ô nào)**; đề xuất được đưa ra trước khi xem điểm phương án nên không chỉnh theo kết quả. CR = 0,0098 (λmax = 5,044, CI = 0,011, RI = 1,12) < 0,10. **Chưa nhờ Phong, Tấn chấm** (tiêu chí 1 ghi "nên"), nên chỉ có một ma trận, không có ma trận gộp; `src/ahp.py` có sẵn `aggregate_matrices` (trung bình nhân) nếu sau này có thêm. Trạng thái: Xong có ghi chú.
 
 ### 7.2 Tính AHP, xếp hạng và phân tích độ nhạy
 
-- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 7 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** Xong · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 7 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** AHP, Thuật toán & đánh giá
 - **Đầu vào:** Ma trận 7.1; `results.csv` (`split=test`)
 - **Đầu ra:** `src/ahp.py`; bảng trọng số tiêu chí; điểm từng phương án; xếp hạng; biểu đồ độ nhạy; mô hình được gợi ý
@@ -762,6 +763,7 @@ Thêm ngày 12/11/2026 theo yêu cầu "cần minh chứng hybrid cao hơn các 
   3. Độ nhạy: thay đổi từng trọng số ±20% và chỉ ra điểm làm thứ hạng đảo chiều.
   4. Kết luận kèm điều kiện, ví dụ "nếu ưu tiên độ trễ thì chọn …".
 - **Phụ thuộc:** 7.1, 6.1
+- **Kết quả:** (16/11/2026) Notebook `gnn-iot-ids-19-ahp` (Kaggle CPU 4 nhân, bản 1, clone `main` tại `9bdc7b7`), 179 s, RAM đỉnh 0,7 GB, `pytest -q` 136 passed, `tests/test_ahp.py` 13 passed. Code: [src/ahp.py](../../src/ahp.py), [scripts/ahp_plots.py](../../scripts/ahp_plots.py); kết quả [reports/tables/ahp_result.json](../../reports/tables/ahp_result.json); hình `reports/figures/gd7_ahp_{weights,scores,sensitivity}.png`. Số liệu: `summary_test.csv`, NF-ToN-IoT-v3, chế độ ngưỡng hiệu chỉnh, 8 phương án (số test đã có, không chạy lại test). Chuẩn hóa: min-max cho F1, FPR, recall; log10 rồi min-max cho độ trễ và kích thước; FPR, độ trễ, kích thước đảo chiều. **Trọng số** (vector riêng; trung bình nhân lệch tối đa 0,002): FPR 0,431; Recall 0,204; F1-macro 0,189; Kích thước 0,109; Độ trễ 0,067. **Xếp hạng:** Hybrid chính 0,831; MLP 0,665; LightGBM + TB hàng xóm (c) 0,634; LightGBM 0,577; Hybrid nhẹ 0,564; GAT 0,491; GraphSAGE 0,446; Random Forest 0,357. **Gợi ý: Hybrid chính.** **Độ nhạy:** tăng hoặc giảm từng trọng số 20% không đổi hạng nhất. Hạng nhất chỉ đổi khi trọng số độ trễ tăng từ 0,07 lên 0,20 (→ MLP), kích thước từ 0,11 lên 0,32 (→ MLP), FPR lên 0,84 (→ MLP), recall lên 0,83 (→ (c)). **Kết luận có điều kiện:** ưu tiên F1, FPR hoặc recall (50%) thì Hybrid chính; ưu tiên độ trễ hoặc kích thước (50%) thì MLP. **Cần lưu ý khi viết báo cáo:** (1) Hybrid chính (144.560 tham số, 9,7 MB) **không đạt ngưỡng nhẹ** (≤ 100.000 tham số, ≤ 1 MB); nếu chỉ xét các phương án đạt ngưỡng nhẹ (phân tích phụ, ngoài ma trận đã duyệt) thì AHP chọn MLP, Hybrid nhẹ đứng thứ ba trong nhóm đó; (2) hạng nhất bền với min-max thuần và log min-max nhưng **đổi thành MLP khi chuẩn hóa theo tỉ lệ min/x** (`normalization_robustness`), tức kết quả phụ thuộc cách chuẩn hóa; (3) AHP đã duyệt chấm FPR quan trọng nhất nên ủng hộ mô hình chính xác, không ủng hộ mô hình nhẹ. Trạng thái: Xong.
 
 ## GĐ8 Mô phỏng thời gian thực
 
@@ -769,7 +771,7 @@ Thêm ngày 12/11/2026 theo yêu cầu "cần minh chứng hybrid cao hơn các 
 
 Gom cửa sổ online từ luồng flow.
 
-- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 6 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** Đang làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 6 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** Triển khai
 - **Đầu vào:** `build_graph.py`; file flow của tập test
 - **Đầu ra:** `stream_features.py`: đọc flow theo thứ tự thời gian (replay theo tốc độ thật hoặc tăng tốc ×N), đóng cửa sổ, dựng đồ thị bằng đúng hàm offline
@@ -778,12 +780,13 @@ Gom cửa sổ online từ luồng flow.
   2. Bộ nhớ không tăng theo thời gian chạy: chạy ≥ 30 phút dữ liệu, RAM ổn định ±10%.
   3. Dùng scaler đã fit trên train, không fit lại.
 - **Phụ thuộc:** 0.4
+- **Kết quả:** (16/11/2026) Code [src/stream_features.py](../../src/stream_features.py), kiểm thử [tests/test_stream_features.py](../../tests/test_stream_features.py); chạy trong notebook `gnn-iot-ids-20-realtime` (Kaggle CPU 4 nhân, bản 2, clone `main` tại `196064a`, 3.433 s tổng, RAM đỉnh 19,5 GB do nạp 27 triệu flow gốc và đồ thị tham chiếu). Phát lại **toàn bộ tập test NF-ToN-IoT-v3: 11.449 cửa sổ, 121.770 node** (khoảng 15,9 giờ dữ liệu theo số cửa sổ). (1) **Đạt:** đặc trưng node và cạnh online so với offline max |sai khác| = **0,0**, cấu trúc đồ thị (IP, cạnh) khớp ở cả 11.449 cửa sổ. (3) **Đạt:** dùng `scaler.pkl` đã fit trên train, kiểm bằng test rằng scaler không bị fit lại. (2) **Không đạt cho mô hình được AHP gợi ý:** RAM (RSS) trung vị 1.144 cửa sổ sau warm-up là 1.730 MB, 1.144 cửa sổ cuối là 1.927 MB, **tăng 11,4% > 10%**, tăng gần đều theo 10 phần (1.730 → 1.927 MB). Cùng điều kiện, hybrid nhẹ **giảm 3,9%** (đạt) nhưng không đơn điệu (lên 1.887 MB rồi xuống 1.668 MB). Chưa xác định được nguyên nhân (rò rỉ thật, cấp phát bộ nhớ, hay danh sách thống kê của chính bộ đo `windows` tích lũy theo số cửa sổ); chưa điều tra thêm, không nới chỉ tiêu. Trạng thái: để **Đang làm** vì tiêu chí 2 chưa đạt với mô hình được gợi ý.
 
 ### 8.2 detector.py và log cảnh báo
 
 Bộ phát hiện thời gian thực.
 
-- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 7 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** Xong · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 7 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** Triển khai
 - **Đầu vào:** `stream_features.py`; mô hình được AHP gợi ý (dùng tạm GAT chính nếu 7.2 chưa xong)
 - **Đầu ra:** `detector.py` (CLI): nhận file flow, xuất `alerts.csv` gồm thời gian, cửa sổ, IP, lớp dự đoán, xác suất, thời gian xử lý
@@ -792,12 +795,13 @@ Bộ phát hiện thời gian thực.
   2. Dự đoán online khớp dự đoán offline trên cùng các cửa sổ ≥ 99,9%.
   3. Chạy CPU, không cần GPU.
 - **Phụ thuộc:** 8.1, 5.3
+- **Kết quả:** (16/11/2026) Code [scripts/detector.py](../../scripts/detector.py) (nạp mô hình đóng băng bằng đúng `final_test.build`, ngưỡng đóng băng của seed 42), hướng dẫn một lệnh ở mục "Demo thời gian thực" trong [README.md](../../README.md). Mô hình chạy: hybrid chính (AHP gợi ý) và hybrid nhẹ, seed 42, thiết bị CPU, `torch.set_num_threads(1)`. (1) **Đạt** (chạy qua notebook 20, vì dữ liệu và mô hình ở trên Kaggle). (2) **Đạt:** dự đoán theo ngưỡng khớp offline **100%** (0/121.770 node lệch; argmax cũng 0 lệch), sai khác xác suất tối đa 1,2e-4. (3) **Đạt:** không dùng GPU. Chưa kiểm khớp trên các seed 43, 44. `alerts_sample.csv` ≤ 1.000 dòng ở [reports/kaggle/gnn-iot-ids-20-realtime/](../../reports/kaggle/gnn-iot-ids-20-realtime/). Trạng thái: Xong.
 
 ### 8.3 Đo hiệu năng triển khai
 
 Độ trễ, thông lượng, RAM.
 
-- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 7 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** Xong · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 7 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** Triển khai, Thuật toán & đánh giá
 - **Đầu vào:** `detector.py`; quyết định D7
 - **Đầu ra:** Báo cáo hiệu năng: độ trễ p50/p95/p99 (tách riêng phần dựng đồ thị và phần suy luận), số flow/giây, RAM tối đa, cấu hình máy
@@ -807,10 +811,11 @@ Bộ phát hiện thời gian thực.
   3. Ghi đầy đủ CPU, RAM, hệ điều hành, phiên bản thư viện (và giới hạn CPU/RAM của Docker nếu dùng Docker).
   4. Có biểu đồ phân bố độ trễ và độ trễ theo số node của cửa sổ.
 - **Phụ thuộc:** 8.2
+- **Kết quả:** (16/11/2026) Notebook `gnn-iot-ids-20-realtime` bản 2; bảng [reports/tables/latency.json](../../reports/tables/latency.json) (hybrid chính; hybrid nhẹ ở `reports/kaggle/gnn-iot-ids-20-realtime/extra_hybrid_light/`); hình `reports/figures/gd8_latency_hist.png`, `gd8_latency_vs_nodes.png`. CPU Intel Xeon 2,20 GHz (4 nhân, dùng 1 luồng), Kaggle, phiên bản thư viện trong `latency.json` mục `env`. Độ trễ = từ lúc đóng cửa sổ đến lúc có dự đoán, **11.399 cửa sổ** sau 50 cửa sổ warm-up. **Hybrid chính:** tổng p50 / p95 / p99 = 118,1 / **136,0** / 190,8 ms (dựng đồ thị p95 108,2 ms, suy luận p95 29,5 ms); lớn nhất 0,75 s (dưới 1 s); thông lượng khoảng 1.754 flow/giây xử lý. **Hybrid nhẹ:** tổng p95 120,9 ms (dựng đồ thị 113,3 ms, suy luận 8,0 ms). Dựng đồ thị chiếm phần lớn và gần như không đổi theo số node; suy luận tăng theo số node. (1) Đạt. (2) **Đạt:** p95 136 ms ≤ 1.000 ms. (3) Đạt. (4) Đạt. Lưu ý: p95 end-to-end (136 ms) lớn hơn nhiều so với p95 chỉ suy luận 24,4 ms ở GĐ H vì thêm bước dựng đồ thị bằng pandas. Đo trên Kaggle (D7 điều chỉnh), chưa phải thiết bị gateway thật. Trạng thái: Xong.
 
 ### 8.4 Đánh giá kết quả triển khai
 
-- **Trạng thái:** Chưa làm · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 8 · **Ưu tiên:** Bắt buộc
+- **Trạng thái:** Xong (có ghi chú) · **Phụ trách:** Phúc · **Kiểm tra:** Tự kiểm · **Tuần:** 8 · **Ưu tiên:** Bắt buộc
 - **Mục đề tài:** Triển khai, Thuật toán & đánh giá
 - **Đầu vào:** `alerts.csv`, nhãn thật, báo cáo 8.3
 - **Đầu ra:** Mục "Đánh giá kết quả triển khai": số cảnh báo giả mỗi giờ, thời gian phát hiện (từ lúc đợt tấn công bắt đầu đến cảnh báo đầu tiên) cho từng đợt, so với chỉ tiêu
@@ -819,6 +824,7 @@ Bộ phát hiện thời gian thực.
   2. Số cảnh báo giả mỗi giờ tính trên các đoạn chỉ có Normal.
   3. Có bảng đạt hoặc không đạt cho từng chỉ tiêu triển khai.
 - **Phụ thuộc:** 8.3
+- **Kết quả:** (16/11/2026) [reports/tables/realtime_eval.json](../../reports/tables/realtime_eval.json) (mục `targets` là bảng đạt hoặc không đạt; hybrid nhẹ ở `extra_hybrid_light/`). Đợt tấn công = các cửa sổ cùng lớp cách nhau ≤ 60 s; thời gian phát hiện = từ flow đầu tiên của lớp đó trong đợt đến lúc đóng cửa sổ có cảnh báo đầu tiên, cộng thời gian xử lý. **Hybrid chính:** (a) **cảnh báo giả 15,1 mỗi giờ**: 79 cảnh báo (node) trong 3.774 cửa sổ chỉ có Normal (5,24 giờ dữ liệu); số cửa sổ có ít nhất một cảnh báo giả: 9,7 mỗi giờ. (b) **27 đợt tấn công, 13 phát hiện, 14 không phát hiện**; thời gian phát hiện của 13 đợt có cảnh báo: **median 5,1 s, max 234,1 s**. Theo lớp: DoS_DDoS 4/4 (median 4,9 s, max 5,1 s); Botnet_Backdoor 4/5 (median 12,9 s, max 72,7 s); Truy_cap_trai_phep 2/5 (median 5,1 s); Khac 3/13 (median 183,9 s). (c) Mức node online (từ chính các cảnh báo): FPR 1,92%, recall tấn công 96,8%. **Hybrid nhẹ:** cảnh báo giả 18,9 mỗi giờ, 13/27 đợt phát hiện (median 5,1 s, max 396,1 s), FPR 2,47%, recall 96,3%. **Bảng đạt/không đạt (hybrid chính):** p95 ≤ 1 s đạt; đặc trưng khớp đạt; dự đoán khớp ≥ 99,9% đạt; FPR ≤ 4,08% đạt; recall ≥ 95% đạt; **RAM ±10% không đạt (+11,4%)**; **tham số ≤ 100.000 không đạt (144.560)**; **kích thước ≤ 1 MB không đạt (9,7 MB)**. Hybrid nhẹ đạt cả tham số, kích thước và RAM. **Cảnh báo giả mỗi giờ và thời gian phát hiện chưa có chỉ tiêu trong KE_HOACH nên chỉ báo cáo, không chấm đạt hay không.** Lưu ý: 14 trong 27 đợt không có cảnh báo nào (10 là lớp Khac, 3 Truy_cap_trai_phep, 1 Botnet_Backdoor), nên "median và max" chỉ tính trên 13 đợt phát hiện được; cách gộp đợt (60 s) là lựa chọn của người làm, đổi cách gộp thì số đợt đổi. Trạng thái: Xong có ghi chú.
 
 ## GĐ9 Báo cáo & bảo vệ
 

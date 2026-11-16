@@ -85,6 +85,22 @@ gnn-iot-ids/
 
 Đặt file gốc vào `data/raw/<tên_bộ>/` (ví dụ `data/raw/nf_ton_iot_v3/`). Toàn bộ nội dung `data/raw/` và `data/processed/` cùng mọi file `*.parquet` đều bị `.gitignore` bỏ qua, **không commit dữ liệu**. Link tải và license của từng bộ ghi trong phiếu ở [docs/dataset_cards/](docs/dataset_cards/).
 
+## Demo thời gian thực (task 8.2)
+
+`scripts/detector.py` phát lại flow NetFlow v3 theo thứ tự thời gian, gom cửa sổ 5 giây, dựng đồ thị bằng đúng hàm offline
+([src/stream_features.py](src/stream_features.py)), dự đoán bằng mô hình đã đóng băng và ngưỡng của nó, rồi ghi cảnh báo. Chỉ cần CPU (1 luồng).
+Dữ liệu và mô hình đã đóng băng nằm trên Kaggle, nên demo chạy trong notebook [20_realtime](notebooks/20_realtime.ipynb), một lệnh:
+
+```
+python -I scripts/detector.py --config detector_config.json --model hybrid_gat_lgbm_oofavg_il --out demo_out [--max-windows 200] [--speedup 10]
+```
+
+- `detector_config.json`: cấu trúc như config của `scripts/final_test.py`, thêm `dataset` (ví dụ `nf_ton_iot_v3`) và `flows_csv` (file `NF-ToN-IoT-v3.csv`); notebook 20 tự sinh file này.
+- `--model`: `hybrid_gat_lgbm_oofavg_il` (AHP gợi ý), `hybrid_light`, hoặc bất kỳ mô hình đã đóng băng nào của `final_test.py`.
+- `--speedup N`: chờ cho thời gian thật chậm hơn thời gian dữ liệu N lần (mặc định không chờ). `--max-windows N`: dừng sau N cửa sổ. `--no-reference`: không đối chiếu với đồ thị offline.
+- Kết quả trong `--out`: `alerts.csv` (t_close, window, ip, pred_class, p_attack, p_class, proc_ms), `windows.csv` (độ trễ từng cửa sổ, RAM, đối chiếu offline), `detector_summary.json` (mô hình, ngưỡng, CPU, phiên bản thư viện).
+- Đánh giá: `python -I scripts/realtime_eval.py <thư mục --out> <thư mục bảng> <thư mục hình>` ghi `latency.json`, `realtime_eval.json`, `alerts_sample.csv`, `gd8_*.png`.
+
 ## Quy ước làm việc
 
 - Commit và push thẳng lên `main`, không tạo nhánh hay PR.
