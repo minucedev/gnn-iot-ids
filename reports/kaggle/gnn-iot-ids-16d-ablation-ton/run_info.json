@@ -1,0 +1,80 @@
+{
+ "steps_s": {
+  "clone_va_cai_goi": 88.5,
+  "pytest": 92.3,
+  "gat_explain": 41.5,
+  "hybrid_ablation_pareto": 3517.1
+ },
+ "device": "CPU",
+ "gpu": null,
+ "commit": "ad92f6a6515f75d5f79c6f702f3066640f4af189",
+ "total_s": 3746.8,
+ "peak_ram_gb": 2.6,
+ "gpu_hours": 0,
+ "cpu_count": 4,
+ "pytest": "110 passed, 4295 warnings in 87.29s (0:01:27)",
+ "dataset": "nf_ton_iot_v3",
+ "data": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-04-build-graphs/processed/nf_ton_iot_v3",
+ "folds": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-15f-hybrid-il-ton/models_hybrid",
+ "ckpt": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-07-train-gnn/ckpt",
+ "checks": {
+  "ablation_cd": {
+   "rows": 6,
+   "models": [
+    "abl_lgbm_emb_only",
+    "abl_lgbm_x_nbrmean"
+   ],
+   "seeds": [
+    42,
+    43,
+    44
+   ],
+   "only_val": true
+  },
+  "pareto": {
+   "rows": 150,
+   "variants": [
+    "gat1",
+    "gat2",
+    "gat3",
+    "gat5",
+    "gatfull"
+   ],
+   "seeds": [
+    42,
+    43,
+    44
+   ]
+  },
+  "ref_check": {
+   "42": {
+    "lgbm_cfg": {
+     "n": 300,
+     "l": 63
+    },
+    "f1_macro": 0.9323199480851427,
+    "fpr": 0.04949073603056714,
+    "recall_attack": 0.9356931619289034
+   },
+   "43": {
+    "lgbm_cfg": {
+     "n": 300,
+     "l": 63
+    },
+    "f1_macro": 0.9319030856805026,
+    "fpr": 0.0495133448638383,
+    "recall_attack": 0.9356328082563824
+   },
+   "44": {
+    "lgbm_cfg": {
+     "n": 300,
+     "l": 63
+    },
+    "f1_macro": 0.9337139219592054,
+    "fpr": 0.049253343281219976,
+    "recall_attack": 0.9362966986541131
+   }
+  }
+ },
+ "models_light_files": 30
+}

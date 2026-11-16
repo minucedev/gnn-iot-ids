@@ -1,0 +1,70 @@
+{
+ "steps_s": {
+  "clone_va_cai_goi": 82.5,
+  "pytest": 92.6,
+  "thresholds_baselines_gnn": 1368.0
+ },
+ "device": "CPU",
+ "gpu": null,
+ "commit": "ad92f6a6515f75d5f79c6f702f3066640f4af189",
+ "total_s": 1547.8,
+ "peak_ram_gb": 1.97,
+ "gpu_hours": 0,
+ "cpu_count": 4,
+ "pytest": "110 passed, 4295 warnings in 87.55s (0:01:27)",
+ "dataset": "nf_ton_iot_v3",
+ "data": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-04-build-graphs/processed/nf_ton_iot_v3",
+ "ckpt": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-07-train-gnn/ckpt",
+ "thresholds_models": {
+  "gcn": [
+   "42",
+   "43",
+   "44"
+  ],
+  "sage": [
+   "42",
+   "43",
+   "44"
+  ],
+  "gat": [
+   "42",
+   "43",
+   "44"
+  ],
+  "logreg": [
+   "42",
+   "43",
+   "44"
+  ],
+  "random_forest": [
+   "42",
+   "43",
+   "44"
+  ],
+  "xgboost": [
+   "42",
+   "43",
+   "44"
+  ],
+  "lightgbm": [
+   "42",
+   "43",
+   "44"
+  ],
+  "mlp": [
+   "42",
+   "43",
+   "44"
+  ]
+ },
+ "repro_f1_diff_max_abs": {
+  "gcn": 0.0,
+  "sage": 0.0,
+  "gat": 0.0,
+  "logreg": 0.0,
+  "random_forest": 0.0,
+  "xgboost": 0.0002691511537837865,
+  "lightgbm": 0.0,
+  "mlp": 0.0
+ }
+}

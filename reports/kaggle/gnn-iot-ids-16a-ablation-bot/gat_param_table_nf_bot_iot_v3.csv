@@ -1,0 +1,17 @@
+layer,param,shape,numel
+convs.0,att,1x4x16,64
+convs.0,bias,64,64
+convs.0,lin_l.weight,64x18,1152
+convs.0,lin_l.bias,64,64
+convs.0,lin_r.weight,64x18,1152
+convs.0,lin_r.bias,64,64
+convs.0,lin_edge.weight,64x3,192
+convs.1,att,1x4x16,64
+convs.1,bias,64,64
+convs.1,lin_l.weight,64x64,4096
+convs.1,lin_l.bias,64,64
+convs.1,lin_r.weight,64x64,4096
+convs.1,lin_r.bias,64,64
+convs.1,lin_edge.weight,64x3,192
+head,weight,3x64,192
+head,bias,3,3

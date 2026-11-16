@@ -1,0 +1,14 @@
+{
+ "steps_s": {
+  "clone_va_cai_goi": 96.2,
+  "pytest": 96.8
+ },
+ "device": "CPU",
+ "gpu": null,
+ "commit": "39ed05102c3ada590aa3553f8f6d4300de2dba42",
+ "total_s": 197.6,
+ "peak_ram_gb": 0.68,
+ "gpu_hours": 0,
+ "cpu_count": 4,
+ "pytest": "110 passed, 4295 warnings in 91.51s (0:01:31)"
+}

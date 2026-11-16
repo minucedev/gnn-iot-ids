@@ -1,0 +1,18 @@
+{
+ "dataset": "nf_ton_iot_v3",
+ "seed": 42,
+ "checkpoint": "nf_ton_iot_v3_gat_s42.pt",
+ "config": {
+  "hidden": 16,
+  "heads": 4,
+  "layers": 2,
+  "edge_dim": 3
+ },
+ "total_params": 11717,
+ "by_layer": {
+  "convs.0": 2752,
+  "convs.1": 8640,
+  "head": 325
+ },
+ "size_kb": 50.6
+}
