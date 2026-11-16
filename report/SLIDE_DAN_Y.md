@@ -1,8 +1,8 @@
-# Dàn ý slide bảo vệ (18 slide)
+# Dàn ý slide bảo vệ (19 slide)
 
 Nhóm: Nguyễn Minh Phúc, Lê Trung Phong, Văn Bá Phạm Tấn. Đề tài: *Ứng dụng mạng Lightweight GNN gợi ý phát hiện xâm nhập IoT thời gian thực*.
 
-Quy ước: mỗi slide có tiêu đề, 3–4 ý và hình dùng (đường dẫn tương đối từ `report/`). Số liệu lấy từ [BAO_CAO.md](BAO_CAO.md) (ghi nguồn ở đó). Các slide đánh dấu **[chờ GĐ I]** chỉ điền được sau khi AHP và mô phỏng thời gian thực xong. Thời lượng gợi ý: khoảng 1 phút mỗi slide.
+Quy ước: mỗi slide có tiêu đề, 3–4 ý và hình dùng (đường dẫn tương đối từ `report/`). Số liệu lấy từ [BAO_CAO.md](BAO_CAO.md) (ghi nguồn ở đó). Slide 17 (AHP) và 18 (thời gian thực) lấy từ mục 5.10 và 5.11. Thời lượng gợi ý: khoảng 1 phút mỗi slide.
 
 ---
 
@@ -46,7 +46,7 @@ Quy ước: mỗi slide có tiêu đề, 3–4 ý và hình dùng (đường d�
 - LightGBM cho xác suất dễ hiệu chỉnh ngưỡng quyết định.
 - Đây là giả thuyết thiết kế; slide 13 đối chiếu giả thuyết với số liệu.
 
-**Hình:** sơ đồ hybrid (sơ đồ mermaid ở mục 4.4 của báo cáo, vẽ lại).
+**Hình:** `../reports/figures/gd4_hybrid_diagram.png` (sơ đồ hybrid, mục 4.4 của báo cáo).
 
 ### Slide 6. Khảo sát 8 bộ và lý do chọn 2 bộ
 
@@ -147,20 +147,29 @@ Quy ước: mỗi slide có tiêu đề, 3–4 ý và hình dùng (đường d�
 
 **Hình:** `../reports/figures/gd6_confusion_hybrid_nf_ton_iot_v3.png`, `../reports/figures/gd6_attention_nf_ton_iot_v3.png`.
 
-### Slide 17. AHP gợi ý mô hình triển khai và mô phỏng thời gian thực **[chờ GĐ I]**
+### Slide 17. AHP gợi ý mô hình triển khai
 
-- AHP: cây tiêu chí (F1-macro, FPR, recall, độ trễ, tham số), ma trận so sánh cặp, CR < 0,10, xếp hạng, độ nhạy.
-- Mô hình được gợi ý và điều kiện áp dụng (ví dụ "nếu ưu tiên độ trễ thì chọn …").
-- Mô phỏng phát lại flow: độ trễ p50/p95/p99, thông lượng, RAM, số cảnh báo giả mỗi giờ, thời gian phát hiện từng đợt.
-- Demo: chạy `20_realtime` hoặc chiếu `alerts_sample.csv`.
+- Cây: 5 tiêu chí (F1-macro, FPR, recall, độ trễ, kích thước) × 8 phương án; ma trận 5×5 một người chấm, CR = 0,0098 < 0,10; trọng số FPR 0,43, recall 0,20, F1-macro 0,19.
+- (a) Không ràng buộc: **hybrid chính** (0,831); hạng nhất không đổi khi ±20% trọng số, nhưng đổi sang MLP nếu chuẩn hóa theo tỉ lệ.
+- (b) Ràng buộc nhẹ (≤ 100.000 tham số, ≤ 1 MB, loại 4 phương án): **MLP** (0,612). Đánh đổi: nhỏ hơn 25 lần, nhanh hơn 40 lần, nhưng recall 93,86% (dưới 95%) và kịch bản mong manh (GraphSAGE chỉ kém 0,047).
+- Nếu cần đạt cả ràng buộc nhẹ lẫn FPR, recall: hybrid nhẹ (phân tích mở rộng, ngoài ma trận đã duyệt).
 
-**Hình:** (điền sau GĐ I) biểu đồ trọng số AHP, biểu đồ độ nhạy, phân bố độ trễ.
+**Hình:** `../reports/figures/gd7_ahp_constrained.png`, `../reports/figures/gd7_ahp_sensitivity.png`.
 
-### Slide 18. Kết luận, hạn chế, hướng phát triển
+### Slide 18. Mô phỏng thời gian thực (phát lại toàn tập test)
 
-- Đạt: accuracy, recall, F1-macro, độ ổn định, độ trễ (sơ bộ), 2 bộ dữ liệu; FPR đạt ở ngưỡng; hybrid nhẹ đạt mọi chỉ tiêu hiệu năng và độ nhẹ ở ngưỡng.
+- 11.449 cửa sổ, 2,4 triệu flow, CPU 1 luồng: p95 end-to-end **121 ms** (dựng đồ thị 96 ms, suy luận 28 ms), không cửa sổ nào vượt 1 s; online khớp offline **100%**, RAM +9,6% (đã sửa từ +11,4%).
+- 15,1 cảnh báo giả mỗi giờ; FPR 1,92%, recall 96,8% mức node.
+- Thời gian phát hiện median 5,1 s, max 234 s, nhưng **14/27 đợt không phát hiện**: 12 đợt bị gán Normal, 2 đợt dưới ngưỡng; phần lớn rất ngắn (6 đợt chỉ 1 cửa sổ) hoặc lớp Khac (10 đợt).
+- Demo: chạy `20_realtime` hoặc chiếu `alerts_sample.csv`; hạn chế: Kaggle, chưa phải gateway thật.
+
+**Hình:** `../reports/figures/gd8_latency_hist.png`, `../reports/figures/gd8_latency_vs_nodes.png`.
+
+### Slide 19. Kết luận, hạn chế, hướng phát triển
+
+- Đạt: accuracy, recall, F1-macro, độ ổn định, độ trễ end-to-end 121 ms, online khớp offline, RAM ±10% (sát ngưỡng), tái lập, 2 bộ dữ liệu; FPR đạt ở ngưỡng; hybrid nhẹ đạt mọi chỉ tiêu hiệu năng và độ nhẹ ở ngưỡng.
 - Chưa đạt: "hybrid vượt mọi baseline"; hybrid chính vượt ngưỡng tham số và kích thước; FPR argmax 4,20%.
-- Hạn chế: lợi thế chủ yếu từ thông tin hàng xóm; BoT bị chặn bởi dữ liệu; chia xen kẽ; thử chéo kém; AHP và thời gian thực chưa có.
+- Hạn chế: lợi thế chủ yếu từ thông tin hàng xóm; BoT bị chặn bởi dữ liệu; chia xen kẽ; thử chéo kém; 14/27 đợt tấn công nhỏ hoặc lớp Khac không phát hiện; AHP một người chấm; đo trên Kaggle, chưa phải gateway.
 - Hướng phát triển: phân loại mức flow, đặc trưng nhiều cửa sổ, ngưỡng theo tầng, thích nghi miền, làm nhẹ hơn.
 
 **Hình:** bảng đối chiếu chỉ tiêu (bảng 6.1).
@@ -176,5 +185,6 @@ Quy ước: mỗi slide có tiêu đề, 3–4 ý và hình dùng (đường d�
 | Vì sao bộ dữ liệu này? | Có timestamp thật, mới (2025), đúng yêu cầu NF-ToN; mục 3.1 |
 | Vì sao FPR BoT 18%? | Dữ liệu: IP tấn công cũng sinh flow Normal giống hệt; mục 5.8 |
 | Vì sao chia theo khối? | Chia thuần thời gian làm val và test thiếu lớp; mục 3.6 |
-| Vì sao AHP? | Chọn mô hình triển khai theo nhiều tiêu chí; **[chờ GĐ I]** |
-| Giả định thời gian thực? | Replay flow, CPU 1 luồng; độ trễ hiện mới đo sơ bộ; mục 5.9 |
+| Vì sao AHP? | Chọn mô hình triển khai theo nhiều tiêu chí và có độ nhạy; kết quả phụ thuộc ma trận (một người chấm) và cách chuẩn hóa; mục 5.10 |
+| Giả định thời gian thực? | Phát lại flow test trên Kaggle CPU 1 luồng, không phải gateway hay mạng thật; p95 end-to-end 121 ms; mục 5.11 |
+| Vì sao 14 đợt không phát hiện? | 12 đợt mô hình tin là Normal, 2 đợt dưới ngưỡng; 10 là lớp Khac, 6 đợt chỉ 1 cửa sổ; mục 5.11 |

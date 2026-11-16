@@ -119,6 +119,7 @@ def fit_images(doc, max_width_cm=16.0):
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
     text = SRC.read_text(encoding="utf-8")
+    text = re.sub(r"```mermaid\n.*?```", "![Hình 4.1](../reports/figures/gd4_hybrid_diagram.png)", text, flags=re.S)       # mermaid không hiển thị được trong Word
     text = re.sub(r"^## Mục lục\n.*?\n(?=\*\*Quy ước)", "", text, flags=re.S | re.M)          # bỏ mục lục tay (pandoc sinh mục lục thật)
     with tempfile.TemporaryDirectory() as d:
         ref = Path(d) / "reference.docx"

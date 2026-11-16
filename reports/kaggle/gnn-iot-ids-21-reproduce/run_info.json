@@ -1,19 +1,19 @@
 {
  "steps_s": {
-  "clone_va_cai_goi": 75.6,
-  "pytest": 7.1,
-  "aggregate_h": 28.8,
+  "clone_va_cai_goi": 116.9,
+  "pytest": 8.1,
+  "aggregate_h": 27.6,
   "reproduce_check": 1.0
  },
  "device": "CPU",
  "gpu": null,
- "commit": "8e3372e29796ed300dc2436a40b15905255385b5",
- "total_s": 114.3,
- "peak_ram_gb": 0.46,
+ "commit": "d9d3c7783f304672d35122211a9f8fc6187973e6",
+ "total_s": 155.4,
+ "peak_ram_gb": 0.47,
  "gpu_hours": 0,
  "cpu": "Intel(R) Xeon(R) CPU @ 2.20GHz",
  "cpu_count": 4,
- "pytest": "9 passed, 1 warning in 3.82s",
+ "pytest": "9 passed, 1 warning in 4.54s",
  "config": {
   "eval_split": "test",
   "eval_dir": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-17-final-test",

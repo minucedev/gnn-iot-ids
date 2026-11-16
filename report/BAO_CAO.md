@@ -3,9 +3,9 @@
 **Báo cáo cuối kỳ**
 
 Nhóm thực hiện: Nguyễn Minh Phúc (nhóm trưởng), Lê Trung Phong, Văn Bá Phạm Tấn
-Mã nguồn: `minucedev/gnn-iot-ids` · Phiên bản báo cáo: bản 1 (16/11/2026), hạn nộp tạm tính 19/11/2026
+Mã nguồn: `minucedev/gnn-iot-ids` · Phiên bản báo cáo: bản nộp (16/11/2026), hạn nộp tạm tính 19/11/2026
 
-> **Trạng thái bản này.** Giai đoạn A–H (dữ liệu, EDA, baseline, GNN, hybrid, ablation, đóng băng và chạy test một lần) đã xong; mọi số liệu của chương 3–5 lấy từ file trong `reports/` và `docs/`, mỗi bảng ghi nguồn bên dưới. Phần **AHP** và **mô phỏng thời gian thực** thuộc giai đoạn I đang chạy ở phiên khác, nên các mục đó chỉ có tiêu đề và dấu **[chờ GĐ I]**. Tài liệu tham khảo có mục chưa kiểm chứng đủ được đánh dấu **[cần kiểm tra]** (xem mục "Tài liệu tham khảo").
+> **Trạng thái bản này.** Đã đủ giai đoạn A–J: mọi số liệu lấy từ file trong `reports/` và `docs/`, mỗi bảng ghi nguồn bên dưới. AHP (mục 5.10), mô phỏng thời gian thực (mục 5.11) và kiểm tra tái lập (mục 6.1) đã có kết quả; các chỉ tiêu không đạt và hạn chế ghi ở chương 6.
 
 ## Mục lục
 
@@ -38,6 +38,9 @@ Kết quả chính, trình bày đúng như số liệu cho phép:
 4. Chỉ tiêu "hybrid vượt mọi baseline" **không đạt**.
 5. **Hybrid nhẹ** (30.934 tham số, 986 KB) đạt mọi chỉ tiêu hiệu năng và độ nhẹ trên NF-ToN-IoT-v3 ở chế độ ngưỡng (accuracy 97,11%, FPR 2,27%, recall 95,65%, F1-macro 0,9588); ở argmax FPR 5,69% không đạt. Hybrid chính (144.518 tham số, 9,75 MB) không đạt ngưỡng tham số và kích thước.
 6. FPR khoảng 18% trên NF-BoT-IoT-v3 là do **dữ liệu** (các IP máy tấn công cũng sinh flow Normal có đặc trưng giống lúc tấn công), không do mô hình hay cách gán nhãn; thử chéo giữa hai bộ rất kém (F1-macro 0,15–0,38).
+7. **AHP** (một ma trận do Phúc duyệt, CR = 0,0098): gợi ý hybrid chính khi không ràng buộc (hạng nhất đổi sang MLP nếu chuẩn hóa theo tỉ lệ) và MLP khi ràng buộc nhẹ (≤ 100.000 tham số, ≤ 1 MB), nhưng MLP không đạt recall ≥ 95%; nếu cần đạt cả ràng buộc nhẹ và chỉ tiêu FPR, recall thì hybrid nhẹ (phân tích mở rộng).
+8. **Thời gian thực** (phát lại toàn tập test, CPU 1 luồng): p95 end-to-end 121 ms, online khớp offline 100%, RAM +9,6%, 15,1 cảnh báo giả mỗi giờ; thời gian phát hiện median 5,1 s nhưng 14/27 đợt tấn công (chủ yếu đợt rất ngắn và lớp Khac) không có cảnh báo nào.
+9. **Tái lập:** chạy lại bước tổng hợp từ output đã lưu cho kết quả trùng khớp (lệch F1-macro 0,0).
 
 Mô hình hybrid được thiết kế ban đầu (out-of-fold theo 5 nhóm khối liên tiếp) **thất bại** (F1-macro val 0,647 trên ToN, 0,714 trên BoT); nguyên nhân đã xác định và bản sửa (out-of-fold xen kẽ) được trình bày ở mục 4.4. Tổng giờ GPU Kaggle ghi nhận được là khoảng 4,09 giờ.
 
@@ -80,7 +83,7 @@ Gateway của mạng IoT thu được luồng NetFlow liên tục. Đề tài c�
 1. Xây dựng và đánh giá mô hình hybrid GAT + LightGBM trên hai bộ NetFlow (NF-ToN-IoT-v3, NF-BoT-IoT-v3).
 2. Chứng minh (hoặc bác bỏ) bằng thực nghiệm có kiểm định rằng hybrid vượt các baseline ML, DL và GNN đơn.
 3. Làm bản hybrid nhẹ (≤ 100.000 tham số, ≤ 1 MB) và đo đánh đổi giữa độ chính xác và độ nhẹ.
-4. Dùng AHP để gợi ý mô hình triển khai và mô phỏng phát lại flow theo thời gian thực **[chờ GĐ I]**.
+4. Dùng AHP để gợi ý mô hình triển khai và mô phỏng phát lại flow theo thời gian thực.
 
 ### 1.3 Yêu cầu của thầy ngày 12/11/2026
 
@@ -101,10 +104,10 @@ Chỉ tiêu đo trên tập test của bộ chính, trung bình 3 seed. Hai ngư
 | Độ ổn định | std accuracy ≤ 1,5 điểm % | 3 seed |
 | Tổng tham số | ≤ 100.000 | Với hybrid: tham số các GAT + số lá LightGBM |
 | Kích thước file mô hình | ≤ 1 MB | File mô hình đã lưu |
-| Độ trễ | p95 ≤ 1 s mỗi cửa sổ | CPU 1 luồng; nhóm mới đo sơ bộ (mục 5.9) |
+| Độ trễ | p95 ≤ 1 s mỗi cửa sổ | CPU 1 luồng; đo end-to-end trên 11.399 cửa sổ ở mục 5.11 (p95 121 ms) |
 | So với baseline | Hybrid > baseline tốt nhất (ML, MLP, GNN đơn) về F1-macro, chênh > 2 lần std, kèm McNemar p < 0,05 | Không đạt thì báo cáo trung thực kèm phân tích |
 | Số bộ dữ liệu | ≥ 2 | Yêu cầu của thầy ngày 12/11/2026 |
-| Tái lập | Chạy lại lệch ≤ 0,5 điểm % | Notebook `21_reproduce` (chưa chạy) |
+| Tái lập | Chạy lại lệch ≤ 0,5 điểm % | Notebook `21_reproduce`; kết quả ở mục 6.1 |
 
 *Nguồn: `docs/gnn_ids/KE_HOACH.md` mục 3.*
 
@@ -198,7 +201,7 @@ AHP [32, 33, 34] phân rã quyết định thành mục tiêu → tiêu chí →
 
 **Ví dụ tính tay 3×3** (ví dụ minh họa do nhóm tự đặt để kiểm tra phương pháp, *không* phải ma trận của đề tài): 
 $A = \begin{pmatrix} 1 & 3 & 5 \\ 1/3 & 1 & 3 \\ 1/5 & 1/3 & 1 \end{pmatrix}$.
-Trung bình nhân từng hàng: $\sqrt[3]{15} = 2{,}466$; $\sqrt[3]{1} = 1$; $\sqrt[3]{1/15} = 0{,}405$; tổng 3,871, nên $w \approx (0{,}637;\ 0{,}258;\ 0{,}105)$. $Aw \approx (1{,}936;\ 0{,}785;\ 0{,}318)$, tỉ số với $w$ là 3,039; 3,039; 3,039, nên $\lambda_{\max} \approx 3{,}039$, $CI \approx 0{,}019$, $CR = 0{,}019/0{,}58 \approx 0{,}033 < 0{,}10$: nhất quán. Kết quả áp dụng AHP cho đề tài (cây tiêu chí, ma trận, xếp hạng, độ nhạy) nằm ở mục 5.10 **[chờ GĐ I]**.
+Trung bình nhân từng hàng: $\sqrt[3]{15} = 2{,}466$; $\sqrt[3]{1} = 1$; $\sqrt[3]{1/15} = 0{,}405$; tổng 3,871, nên $w \approx (0{,}637;\ 0{,}258;\ 0{,}105)$. $Aw \approx (1{,}936;\ 0{,}785;\ 0{,}318)$, tỉ số với $w$ là 3,039; 3,039; 3,039, nên $\lambda_{\max} \approx 3{,}039$, $CI \approx 0{,}019$, $CR = 0{,}019/0{,}58 \approx 0{,}033 < 0{,}10$: nhất quán. Kết quả áp dụng AHP cho đề tài (cây tiêu chí, ma trận, xếp hạng, độ nhạy) nằm ở mục 5.10.
 
 ### 2.8 Đánh giá đúng cách
 
@@ -828,7 +831,7 @@ Kết luận: các IP của máy tấn công cũng sinh flow Normal (Benign ch�
 
 ### 5.9 Hiệu năng và độ trễ
 
-Độ trễ trong Bảng 5.3 là phép đo **sơ bộ**: p95 của 200 lần chạy trên một cửa sổ trung vị, CPU Kaggle 1 luồng, gồm bước GAT và bước LightGBM. Hybrid chính ToN: 24,4 ms mỗi cửa sổ; hybrid nhẹ: 7,32 ms; BoT: 13,4 ms; tất cả ≪ 1 giây. Phép đo end-to-end (dựng đồ thị từ flow thô, ≥ 1.000 cửa sổ, tách thời gian từng bước, thông lượng flow mỗi giây, RAM tối đa) thuộc mô phỏng thời gian thực **[chờ GĐ I]**.
+Độ trễ trong Bảng 5.3 là phép đo **sơ bộ**: p95 của 200 lần chạy trên một cửa sổ trung vị, CPU Kaggle 1 luồng, gồm bước GAT và bước LightGBM. Hybrid chính ToN: 24,4 ms mỗi cửa sổ; hybrid nhẹ: 7,32 ms; BoT: 13,4 ms; tất cả ≪ 1 giây. Phép đo end-to-end (dựng đồ thị từ flow thô, 11.399 cửa sổ, tách thời gian từng bước, thông lượng, RAM) ở mục 5.11: p95 tổng 121,1 ms với hybrid chính (dựng đồ thị 95,8 ms, suy luận 27,6 ms) và 114,7 ms với hybrid nhẹ.
 
 ### 5.10 AHP: gợi ý mô hình triển khai
 
@@ -877,9 +880,101 @@ Ma trận đặt FPR lên đầu vì báo động giả làm người vận hàn
 
 **Hạn chế của AHP này.** Một người chấm, không có ma trận gộp; ma trận ưu tiên FPR cao nên kết quả nghiêng về mô hình chính xác; điểm AHP tính từ trung bình 3 seed nên không có khoảng tin cậy; thứ hạng phụ thuộc cách chuẩn hóa (đã nêu ở trên).
 
-### 5.11 Mô phỏng thời gian thực **[chờ GĐ I]**
+### 5.11 Mô phỏng thời gian thực
 
-*(Đo end-to-end `stream_features.py` và `detector.py`: độ trễ p50/p95/p99, thông lượng, RAM, so khớp dự đoán online và offline, số cảnh báo giả mỗi giờ, thời gian phát hiện từng đợt tấn công, kèm `alerts_sample.csv`. Sẽ điền sau GĐ I.)*
+**Cách đo.** `scripts/detector.py` phát lại toàn bộ flow của tập test NF-ToN-IoT-v3 theo thứ tự thời gian (2.409.446 flow, 11.449 cửa sổ 5 giây, khoảng 15,9 giờ dữ liệu), gom cửa sổ bằng `src/stream_features.py`, dựng đồ thị bằng đúng hàm offline với scaler đã fit trên train (không fit lại), dự đoán bằng mô hình đã đóng băng với ngưỡng đã đóng băng của seed 42, và ghi cảnh báo. Đo trên Kaggle CPU (Intel Xeon 2,20 GHz, 4 nhân, dùng 1 luồng; Python 3.13, torch 2.11 bản CPU, pandas 3.1, LightGBM 4.7.0), không dùng GPU. Độ trễ của một cửa sổ là từ lúc cửa sổ đóng đến lúc có dự đoán, tách thành **dựng đồ thị** (nối flow, nhóm theo IP, đặc trưng, chuẩn hóa, dựng đồ thị) và **suy luận** (mô hình và ngưỡng). Thống kê tính trên 11.399 cửa sổ sau 50 cửa sổ warm-up. Mô hình chính là hybrid chính (mô hình AHP gợi ý ở kịch bản (a)); chạy thêm hybrid nhẹ để so sánh. Đây là mô phỏng phát lại flow trên Kaggle, không phải gateway thật và không phải mạng thật.
+
+**Bảng 5.16. Độ trễ mỗi cửa sổ (ms), tách hai phần.**
+
+| Mô hình | Phần | p50 | p95 | p99 | Lớn nhất |
+|---|---|---|---|---|---|
+| Hybrid chính | Dựng đồ thị | 87,2 | 95,8 | 102,9 | 692,2 |
+| | Suy luận | 19,5 | 27,6 | 83,6 | 118,4 |
+| | **Tổng** | 107,2 | **121,1** | 178,7 | 706,8 |
+| Hybrid nhẹ | Dựng đồ thị | 96,7 | 107,4 | 122,0 | 593,9 |
+| | Suy luận | 6,3 | 7,5 | 11,1 | 24,1 |
+| | **Tổng** | 103,0 | **114,7** | 129,3 | 599,6 |
+
+*Nguồn: `reports/tables/latency.json` (hybrid chính), `reports/kaggle/gnn-iot-ids-20-realtime/extra_hybrid_light/latency.json` (hybrid nhẹ).*
+
+Không cửa sổ nào vượt 1 giây (lớn nhất 0,71 s). **Dựng đồ thị chiếm khoảng 80% thời gian (hybrid chính) đến 94% (hybrid nhẹ)** và gần như không phụ thuộc số node; chỉ phần suy luận tăng theo số node. Vì vậy làm nhẹ mô hình (hybrid nhẹ) chỉ giảm p95 tổng từ 121,1 xuống 114,7 ms. p95 chỉ suy luận đo ở Bảng 5.3 (24,4 ms) gần với phần suy luận ở đây (27,6 ms); p95 end-to-end lớn hơn nhiều vì có bước dựng đồ thị bằng pandas. Một lần chạy trước (chưa sửa bộ đo, mục "RAM" bên dưới) cho p95 tổng 136,0 ms, tức độ trễ dao động khoảng 10% giữa các lần chạy. Khả năng xử lý: khoảng 1.937 flow/giây và 9,2 cửa sổ/giây (hybrid nhẹ 2.011 flow/giây); luồng test trung bình chỉ khoảng 42 flow/giây nên CPU 1 luồng xử lý nhanh hơn thời gian thực hơn 40 lần. Hình 5.19 và 5.20 cho phân bố độ trễ và độ trễ theo số node.
+
+![Hình 5.19](../reports/figures/gd8_latency_hist.png)
+
+**Hình 5.19.** Phân bố độ trễ mỗi cửa sổ (tổng, dựng đồ thị, suy luận; thang log), hybrid chính. *Nguồn: `reports/figures/gd8_latency_hist.png`.*
+
+![Hình 5.20](../reports/figures/gd8_latency_vs_nodes.png)
+
+**Hình 5.20.** Độ trễ theo số node của cửa sổ. *Nguồn: `reports/figures/gd8_latency_vs_nodes.png`.*
+
+**Khớp online và offline.** Trên cả 11.449 cửa sổ (121.770 node), đặc trưng node và cạnh online so với offline có max |sai khác| = **0,0**, cấu trúc đồ thị (IP, cạnh) khớp 100%, dự đoán theo ngưỡng và theo argmax khớp **100%** (0 node lệch), xác suất lệch tối đa 1,2·10⁻⁴. Mới kiểm seed 42, chưa kiểm seed 43 và 44. Nhờ vậy số đo FPR và recall của luồng online (1,92% và 96,82%, tính từ chính các cảnh báo) trùng với số offline ở GĐ H (1,88% và 96,71% là trung bình 3 seed).
+
+**Bảng 5.17. Chỉ tiêu thời gian thực (ngưỡng đã đóng băng, seed 42).**
+
+| Chỉ tiêu | Ngưỡng | Hybrid chính | Hybrid nhẹ |
+|---|---|---|---|
+| p95 end-to-end mỗi cửa sổ | ≤ 1 s | 121,1 ms — đạt | 114,7 ms — đạt |
+| Đặc trưng online khớp offline | sai khác < 1e-6 | 0,0 — đạt | 0,0 — đạt |
+| Dự đoán online khớp offline | ≥ 99,9% | 100% — đạt | 100% — đạt |
+| RAM tăng theo thời gian chạy | ≤ 10% | +9,6% — đạt (sát ngưỡng) | +2,8% — đạt |
+| FPR mức node (online) | ≤ 4,08% | 1,92% — đạt | 2,47% — đạt |
+| Recall tấn công mức node (online) | ≥ 95% | 96,82% — đạt | 96,29% — đạt |
+| Tổng tham số | ≤ 100.000 | 144.560 — **không đạt** | 30.934 — đạt |
+| Kích thước mô hình | ≤ 1 MB | 9.746 KB — **không đạt** | 986 KB — đạt |
+| Cảnh báo giả mỗi giờ | chưa có chỉ tiêu | 15,1 | 18,9 |
+| Thời gian phát hiện (median; max) | chưa có chỉ tiêu | 5,1 s; 234,1 s (13/27 đợt) | 5,1 s; 396,1 s (13/27 đợt) |
+
+*Nguồn: `reports/tables/realtime_eval.json` (mục `targets`), `reports/tables/targets.csv`; hybrid nhẹ ở `reports/kaggle/gnn-iot-ids-20-realtime/extra_hybrid_light/`. Số tham số và kích thước là của seed 42 (trung bình 3 seed của hybrid chính: 144.518 tham số, 9.747 KB, Bảng 6.1).*
+
+**Cảnh báo giả mỗi giờ.** Tính trên các cửa sổ chỉ có Normal (không node tấn công nào, 3.774 cửa sổ, 5,24 giờ dữ liệu): hybrid chính tạo 79 cảnh báo (node), tức **15,1 cảnh báo giả mỗi giờ** (51 cửa sổ có ít nhất một cảnh báo, 9,7 cửa sổ mỗi giờ); hybrid nhẹ 18,9 mỗi giờ. Tỉ lệ node bị báo nhầm trong các cửa sổ này là 0,23%. Mức này là số liệu của luồng test (dựng lại từ các khối xen kẽ, tập có nhiều tấn công), không phải mạng sản xuất; nhóm chưa có chỉ tiêu cho đại lượng này nên chỉ báo cáo, không chấm đạt.
+
+**Thời gian phát hiện.** Đợt tấn công là các cửa sổ cùng lớp cách nhau không quá 60 giây (cách gộp do nhóm chọn; đổi cách gộp thì số đợt đổi). Thời gian phát hiện là từ flow đầu tiên của lớp đó trong đợt đến lúc đóng cửa sổ có cảnh báo đầu tiên, cộng thời gian xử lý (cận dưới khoảng 5 giây vì cửa sổ dài 5 giây). Toàn tập test có **27 đợt, phát hiện 13 đợt, không phát hiện 14 đợt**. Với 13 đợt phát hiện được: median **5,1 s**, p95 204,0 s, max 234,1 s.
+
+**Bảng 5.18. Thời gian phát hiện theo lớp (hybrid chính).**
+
+| Lớp | Số đợt | Phát hiện | Không phát hiện | Median (s) | Max (s) |
+|---|---|---|---|---|---|
+| DoS_DDoS | 4 | 4 | 0 | 4,9 | 5,1 |
+| Botnet_Backdoor | 5 | 4 | 1 | 12,9 | 72,7 |
+| Truy_cap_trai_phep | 5 | 2 | 3 | 5,1 | 5,1 |
+| Khac | 13 | 3 | 10 | 183,9 | 234,1 |
+
+*Nguồn: `reports/tables/realtime_eval.json` (mục `detection`).*
+
+**Các đợt không phát hiện.** 14 đợt không có cảnh báo nào. Nhóm phân tích lại từng đợt bằng điểm tấn công 1 − P(Normal) của mọi node mang nhãn lớp đó, so với ngưỡng đã đóng băng 0,7233 (`scripts/undetected_episodes.py`, kết quả `reports/tables/undetected_episodes.json`; kết luận phát hiện hay không của từng đợt khớp với `windows.csv` của lần chạy thời gian thực).
+
+**Bảng 5.19. Mười bốn đợt tấn công không có cảnh báo (hybrid chính).**
+
+| # | Loại tấn công | Bắt đầu (UTC) | Số cửa sổ | Độ dài (s) | Flow lớp / mọi flow | Số node | Node chỉ nhận | Điểm lớn nhất | Vì sao không có cảnh báo |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | Botnet_Backdoor | 2019-04-28 07:41:31 | 8 | 118,6 | 11 / 117 | 12 | 33% | 0,326 | bị gán Normal (điểm < 0,5) |
+| 2 | Truy_cap_trai_phep | 2019-04-23 22:33:35 | 1 | 4,5 | 1 / 47 | 2 | 50% | 0,093 | bị gán Normal (điểm < 0,5); chỉ 1 cửa sổ |
+| 3 | Truy_cap_trai_phep | 2019-04-23 22:43:35 | 1 | 4,2 | 1 / 29 | 2 | 50% | 0,007 | bị gán Normal (điểm < 0,5); chỉ 1 cửa sổ |
+| 4 | Truy_cap_trai_phep | 2019-04-23 23:07:22 | 1 | 2,8 | 2 / 27 | 1 | 100% | 0,002 | bị gán Normal (điểm < 0,5); chỉ 1 cửa sổ |
+| 5 | Khac | 2019-04-28 05:23:02 | 24 | 212,1 | 150 / 527 | 30 | 10% | 0,284 | bị gán Normal (điểm < 0,5) |
+| 6 | Khac | 2019-04-28 05:31:14 | 1 | 0,2 | 1 / 3 | 2 | 50% | 0,000 | bị gán Normal (điểm < 0,5); chỉ 1 cửa sổ |
+| 7 | Khac | 2019-04-28 06:05:23 | 1 | 1,9 | 1 / 3 | 2 | 50% | 0,000 | bị gán Normal (điểm < 0,5); chỉ 1 cửa sổ |
+| 8 | Khac | 2019-04-29 13:16:05 | 6 | 54,8 | 7 / 57 | 12 | 50% | 0,329 | bị gán Normal (điểm < 0,5) |
+| 9 | Khac | 2019-04-29 13:18:23 | 80 | 876,0 | 186 / 755 | 170 | 52% | 0,520 | dưới ngưỡng (có node ≥ 0,5, không node nào > 0,7233) |
+| 10 | Khac | 2019-04-29 13:36:05 | 32 | 294,4 | 72 / 333 | 71 | 55% | 0,672 | dưới ngưỡng (có node ≥ 0,5, không node nào > 0,7233) |
+| 11 | Khac | 2019-04-29 13:52:46 | 8 | 138,2 | 37 / 67 | 15 | 47% | 0,189 | bị gán Normal (điểm < 0,5) |
+| 12 | Khac | 2019-04-29 13:56:56 | 2 | 13,3 | 3 / 90 | 6 | 50% | 0,325 | bị gán Normal (điểm < 0,5) |
+| 13 | Khac | 2019-04-29 14:07:36 | 5 | 93,9 | 12 / 34 | 11 | 55% | 0,198 | bị gán Normal (điểm < 0,5) |
+| 14 | Khac | 2019-04-29 14:43:05 | 1 | 4,8 | 2 / 3 | 2 | 50% | 0,008 | bị gán Normal (điểm < 0,5); chỉ 1 cửa sổ |
+
+*Nguồn: `reports/tables/undetected_episodes.json`. "Node chỉ nhận" là tỉ lệ node của đợt không khởi tạo flow nào trong cửa sổ.*
+
+Nhận xét:
+
+1. **12/14 đợt do mô hình tin node là Normal:** mọi node của đợt có điểm tấn công dưới 0,5 (điểm lớn nhất của mỗi đợt từ 0,000 đến 0,329; điểm trung vị của node trong đợt không quá 0,18). Đây là cùng nguyên nhân ở mục 5.7: node tấn công có đặc trưng cấp node giống Normal (ít flow, ít đích).
+2. **2/14 đợt là dưới ngưỡng** (đều lớp Khac, 80 và 32 cửa sổ): có node điểm trên 0,5 (2 node ở đợt đầu, 30 node ở đợt sau, lớn nhất 0,52 và 0,67) nhưng không node nào vượt ngưỡng 0,7233. Hạ ngưỡng để bắt các đợt này sẽ kéo FPR lên vì ngưỡng được chọn để giữ FPR val ≤ 4,08%; nhóm không đổi ngưỡng đã đóng băng.
+3. **6/14 đợt quá ngắn:** chỉ một cửa sổ (từ 0,2 đến 5 giây), có 1–2 flow của lớp tấn công lẫn trong 3–47 flow của cửa sổ, 1–2 node; mô hình chỉ có một lần quyết định và không có dữ liệu để dựa. Ba trong số đó là Truy_cap_trai_phep và ba là Khac.
+4. **Lớp Khac chiếm 10/14 đợt không phát hiện** (mô hình không nhận ra lớp này, 0/666 node test ở mục 5.7, lớp không tính vào F1-macro). Ba đợt Truy_cap_trai_phep không phát hiện đều là một cửa sổ có 1–2 flow; một đợt Botnet_Backdoor không phát hiện có 8 cửa sổ nhưng chỉ 11 flow tấn công trong 117 flow.
+5. **Đợt phát hiện được là đợt lớn:** trung vị 7.522 flow lớp tấn công, 1.180 node, 304 cửa sổ; đợt không phát hiện trung vị 5 flow, 8,5 node, 3,5 cửa sổ, 50% node chỉ nhận flow. Vì vậy recall mức node cao (96,8%) nhưng recall mức đợt chỉ 13/27 (48%): số đợt đếm mỗi đợt như nhau dù độ lớn rất khác nhau, nên hai con số không mâu thuẫn mà đo hai thứ khác nhau.
+
+**RAM (task 8.1).** Lần chạy đầu (16/11) cho RAM tăng 11,4% (trung vị RSS 1.730 MB sau warm-up, 1.927 MB ở cuối), vượt chỉ tiêu ±10%. Nhóm chẩn đoán trên Kaggle CPU (notebook `20b`, `20c`, `20d`, `scripts/ram_diag.py`, 4.000 cửa sổ mỗi phép đo): LightGBM không làm RSS tăng (0,0%); dựng đồ thị tăng 1,2%; các GAT tăng nhẹ (+1,5%); và **bộ đo trong `detector.py` giữ một từ điển cho mỗi cửa sổ đã xử lý**, khiến số khối bộ nhớ Python tăng đều. Tái hiện cách giữ đó cho RSS +6,4%; ghi thẳng `windows.csv` từng dòng thì RSS −5,3%, thêm gọi `malloc_trim` mỗi 200 cửa sổ thì −6,7%. Nhóm bỏ danh sách đó và bật `malloc_trim` (ngoài khoảng đo độ trễ); `src/stream_features.py` không có chỗ giữ tham chiếu tới đồ thị cũ (bộ gom chỉ giữ flow của cửa sổ đang mở). Việc sửa không đổi mô hình, ngưỡng hay cách dự đoán (dự đoán vẫn khớp offline 100% như trên). Chạy lại toàn tập test: **RAM tăng 9,6% (1.753 → 1.922 MB), đạt chỉ tiêu nhưng sát ngưỡng**; hybrid nhẹ tăng 2,8%. Độ dốc ở nửa sau của hybrid chính vẫn dương (+14,7 MB mỗi 1.000 cửa sổ), nên nhóm **không khẳng định RAM phẳng**: chỉ tiêu "ổn định ±10% trong ≥ 30 phút dữ liệu" đạt trên 15,9 giờ dữ liệu, nhưng với luồng dài hơn nhiều giờ cần kiểm lại. Phần tăng còn lại nằm ở bộ nhớ native của torch (heap đang dùng tăng khoảng 11 MB mỗi 1.000 cửa sổ trong phép đo `20c`), nhóm chưa xác định được cơ chế cụ thể. RAM đỉnh 19,5 GB của notebook là do nạp 27 triệu flow gốc và đồ thị tham chiếu để đối chiếu, không phải RAM của bộ phát hiện.
+
+**Demo.** Một lệnh chạy bộ phát hiện (xem README, mục "Demo thời gian thực"); `reports/tables/alerts_sample.csv` là mẫu 1.000 dòng cảnh báo (t_close, window, ip, pred_class, p_attack, p_class, proc_ms).
 
 ### 5.12 Tổng hợp: đối chiếu với các nhận định chính
 
@@ -915,21 +1010,26 @@ Chỉ tiêu nghiệm thu được kiểm trên bộ chính NF-ToN-IoT-v3 (chính
 | Std accuracy ≤ 1,5 điểm % | 0,06 — đạt | 0,04 — đạt | 0,51 — đạt | 0,07 — đạt |
 | Tham số ≤ 100.000 | 144.518 — **không đạt** | 144.518 — **không đạt** | 30.934 — đạt | 30.934 — đạt |
 | Kích thước ≤ 1 MB | 9.747 KB — **không đạt** | 9.747 KB — **không đạt** | 986 KB — đạt | 986 KB — đạt |
-| Độ trễ p95 ≤ 1 s | 24,4 ms — đạt (sơ bộ) | đạt (sơ bộ) | 7,32 ms — đạt (sơ bộ) | đạt (sơ bộ) |
+| Độ trễ p95 ≤ 1 s, chỉ suy luận (đo sơ bộ, 200 lần) | 24,4 ms — đạt | 24,4 ms — đạt | 7,32 ms — đạt | 7,32 ms — đạt |
+| Độ trễ p95 end-to-end ≤ 1 s (thời gian thực, 11.399 cửa sổ, 1 luồng) | 121,1 ms — đạt | 121,1 ms — đạt | 114,7 ms — đạt | 114,7 ms — đạt |
+| Đặc trưng online khớp offline (< 1e-6) | 0,0 — đạt | 0,0 — đạt | 0,0 — đạt | 0,0 — đạt |
+| Dự đoán online khớp offline ≥ 99,9% | 100% — đạt | 100% — đạt | 100% — đạt | 100% — đạt |
+| RAM không tăng quá 10% theo thời gian chạy | +9,6% — đạt (sát ngưỡng) | +9,6% — đạt (sát ngưỡng) | +2,8% — đạt | +2,8% — đạt |
+| FPR và recall mức node của luồng online (ngưỡng) | — | 1,92% và 96,82% — đạt | — | 2,47% và 96,29% — đạt |
 | Hybrid > baseline tốt nhất (F1 > 2 std và McNemar) | **Không đạt** (2/4 nhóm) | **Không đạt** (3/4 nhóm) | **Không đạt** (1/4) | **Không đạt** (1/4) |
 | Số bộ dữ liệu ≥ 2 | Đạt (ToN và BoT đều có kết quả test) | | | |
-| Tái lập lệch ≤ 0,5 điểm % | Sơ bộ đạt (F1 val dựng lại lệch 0,0); `21_reproduce` **chưa chạy** | | | |
+| Tái lập lệch ≤ 0,5 điểm % | **Đạt**: chạy lại `aggregate_h.py` từ output đã lưu (notebook `21_reproduce`, Kaggle CPU) lệch F1-macro lớn nhất 0,0 trên 4 bảng (348, 58, 58, 126 dòng) | | | |
 
-*Nguồn: `reports/tables/targets.csv`, `summary_test.csv`.*
+*Nguồn: `reports/tables/targets.csv` (cả dòng thời gian thực và tái lập), `summary_test.csv`, `realtime_eval.json`, `reports/kaggle/gnn-iot-ids-21-reproduce/reproduce_check.json`. Dòng thời gian thực dùng seed 42, ngưỡng đã đóng băng; chưa có chỉ tiêu cho cảnh báo giả mỗi giờ (15,1 mỗi giờ) và thời gian phát hiện (median 5,1 s; 13/27 đợt), nên không chấm đạt (mục 5.11).*
 
 **Kết luận về chỉ tiêu.**
 
-- **Đạt:** accuracy, recall tấn công, F1-macro, độ ổn định, độ trễ (sơ bộ) và số bộ dữ liệu. FPR đạt ở chế độ ngưỡng (hybrid chính 1,88%, hybrid nhẹ 2,27%) nhưng **không đạt ở argmax** (4,20% và 5,69%).
+- **Đạt:** accuracy, recall tấn công, F1-macro, độ ổn định, độ trễ (kể cả end-to-end 121 ms), khớp online và offline, RAM ổn định ±10% (sát ngưỡng: +9,6%), số bộ dữ liệu và tái lập. FPR đạt ở chế độ ngưỡng (hybrid chính 1,88%, hybrid nhẹ 2,27%) nhưng **không đạt ở argmax** (4,20% và 5,69%).
 - **Hybrid nhẹ đạt mọi chỉ tiêu hiệu năng và độ nhẹ ở chế độ ngưỡng** (accuracy 97,11%, FPR 2,27%, recall 95,65%, F1-macro 0,9588, 30.934 tham số, 986 KB, 7,32 ms); GraphSAGE và GAT đơn cũng đạt (mục 5.12).
 - **Hybrid chính không đạt tham số và kích thước** (144.518 tham số, 9,75 MB), do 5 GAT nhóm và file LightGBM.
 - **Không đạt: "hybrid vượt mọi baseline".** Hybrid vượt ML, MLP, GNN đơn ở từng chế độ nhưng không vượt cả bốn nhóm cùng lúc, và phương án (c) cho kết quả tương đương. Đây là kết quả trung thực của đề tài.
 - **Bộ thứ hai (tham khảo):** ở argmax hybrid đạt accuracy 91,20% và F1-macro 0,9164, nhưng FPR 17,97% và recall 94,79% (chưa tới 95%); ở ngưỡng FPR 1,19% nhưng recall chỉ 47,47% và F1-macro 0,7084 (không đạt 0,80), std accuracy 1,69 điểm % (không đạt 1,5).
-- **Chưa kiểm tra:** AHP, thời gian thực, độ trễ end-to-end và tái lập đầy đủ **[chờ GĐ I và GĐ J]**.
+- **AHP và thời gian thực (mục 5.10, 5.11):** AHP gợi ý hybrid chính khi không ràng buộc và MLP khi ràng buộc nhẹ (MLP không đạt recall ≥ 95%; phân tích mở rộng chọn hybrid nhẹ). Thời gian phát hiện median 5,1 s nhưng **14/27 đợt tấn công không có cảnh báo nào** (phần lớn là đợt rất ngắn hoặc lớp Khac).
 
 **Về minh chứng "hybrid cao hơn baseline" mà thầy yêu cầu.** Kết quả có hai mặt. Hybrid là mô hình có F1-macro cao nhất trên bộ chính ở chế độ ngưỡng và vượt có ý nghĩa baseline ML tốt nhất; nhưng nó không vượt có ý nghĩa mọi baseline, không cao nhất trên bộ thứ hai ở argmax, và phần lớn lợi thế của nó đến từ thông tin hàng xóm, có thể đạt tương đương bằng một phép trung bình đơn giản. Nhóm không khẳng định embedding GAT tốt hơn tổng hợp tay.
 
@@ -943,11 +1043,14 @@ Chỉ tiêu nghiệm thu được kiểm trên bộ chính NF-ToN-IoT-v3 (chính
 6. **Kích thước hybrid chính.** 144.518 tham số và 9,75 MB, phần lớn là LightGBM; đã giải quyết bằng hybrid nhẹ với giảm F1-macro 0,9–1,3 điểm %.
 7. **Nhãn và lớp.** Nhóm Truy_cap_trai_phep gộp dò quét, XSS, mật khẩu, tiêm mã; đồ thị chỉ lưu nhãn nhóm. Lớp Khac (mitm, ransomware) không được nhận ra (0/666 node test).
 8. **FPR ở node chỉ nhận.** FPR của ToN tập trung ở node nạn nhân (8,15% so với 1,03% ở node khởi tạo); nhãn node chỉ nhận lấy từ flow nhận nên đặc trưng 18 chiều khó tách.
-9. **Độ trễ chưa end-to-end.** Chỉ đo sơ bộ (200 lần trên 1 cửa sổ, CPU Kaggle 1 luồng), chưa gồm dựng đồ thị và chưa ≥ 1.000 cửa sổ **[chờ GĐ I]**.
+9. **Độ trễ đo trên Kaggle, chưa phải gateway thật.** p95 end-to-end 121 ms đo bằng phát lại flow trên CPU Xeon 2,2 GHz, 1 luồng, một seed; chưa đo trên thiết bị gateway hay Docker giới hạn tài nguyên. Dựng đồ thị bằng pandas chiếm khoảng 80% thời gian và có thể tối ưu thêm.
 10. **Chưa so sánh với nghiên cứu khác.** Nhóm chưa làm bảng so sánh (task 6.4) nên báo cáo không đưa ra khẳng định "tốt hơn công trình khác"; các công trình khác phân loại ở mức flow nên không so trực tiếp.
 11. **Tổng quát hóa giữa các bộ.** Rất kém (F1-macro 0,15–0,38); mô hình cần huấn luyện lại cho từng mạng.
 12. **Giờ GPU chưa đầy đủ.** Tài khoản Kaggle dùng chung với dự án khác; giờ GPU của notebook `07` không được ghi.
-13. **Chưa chạy kiểm tra tái lập** (`21_reproduce`).
+13. **Phạm vi tái lập.** Kiểm tra tái lập chạy lại bước tổng hợp (`aggregate_h.py`) từ các output đã lưu và khớp tuyệt đối; nhóm không huấn luyện lại mô hình từ đầu để so (huấn luyện GAT trên GPU có thành phần không tất định).
+14. **RAM sát ngưỡng.** RAM của luồng thời gian thực tăng 9,6% (chỉ tiêu ≤ 10%) sau khi sửa bộ đo; độ dốc nửa sau vẫn dương (+14,7 MB mỗi 1.000 cửa sổ) nên chưa chứng minh được RAM phẳng với luồng dài hơn nhiều giờ.
+15. **Đợt tấn công nhỏ và lớp Khac không được phát hiện.** 14/27 đợt không có cảnh báo (10 đợt Khac, 3 Truy_cap_trai_phep, 1 Botnet_Backdoor), phần lớn chỉ 1–8 cửa sổ với vài flow; recall mức node 96,8% che đi việc này. Số đợt phụ thuộc cách gộp (60 giây).
+16. **AHP một người chấm.** Ma trận chỉ do Nguyễn Minh Phúc duyệt (Claude đề xuất), không có ma trận gộp; hạng nhất phụ thuộc cách chuẩn hóa, và kịch bản ràng buộc nhẹ rất mong manh (MLP và GraphSAGE cách nhau 0,047). Cảnh báo giả mỗi giờ và thời gian phát hiện chưa có chỉ tiêu nên không chấm đạt.
 
 ### 6.3 Hướng phát triển
 
@@ -957,7 +1060,7 @@ Chỉ tiêu nghiệm thu được kiểm trên bộ chính NF-ToN-IoT-v3 (chính
 4. **Ngưỡng theo tầng và hiệu chỉnh xác suất:** ngưỡng riêng cho node khởi tạo và node chỉ nhận; hiệu chỉnh xác suất thay vì chỉ chọn ngưỡng.
 5. **Thích nghi miền** giữa các mạng để khắc phục tổng quát hóa kém; thêm bộ dữ liệu có nhiều IP hơn.
 6. **Làm nhẹ hơn:** lượng tử hóa, pruning, thay LightGBM bằng cây nhỏ hơn; thử 8 head (ablation cho thấy cao hơn 0,0089).
-7. **Hoàn thiện triển khai:** AHP chốt mô hình, đo end-to-end trên gateway thật hoặc Docker giới hạn tài nguyên **[chờ GĐ I]**.
+7. **Hoàn thiện triển khai:** đo end-to-end trên gateway thật hoặc Docker giới hạn tài nguyên; tối ưu bước dựng đồ thị (chiếm khoảng 80% độ trễ); kiểm RAM trên luồng dài hơn; xử lý các đợt tấn công nhỏ (gộp nhiều cửa sổ hoặc ngưỡng theo tầng); mở rộng AHP với nhiều người chấm.
 
 ---
 
@@ -973,7 +1076,7 @@ Chỉ tiêu nghiệm thu được kiểm trên bộ chính NF-ToN-IoT-v3 (chính
 | 4 | Xử lý EDA | EDA mức flow và mức đồ thị cho cả 2 bộ: 26 hình, homophily, cửa sổ mẫu | 3.3–3.5 | Đạt (thiếu hình riêng cho giao thức và cổng) |
 | 5 | Minh chứng hybrid cao hơn baseline (ML, DL, …) | Cùng cách chia, 3 seed, McNemar, ablation, 5 baseline + 3 GNN đơn + (c) | 5.1–5.4; 6.1 | **Đạt một phần:** hybrid vượt ML tốt nhất, nhưng không vượt mọi baseline (chỉ tiêu không đạt) |
 
-Các hạng mục khác của đề tài chưa có trong 5 yêu cầu: AHP (mục 5.10) và mô phỏng thời gian thực (mục 5.11) **[chờ GĐ I]**.
+Các hạng mục khác của đề tài chưa có trong 5 yêu cầu: AHP (mục 5.10) và mô phỏng thời gian thực (mục 5.11) đã thực hiện; kết quả và hạn chế ở chương 6.
 
 ## Phụ lục B. Nguồn số liệu và cách truy vết
 
@@ -990,14 +1093,20 @@ Các hạng mục khác của đề tài chưa có trong 5 yêu cầu: AHP (mụ
 | Dữ liệu và đồ thị | `docs/dataset_cards/`, `reports/tables/graphs_v2/`, `reports/tables/split_search/` |
 | EDA | `reports/figures/gd2_*`, `reports/kaggle/gnn-iot-ids-12-eda/` |
 | Giờ GPU, RAM | `reports/kaggle/*/run_info.json` |
+| AHP | `reports/tables/ahp_result.json` (không ràng buộc), `reports/tables/ahp_constrained.json` (ràng buộc nhẹ), `docs/ahp_matrix.json`, `reports/figures/gd7_*.png` |
+| Thời gian thực | `reports/tables/latency.json`, `realtime_eval.json`, `alerts_sample.csv`, `reports/figures/gd8_*.png`; hybrid nhẹ và log: `reports/kaggle/gnn-iot-ids-20-realtime/` |
+| Đợt không phát hiện, chẩn đoán RAM | `reports/tables/undetected_episodes.json`; `reports/kaggle/gnn-iot-ids-20{a,b,c,d}-*/` |
+| Tái lập | `reports/kaggle/gnn-iot-ids-21-reproduce/reproduce_check.json`; `reports/tables/targets.csv` dòng "Tái lập" |
 | Quyết định D1–D13, chỉ tiêu | `docs/gnn_ids/KE_HOACH.md` mục 3, 7 |
 | Nhật ký chi tiết, đóng băng | `docs/gnn_ids/TASKS.md`, `docs/gnn_ids/freeze_list.md` |
 
 **Ghi chú về nguồn số liệu.**
 
-1. Các hình `gd5_*` (ablation, Pareto, phân tích FPR) nằm trong thư mục kết quả của từng notebook ở `reports/kaggle/`, không nằm trong `reports/figures/`.
+1. Các hình `gd5_*` (ablation, Pareto, phân tích FPR) được sinh ở thư mục kết quả của từng notebook trong `reports/kaggle/` và đã chép vào `reports/figures/`; báo cáo trỏ tới bản trong `reports/figures/`.
 2. Một số baseline ToN trong `compare_val` do notebook `15` sinh dùng file kết quả mà Kaggle mount từ notebook `05`, nội dung khác bản trong repo (ví dụ LightGBM val 0,9351 so với 0,8984); bản repo khớp log `baseline_search` nên báo cáo dùng bản repo (đã kiểm ở notebook `15c`). Nguyên nhân bản mount khác chưa rõ.
-3. Dòng phân tích lỗi trong `TASKS.md` mục 6.3 (6.883 node sai ToN = 5,7%; 698 node sai BoT = 6,6%) khác file `error_analysis.json` (4.565 = 3,7% và 922 = 8,6%). Báo cáo dùng file JSON vì tỉ lệ lỗi của nó khớp accuracy test của hybrid chính (96,30% và 91,20%), còn số trong `TASKS.md` thì không.
+3. Dòng phân tích lỗi trong `TASKS.md` mục 6.3 ban đầu (6.883 node sai ToN = 5,7%; 698 node sai BoT = 6,6%) khác file `error_analysis.json` (4.565 = 3,7% và 922 = 8,6%). Báo cáo dùng file JSON vì tỉ lệ lỗi của nó khớp accuracy test của hybrid chính (96,30% và 91,20%); dòng trong `TASKS.md` đã được sửa theo file JSON.
+4. Số cửa sổ ToN: báo cáo dùng 66.693 (`reports/tables/graphs_v2/nf_ton_iot_v3/summary.json`, số đồ thị dùng để chia tập); 66.722 là số đo ở D2 trước khi lọc.
+5. Các hình `gd5_*` đã được chép vào `reports/figures/`.
 
 ## Phụ lục C. Các notebook Kaggle và giờ GPU
 
@@ -1023,8 +1132,14 @@ Bảng liệt kê các notebook chính (bỏ `15c`, `15t` và các lần chạy 
 | H | `17a-dryrun-val` | CPU | 2.450 | 2,5 | `9cae412` |
 | H | `17-final-test` | CPU | 2.668 | 2,6 | `abcb5f8` (tag `freeze-v1`) |
 | H | `18-aggregate` | CPU | 269 | 0,69 | `da0f05f` |
+| I | `19-ahp` | CPU | 179 | 0,7 | `9bdc7b7` |
+| I | `20-realtime` (bản chạy đủ sau khi sửa RAM) | CPU | 3.220 | 19,5 | `0fa57c1` |
+| J | `19b-ahp-constrained` | CPU | 196 | 0,7 | `0fa57c1` |
+| J | `20a-undetected` | CPU | 289 | 18,86 | `8e3372e` |
+| J | `20b`, `20c`, `20d` (chẩn đoán RAM) | CPU | 860; 2.155; 527 | 18,9; 19,0; 1,3 | `3857402`, `3857402`, `fc6b153` |
+| J | `21-reproduce` | CPU | 155 | 0,47 | `d9d3c77` |
 
-*Nguồn: `reports/kaggle/<notebook>/run_info.json`. Tổng thời gian các notebook có `run_info.json`: khoảng 11,66 giờ, trong đó 4,01 giờ GPU. Các notebook GĐ A (`05`, `07`, `09`, `10`) không có `run_info.json`.*
+*Nguồn: `reports/kaggle/<notebook>/run_info.json`. Tổng thời gian các notebook có `run_info.json`: khoảng 11,66 giờ, trong đó 4,01 giờ GPU. Các notebook GĐ A (`05`, `07`, `09`, `10`) không có `run_info.json`. Tổng này chưa gồm các notebook của GĐ I và J (đều CPU, 0 giờ GPU).*
 
 ---
 
