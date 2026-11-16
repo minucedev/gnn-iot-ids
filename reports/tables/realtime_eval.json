@@ -42,33 +42,33 @@
   "n_episodes": 27,
   "n_detected": 13,
   "n_undetected": 14,
-  "detection_median_s": 5.1127596793674,
-  "detection_p95_s": 204.00240402147858,
-  "detection_max_s": 234.1129565455558,
+  "detection_median_s": 5.092839457367404,
+  "detection_p95_s": 203.9861319460785,
+  "detection_max_s": 234.09654153755582,
   "per_class": {
    "DoS_DDoS": {
     "n_episodes": 4,
     "n_detected": 4,
-    "median_s": 4.947539128945721,
-    "max_s": 5.1127596793674
+    "median_s": 4.937628189945656,
+    "max_s": 5.092839457367404
    },
    "Botnet_Backdoor": {
     "n_episodes": 5,
     "n_detected": 4,
-    "median_s": 12.92708316300002,
-    "max_s": 72.72725979303505
+    "median_s": 12.914931203500032,
+    "max_s": 72.71161233103521
    },
    "Truy_cap_trai_phep": {
     "n_episodes": 5,
     "n_detected": 2,
-    "median_s": 5.100104685583119,
-    "max_s": 5.13748461199998
+    "median_s": 5.082477268083039,
+    "max_s": 5.110079153000015
    },
    "Khac": {
     "n_episodes": 13,
     "n_detected": 3,
-    "median_s": 183.92870233876056,
-    "max_s": 234.1129565455558
+    "median_s": 183.91252555176038,
+    "max_s": 234.09654153755582
    }
   },
   "episodes": [
@@ -77,10 +77,12 @@
     "start_ts": 1556136555.16,
     "end_ts": 1556143155.0,
     "n_windows": 1320,
+    "first_window": 311227311,
+    "last_window": 311228630,
     "n_true_nodes": 16838,
     "detected": true,
     "first_alert_window": 311227311,
-    "detection_s": 4.96084428616939,
+    "detection_s": 4.9488049291693414,
     "class": "DoS_DDoS"
    },
    {
@@ -88,10 +90,12 @@
     "start_ts": 1556204355.1,
     "end_ts": 1556204675.0,
     "n_windows": 64,
+    "first_window": 311240871,
+    "last_window": 311240934,
     "n_true_nodes": 248,
     "detected": true,
     "first_alert_window": 311240871,
-    "detection_s": 5.1127596793674,
+    "detection_s": 5.092839457367404,
     "class": "DoS_DDoS"
    },
    {
@@ -99,10 +103,12 @@
     "start_ts": 1556204743.696,
     "end_ts": 1556206340.0,
     "n_windows": 304,
+    "first_window": 311240948,
+    "last_window": 311241267,
     "n_true_nodes": 1180,
     "detected": true,
     "first_alert_window": 311240948,
-    "detection_s": 1.4492752058179121,
+    "detection_s": 1.4350484458178698,
     "class": "DoS_DDoS"
    },
    {
@@ -110,10 +116,12 @@
     "start_ts": 1556241105.181,
     "end_ts": 1556245990.0,
     "n_windows": 954,
+    "first_window": 311248221,
+    "last_window": 311249197,
     "n_true_nodes": 2906,
     "detected": true,
     "first_alert_window": 311248221,
-    "detection_s": 4.934233971722051,
+    "detection_s": 4.92645145072197,
     "class": "DoS_DDoS"
    },
    {
@@ -121,10 +129,12 @@
     "start_ts": 1556436599.094,
     "end_ts": 1556436895.0,
     "n_windows": 30,
+    "first_window": 311287319,
+    "last_window": 311287378,
     "n_true_nodes": 57,
     "detected": true,
     "first_alert_window": 311287323,
-    "detection_s": 21.02067208491053,
+    "detection_s": 21.009027523910618,
     "class": "Botnet_Backdoor"
    },
    {
@@ -132,6 +142,8 @@
     "start_ts": 1556437291.354,
     "end_ts": 1556437410.0,
     "n_windows": 8,
+    "first_window": 311287458,
+    "last_window": 311287481,
     "n_true_nodes": 12,
     "detected": false,
     "first_alert_window": null,
@@ -143,10 +155,12 @@
     "start_ts": 1556437602.389,
     "end_ts": 1556438175.0,
     "n_windows": 91,
+    "first_window": 311287520,
+    "last_window": 311287634,
     "n_true_nodes": 129,
     "detected": true,
     "first_alert_window": 311287534,
-    "detection_s": 72.72725979303505,
+    "detection_s": 72.71161233103521,
     "class": "Botnet_Backdoor"
    },
    {
@@ -154,10 +168,12 @@
     "start_ts": 1556465315.68,
     "end_ts": 1556471535.0,
     "n_windows": 1240,
+    "first_window": 311293063,
+    "last_window": 311294306,
     "n_true_nodes": 2909,
     "detected": true,
     "first_alert_window": 311293063,
-    "detection_s": 4.433762385242744,
+    "detection_s": 4.423521851242867,
     "class": "Botnet_Backdoor"
    },
    {
@@ -165,10 +181,12 @@
     "start_ts": 1556499290.281,
     "end_ts": 1556504915.0,
     "n_windows": 1125,
+    "first_window": 311299858,
+    "last_window": 311300982,
     "n_true_nodes": 1906,
     "detected": true,
     "first_alert_window": 311299858,
-    "detection_s": 4.833494241089511,
+    "detection_s": 4.8208348830894465,
     "class": "Botnet_Backdoor"
    },
    {
@@ -176,6 +194,8 @@
     "start_ts": 1556058815.454,
     "end_ts": 1556058820.0,
     "n_windows": 1,
+    "first_window": 311211763,
+    "last_window": 311211763,
     "n_true_nodes": 2,
     "detected": false,
     "first_alert_window": null,
@@ -187,6 +207,8 @@
     "start_ts": 1556059415.79,
     "end_ts": 1556059420.0,
     "n_windows": 1,
+    "first_window": 311211883,
+    "last_window": 311211883,
     "n_true_nodes": 2,
     "detected": false,
     "first_alert_window": null,
@@ -198,6 +220,8 @@
     "start_ts": 1556060842.239,
     "end_ts": 1556060845.0,
     "n_windows": 1,
+    "first_window": 311212168,
+    "last_window": 311212168,
     "n_true_nodes": 1,
     "detected": false,
     "first_alert_window": null,
@@ -209,10 +233,12 @@
     "start_ts": 1556303445.043,
     "end_ts": 1556311075.0,
     "n_windows": 1526,
+    "first_window": 311260689,
+    "last_window": 311262214,
     "n_true_nodes": 6444,
     "detected": true,
     "first_alert_window": 311260689,
-    "detection_s": 5.062724759166258,
+    "detection_s": 5.054875383166063,
     "class": "Truy_cap_trai_phep"
    },
    {
@@ -220,10 +246,12 @@
     "start_ts": 1556344690.0,
     "end_ts": 1556348545.0,
     "n_windows": 768,
+    "first_window": 311268938,
+    "last_window": 311269708,
     "n_true_nodes": 2474,
     "detected": true,
     "first_alert_window": 311268938,
-    "detection_s": 5.13748461199998,
+    "detection_s": 5.110079153000015,
     "class": "Truy_cap_trai_phep"
    },
    {
@@ -231,6 +259,8 @@
     "start_ts": 1556428982.853,
     "end_ts": 1556429195.0,
     "n_windows": 24,
+    "first_window": 311285796,
+    "last_window": 311285838,
     "n_true_nodes": 30,
     "detected": false,
     "first_alert_window": null,
@@ -242,6 +272,8 @@
     "start_ts": 1556429474.831,
     "end_ts": 1556429475.0,
     "n_windows": 1,
+    "first_window": 311285894,
+    "last_window": 311285894,
     "n_true_nodes": 2,
     "detected": false,
     "first_alert_window": null,
@@ -253,6 +285,8 @@
     "start_ts": 1556431523.073,
     "end_ts": 1556431525.0,
     "n_windows": 1,
+    "first_window": 311286304,
+    "last_window": 311286304,
     "n_true_nodes": 2,
     "detected": false,
     "first_alert_window": null,
@@ -264,6 +298,8 @@
     "start_ts": 1556543765.206,
     "end_ts": 1556543820.0,
     "n_windows": 6,
+    "first_window": 311308753,
+    "last_window": 311308763,
     "n_true_nodes": 12,
     "detected": false,
     "first_alert_window": null,
@@ -275,6 +311,8 @@
     "start_ts": 1556543903.964,
     "end_ts": 1556544780.0,
     "n_windows": 80,
+    "first_window": 311308780,
+    "last_window": 311308955,
     "n_true_nodes": 170,
     "detected": false,
     "first_alert_window": null,
@@ -286,6 +324,8 @@
     "start_ts": 1556544965.602,
     "end_ts": 1556545260.0,
     "n_windows": 32,
+    "first_window": 311308993,
+    "last_window": 311309051,
     "n_true_nodes": 71,
     "detected": false,
     "first_alert_window": null,
@@ -297,6 +337,8 @@
     "start_ts": 1556545966.811,
     "end_ts": 1556546105.0,
     "n_windows": 8,
+    "first_window": 311309193,
+    "last_window": 311309220,
     "n_true_nodes": 15,
     "detected": false,
     "first_alert_window": null,
@@ -308,6 +350,8 @@
     "start_ts": 1556546216.67,
     "end_ts": 1556546230.0,
     "n_windows": 2,
+    "first_window": 311309243,
+    "last_window": 311309245,
     "n_true_nodes": 6,
     "detected": false,
     "first_alert_window": null,
@@ -319,10 +363,12 @@
     "start_ts": 1556546406.187,
     "end_ts": 1556546660.0,
     "n_windows": 13,
+    "first_window": 311309281,
+    "last_window": 311309331,
     "n_true_nodes": 24,
     "detected": true,
     "first_alert_window": 311309317,
-    "detection_s": 183.92870233876056,
+    "detection_s": 183.91252555176038,
     "class": "Khac"
    },
    {
@@ -330,6 +376,8 @@
     "start_ts": 1556546856.147,
     "end_ts": 1556546950.0,
     "n_windows": 5,
+    "first_window": 311309371,
+    "last_window": 311309389,
     "n_true_nodes": 11,
     "detected": false,
     "first_alert_window": null,
@@ -341,10 +389,12 @@
     "start_ts": 1556547106.013,
     "end_ts": 1556547580.0,
     "n_windows": 39,
+    "first_window": 311309421,
+    "last_window": 311309515,
     "n_true_nodes": 264,
     "detected": true,
     "first_alert_window": 311309467,
-    "detection_s": 234.1129565455558,
+    "detection_s": 234.09654153755582,
     "class": "Khac"
    },
    {
@@ -352,10 +402,12 @@
     "start_ts": 1556547846.355,
     "end_ts": 1556548580.0,
     "n_windows": 30,
+    "first_window": 311309569,
+    "last_window": 311309715,
     "n_true_nodes": 57,
     "detected": true,
     "first_alert_window": 311309605,
-    "detection_s": 183.7624502059266,
+    "detection_s": 183.74663839492655,
     "class": "Khac"
    },
    {
@@ -363,6 +415,8 @@
     "start_ts": 1556548985.214,
     "end_ts": 1556548990.0,
     "n_windows": 1,
+    "first_window": 311309797,
+    "last_window": 311309797,
     "n_true_nodes": 2,
     "detected": false,
     "first_alert_window": null,
@@ -379,22 +433,22 @@
   "recall_attack": 0.9681891876782021
  },
  "ram": {
-  "ram_first_window_mb": 3804.21875,
-  "ram_last_window_mb": 1937.86328125,
-  "ram_max_mb": 3804.69140625,
-  "ram_early_median_mb": 1730.0859375,
-  "ram_late_median_mb": 1927.0234375,
-  "growth_late_vs_early": 0.11383105066132004,
-  "slope_mb_per_1000_windows_second_half": 17.142757221203738,
+  "ram_first_window_mb": 3841.53125,
+  "ram_last_window_mb": 1933.01953125,
+  "ram_max_mb": 3842.1875,
+  "ram_early_median_mb": 1753.43359375,
+  "ram_late_median_mb": 1921.80078125,
+  "growth_late_vs_early": 0.09602142225410404,
+  "slope_mb_per_1000_windows_second_half": 14.682710977480694,
   "tolerance": 0.1,
-  "stable": false,
+  "stable": true,
   "definition": "trung vị RSS 1144 cửa sổ ngay sau warm-up so với 1144 cửa sổ cuối"
  },
  "targets": [
   {
    "chi_tieu": "Độ trễ p95 end-to-end ≤ 1 s mỗi cửa sổ",
    "nguong": "≤ 1000 ms",
-   "gia_tri": 136.0285449001367,
+   "gia_tri": 121.11827369999446,
    "dat": true,
    "ghi_chu": "11399 cửa sổ sau warm-up, 1 luồng; nguồn: task 8.3"
   },
@@ -415,8 +469,8 @@
   {
    "chi_tieu": "RAM không tăng theo thời gian chạy",
    "nguong": "±10%",
-   "gia_tri": 0.11383105066132004,
-   "dat": false,
+   "gia_tri": 0.09602142225410404,
+   "dat": true,
    "ghi_chu": "trung vị RSS 1144 cửa sổ ngay sau warm-up so với 1144 cửa sổ cuối; nguồn: task 8.1"
   },
   {
@@ -458,8 +512,8 @@
    "chi_tieu": "Thời gian phát hiện mỗi đợt tấn công (median, max)",
    "nguong": "chưa có chỉ tiêu trong KE_HOACH",
    "gia_tri": {
-    "median_s": 5.1127596793674,
-    "max_s": 234.1129565455558,
+    "median_s": 5.092839457367404,
+    "max_s": 234.09654153755582,
     "n_undetected": 14
    },
    "dat": null,

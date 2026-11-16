@@ -1,18 +1,18 @@
 {
  "steps_s": {
-  "clone_va_cai_goi": 68.9,
-  "pytest": 107.8,
-  "ahp_constrained": 1.5
+  "clone_va_cai_goi": 74.4,
+  "pytest": 119.6,
+  "ahp_constrained": 1.6
  },
  "device": "CPU",
  "gpu": null,
- "commit": "f99813fb243a89d4ed0cac18b1ff4300278e02b5",
- "total_s": 178.2,
+ "commit": "0fa57c1eb61326ecf33cd1c7215e71a504af58a7",
+ "total_s": 195.6,
  "peak_ram_gb": 0.7,
  "gpu_hours": 0,
  "cpu": "Intel(R) Xeon(R) CPU @ 2.20GHz",
  "cpu_count": 4,
- "pytest": "155 passed, 5657 warnings in 101.83s (0:01:41)",
+ "pytest": "168 passed, 5657 warnings in 113.07s (0:01:53)",
  "pytest_ahp": "16 passed in 0.04s",
  "scenario_a_top": "hybrid_gat_lgbm_oofavg_il",
  "scenario_b_top": "mlp"

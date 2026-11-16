@@ -1,27 +1,27 @@
 {
  "steps_s": {
-  "clone_va_cai_goi": 80.0,
-  "pytest": 41.6,
-  "detector_hybrid_gat_lgbm_oofavg_il": 1727.5,
-  "eval_hybrid_gat_lgbm_oofavg_il": 4.6,
-  "detector_hybrid_light": 1567.6,
-  "eval_hybrid_light": 4.7
+  "clone_va_cai_goi": 75.8,
+  "pytest": 41.3,
+  "detector_hybrid_gat_lgbm_oofavg_il": 1578.8,
+  "eval_hybrid_gat_lgbm_oofavg_il": 4.3,
+  "detector_hybrid_light": 1508.5,
+  "eval_hybrid_light": 4.3
  },
  "device": "CPU",
  "gpu": null,
  "smoke": false,
  "seed": 42,
- "commit": "196064afecc31dc955838a4180506fc402c248e5",
- "total_s": 3433.2,
- "peak_ram_gb": 19.48,
+ "commit": "0fa57c1eb61326ecf33cd1c7215e71a504af58a7",
+ "total_s": 3219.8,
+ "peak_ram_gb": 19.5,
  "gpu_hours": 0,
  "cpu_count": 4,
- "pytest": "38 passed, 3 warnings in 36.62s",
+ "pytest": "47 passed, 3 warnings in 36.67s",
  "config": {
   "dataset": "nf_ton_iot_v3",
   "split": "test",
   "flows_csv": "/kaggle/input/datasets/athena21/netflow-v3-datasets/NF-ToN-IoT-v3.csv",
-  "expect_commit": "196064a",
+  "expect_commit": "0fa57c1",
   "thresholds": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-16c-aggregate/thresholds.json",
   "thresholds_c": {
    "nf_ton_iot_v3": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-16h-c-threshold/thresholds_c_nf_ton_iot_v3.json"
@@ -63,16 +63,17 @@
   "n_windows": 11449,
   "n_flows": 2409446,
   "warmup_windows": 50,
+  "trim_every": 200,
   "restrict": "test",
   "speedup": null,
   "reference": true,
   "n_ref_windows": 11449,
   "n_ref_windows_not_streamed": 0,
-  "frozen_style_p95_ms": 24.44321534999574,
-  "stream_seconds": 1416.1,
-  "total_seconds": 1717.1,
-  "ram_start_mb": 3762.01953125,
-  "ram_end_mb": 1946.0703125,
+  "frozen_style_p95_ms": 22.81231914994919,
+  "stream_seconds": 1283.3,
+  "total_seconds": 1569.4,
+  "ram_start_mb": 3797.203125,
+  "ram_end_mb": 1947.3046875,
   "env": {
    "cpu_model": "Intel(R) Xeon(R) CPU @ 2.20GHz",
    "cpu_count": 4,
@@ -109,16 +110,17 @@
   "n_windows": 11449,
   "n_flows": 2409446,
   "warmup_windows": 50,
+  "trim_every": 200,
   "restrict": "test",
   "speedup": null,
   "reference": true,
   "n_ref_windows": 11449,
   "n_ref_windows_not_streamed": 0,
-  "frozen_style_p95_ms": 7.0319408997875135,
-  "stream_seconds": 1291.7,
-  "total_seconds": 1554.6,
-  "ram_start_mb": 3790.84375,
-  "ram_end_mb": 1677.75390625,
+  "frozen_style_p95_ms": 6.029106849950948,
+  "stream_seconds": 1239.3,
+  "total_seconds": 1496.4,
+  "ram_start_mb": 3783.390625,
+  "ram_end_mb": 1828.4453125,
   "env": {
    "cpu_model": "Intel(R) Xeon(R) CPU @ 2.20GHz",
    "cpu_count": 4,
@@ -138,20 +140,20 @@
  },
  "cpu": "Intel(R) Xeon(R) CPU @ 2.20GHz",
  "result": {
-  "p95_total_ms": 136.0285449001367,
-  "p95_build_ms": 108.23684220007408,
-  "p95_infer_ms": 29.534829299939254,
+  "p95_total_ms": 121.11827369999446,
+  "p95_build_ms": 95.80563180002173,
+  "p95_infer_ms": 27.61696410000241,
   "n_windows_measured": 11399,
   "ram": {
-   "ram_first_window_mb": 3804.21875,
-   "ram_last_window_mb": 1937.86328125,
-   "ram_max_mb": 3804.69140625,
-   "ram_early_median_mb": 1730.0859375,
-   "ram_late_median_mb": 1927.0234375,
-   "growth_late_vs_early": 0.11383105066132004,
-   "slope_mb_per_1000_windows_second_half": 17.142757221203738,
+   "ram_first_window_mb": 3841.53125,
+   "ram_last_window_mb": 1933.01953125,
+   "ram_max_mb": 3842.1875,
+   "ram_early_median_mb": 1753.43359375,
+   "ram_late_median_mb": 1921.80078125,
+   "growth_late_vs_early": 0.09602142225410404,
+   "slope_mb_per_1000_windows_second_half": 14.682710977480694,
    "tolerance": 0.1,
-   "stable": false,
+   "stable": true,
    "definition": "trung vị RSS 1144 cửa sổ ngay sau warm-up so với 1144 cửa sổ cuối"
   },
   "online_vs_offline": {
@@ -186,33 +188,33 @@
    "n_episodes": 27,
    "n_detected": 13,
    "n_undetected": 14,
-   "detection_median_s": 5.1127596793674,
-   "detection_p95_s": 204.00240402147858,
-   "detection_max_s": 234.1129565455558,
+   "detection_median_s": 5.092839457367404,
+   "detection_p95_s": 203.9861319460785,
+   "detection_max_s": 234.09654153755582,
    "per_class": {
     "DoS_DDoS": {
      "n_episodes": 4,
      "n_detected": 4,
-     "median_s": 4.947539128945721,
-     "max_s": 5.1127596793674
+     "median_s": 4.937628189945656,
+     "max_s": 5.092839457367404
     },
     "Botnet_Backdoor": {
      "n_episodes": 5,
      "n_detected": 4,
-     "median_s": 12.92708316300002,
-     "max_s": 72.72725979303505
+     "median_s": 12.914931203500032,
+     "max_s": 72.71161233103521
     },
     "Truy_cap_trai_phep": {
      "n_episodes": 5,
      "n_detected": 2,
-     "median_s": 5.100104685583119,
-     "max_s": 5.13748461199998
+     "median_s": 5.082477268083039,
+     "max_s": 5.110079153000015
     },
     "Khac": {
      "n_episodes": 13,
      "n_detected": 3,
-     "median_s": 183.92870233876056,
-     "max_s": 234.1129565455558
+     "median_s": 183.91252555176038,
+     "max_s": 234.09654153755582
     }
    }
   }

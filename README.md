@@ -101,6 +101,40 @@ python -I scripts/detector.py --config detector_config.json --model hybrid_gat_l
 - Kết quả trong `--out`: `alerts.csv` (t_close, window, ip, pred_class, p_attack, p_class, proc_ms), `windows.csv` (độ trễ từng cửa sổ, RAM, đối chiếu offline), `detector_summary.json` (mô hình, ngưỡng, CPU, phiên bản thư viện).
 - Đánh giá: `python -I scripts/realtime_eval.py <thư mục --out> <thư mục bảng> <thư mục hình>` ghi `latency.json`, `realtime_eval.json`, `alerts_sample.csv`, `gd8_*.png`.
 
+## Báo cáo và slide
+
+- Báo cáo cuối kỳ: [report/BAO_CAO.docx](report/BAO_CAO.docx) (bản nộp), nguồn [report/BAO_CAO.md](report/BAO_CAO.md).
+- Slide: [report/SLIDE.pptx](report/SLIDE.pptx), nguồn [report/SLIDE_DAN_Y.md](report/SLIDE_DAN_Y.md).
+- Tạo lại hai file này (từ thư mục ngoài repo, vì Windows có thể chặn `python.exe` của `.venv`):
+  `uv run --no-project --python 3.11 --with pypandoc_binary --with python-docx python <repo>/report/build_docx.py` và
+  `uv run --no-project --python 3.11 --with python-pptx --with pillow python <repo>/report/build_pptx.py`.
+
+## Chạy lại toàn bộ trên Kaggle
+
+Mọi tính toán chạy trên Kaggle (tài khoản có quyền đọc dataset `athena21/netflow-v3-datasets`, bật Internet để `git clone`). Mỗi notebook trong
+[notebooks/](notebooks/) clone repo, cài `requirements.txt` (trừ torch, dùng bản có sẵn của Kaggle), chạy `scripts/*.py` và ghi `run_info.json`
+(commit, thời gian, thiết bị, RAM đỉnh). Notebook sau lấy đầu vào từ output của notebook trước (thêm làm "notebook data source"). Thứ tự (slug Kaggle `gnn-iot-ids-<số>-<tên>`):
+
+| Bước | Notebook | Việc | Máy |
+|---|---|---|---|
+| 1 | `04_build_graphs`, `11_build_graphs_bot` | Làm sạch NetFlow v3, dựng đồ thị cửa sổ 5 s, chia tập theo khối (ToN, BoT) | CPU |
+| 2 | `12_eda` | EDA mức flow và đồ thị, `reports/figures/gd2_*` | CPU |
+| 3 | `05_baselines`, `13_baselines`, `07_train_gnn`, `14_train_gnn_bot` | Baseline ML, MLP và GNN đơn (GCN, GraphSAGE, GAT), 3 seed | CPU |
+| 4 | `15_hybrid`, `15b`, `15e`, `15f_hybrid_il_ton` (GPU T4) | Hybrid GAT + LightGBM (out-of-fold xen kẽ) | GPU |
+| 5 | `16_ablation`, `16a`–`16h` | Ablation, hybrid nhẹ, bản cải tiến GAT, hiệu chỉnh ngưỡng trên val | GPU, CPU |
+| 6 | `17a_dryrun_val`, `17_final_test` | Dựng lại mô hình đã đóng băng (tag `freeze-v1`), chạy test **một lần** | CPU |
+| 7 | `18_aggregate` | `scripts/aggregate_h.py`: `results.csv`, `summary_*.csv`, McNemar, `targets.csv`, hình `gd6_*` | CPU |
+| 8 | `19_ahp`, `19b_ahp_constrained` | AHP không ràng buộc và có ràng buộc cứng (`src/ahp.py`) | CPU |
+| 9 | `20_realtime` | Phát lại toàn bộ flow test: độ trễ, khớp online/offline, cảnh báo giả, thời gian phát hiện, RAM | CPU |
+| 10 | `20a_undetected` | Vì sao một số đợt tấn công không có cảnh báo | CPU |
+| 11 | `21_reproduce` | Chạy lại bước 7 từ output đã lưu, so với bảng trong repo (lệch F1-macro ≤ 0,5 điểm %) | CPU |
+
+Công cụ chẩn đoán RAM: `20b`, `20c`, `20d` (`scripts/ram_diag.py`). Kết quả đã kéo về lưu ở `reports/kaggle/<slug>/`, bảng ở `reports/tables/`,
+hình ở `reports/figures/`. Chạy kiểm thử trên Kaggle (`pytest -q`, mỗi notebook làm bước này); WSL không có pip nên không chạy được pytest ở máy cá nhân.
+
+**Kiểm tra tái lập (GĐ J):** xem dòng "Tái lập" trong [reports/tables/targets.csv](reports/tables/targets.csv) và
+[reports/kaggle/gnn-iot-ids-21-reproduce/reproduce_check.json](reports/kaggle/gnn-iot-ids-21-reproduce/reproduce_check.json).
+
 ## Quy ước làm việc
 
 - Commit và push thẳng lên `main`, không tạo nhánh hay PR.

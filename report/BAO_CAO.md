@@ -194,7 +194,7 @@ Với ma trận nhầm lẫn nhị phân (TP, FP, TN, FN; Normal là lớp âm):
 
 ### 2.7 Phương pháp AHP
 
-AHP [32, 33, 34] phân rã quyết định thành mục tiêu → tiêu chí → phương án. Người ra quyết định so sánh cặp các tiêu chí theo thang Saaty 1–9 vào ma trận $A$ ($a_{ij} = 1/a_{ji}$). Trọng số là vector riêng chính $w$ của $A$. Độ nhất quán: $CI = (\lambda_{\max} - n)/(n - 1)$ và $CR = CI/RI$, với chỉ số ngẫu nhiên $RI$ = 0,58 (n = 3), 0,90 (n = 4), 1,12 (n = 5); ma trận chấp nhận được khi $CR < 0{,}10$.
+AHP [32, 33, 34] phân rã quyết định thành mục tiêu → tiêu chí → phương án. Người ra quyết định so sánh cặp các tiêu chí theo thang Saaty 1–9 vào ma trận $A$ ($a_{ij} = 1/a_{ji}$). Trọng số là vector riêng chính $w$ của $A$. Độ nhất quán: $CI = (\lambda_{\max} - n)/(n - 1)$ và $CR = CI/RI$, với chỉ số ngẫu nhiên $RI$ = 0,58 (n = 3), 0,90 (n = 4), 1,12 (n = 5) (giá trị thông dụng của Saaty, tính từ ma trận ngẫu nhiên); ma trận chấp nhận được khi $CR < 0{,}10$.
 
 **Ví dụ tính tay 3×3** (ví dụ minh họa do nhóm tự đặt để kiểm tra phương pháp, *không* phải ma trận của đề tài): 
 $A = \begin{pmatrix} 1 & 3 & 5 \\ 1/3 & 1 & 3 \\ 1/5 & 1/3 & 1 \end{pmatrix}$.
@@ -830,9 +830,52 @@ Kết luận: các IP của máy tấn công cũng sinh flow Normal (Benign ch�
 
 Độ trễ trong Bảng 5.3 là phép đo **sơ bộ**: p95 của 200 lần chạy trên một cửa sổ trung vị, CPU Kaggle 1 luồng, gồm bước GAT và bước LightGBM. Hybrid chính ToN: 24,4 ms mỗi cửa sổ; hybrid nhẹ: 7,32 ms; BoT: 13,4 ms; tất cả ≪ 1 giây. Phép đo end-to-end (dựng đồ thị từ flow thô, ≥ 1.000 cửa sổ, tách thời gian từng bước, thông lượng flow mỗi giây, RAM tối đa) thuộc mô phỏng thời gian thực **[chờ GĐ I]**.
 
-### 5.10 AHP: gợi ý mô hình triển khai **[chờ GĐ I]**
+### 5.10 AHP: gợi ý mô hình triển khai
 
-*(Cây phân cấp, ma trận so sánh cặp, CR, xếp hạng, phân tích độ nhạy và mô hình được gợi ý sẽ được điền sau khi GĐ I hoàn tất. Ghi chú đã chốt từ trước: bản gợi ý triển khai trên NF-ToN-IoT-v3 do AHP quyết định giữa hybrid chính, hybrid nhẹ và các mô hình nhẹ khác; xem ghi chú ở mục 5.12.)*
+**Cây quyết định.** Mục tiêu: chọn mô hình triển khai trên gateway IoT (IDS nhận NetFlow, cửa sổ 5 giây). Năm tiêu chí: F1-macro, FPR, recall tấn công, độ trễ p95, kích thước mô hình. Tám phương án: hybrid chính, hybrid nhẹ, (c) LightGBM + trung bình hàng xóm, LightGBM, Random Forest, MLP, GraphSAGE, GAT. Số liệu của phương án là trung bình 3 seed trên test NF-ToN-IoT-v3 ở chế độ ngưỡng hiệu chỉnh (`summary_test.csv`); không chạy lại test. Ma trận so sánh cặp 5×5 (10 cặp, mỗi cặp có lý do bằng lời, `docs/ahp_matrix.json`) do Claude đề xuất trước khi xem điểm phương án và Nguyễn Minh Phúc duyệt nguyên đề xuất ngày 16/11/2026; chưa có Phong và Tấn chấm độc lập nên **chỉ có một ma trận, không có ma trận gộp**. Độ nhất quán: λmax = 5,044, CI = 0,0110, RI = 1,12, **CR = 0,0098 < 0,10** (nhất quán). Chuẩn hóa điểm: min-max cho F1-macro, FPR, recall; log10 rồi min-max cho độ trễ và kích thước (hai đại lượng này trải nhiều bậc độ lớn, kích thước từ 46 KB đến 494 MB); FPR, độ trễ, kích thước đảo chiều.
+
+**Bảng 5.14. Trọng số tiêu chí (vector riêng; trung bình nhân lệch tối đa 0,002).**
+
+| Tiêu chí | FPR | Recall tấn công | F1-macro | Kích thước | Độ trễ p95 |
+|---|---|---|---|---|---|
+| Trọng số | 0,431 | 0,204 | 0,189 | 0,108 | 0,067 |
+
+Ma trận đặt FPR lên đầu vì báo động giả làm người vận hành quen bỏ qua cảnh báo; vì vậy AHP này ủng hộ mô hình chính xác hơn là mô hình nhẹ (độ trễ chỉ nặng 0,067 và mọi phương án đều dưới 1 s).
+
+**Hai kịch bản.** Cùng ma trận và cùng số liệu, khác nhau ở việc có sàng lọc theo ngưỡng nhẹ của đề tài (≤ 100.000 tham số và ≤ 1 MB) hay không.
+
+**Bảng 5.15. Điểm AHP của hai kịch bản (điểm tổng = Σ trọng số × điểm chuẩn hóa).**
+
+| Phương án | Tham số | Kích thước (KB) | (a) Không ràng buộc | (b) Ràng buộc nhẹ (sàng lọc rồi xếp hạng) |
+|---|---|---|---|---|
+| Hybrid chính | 144.518 | 9.747 | **0,831 (hạng 1)** | loại (vượt cả hai ngưỡng) |
+| MLP | 5.701 | 75 | 0,665 (hạng 2) | **0,612 (hạng 1)** |
+| (c) LightGBM + TB hàng xóm | 173.526 | 9.637 | 0,634 (hạng 3) | loại |
+| LightGBM | 187.500 | 10.317 | 0,577 (hạng 4) | loại |
+| Hybrid nhẹ | 30.934 | 986 | 0,564 (hạng 5) | 0,514 (hạng 3) |
+| GAT | 11.717 | 51 | 0,491 (hạng 6) | 0,431 (hạng 4) |
+| GraphSAGE | 10.949 | 46 | 0,446 (hạng 7) | 0,565 (hạng 2) |
+| Random Forest | 4.817.813 | 493.820 | 0,357 (hạng 8) | loại |
+
+*Nguồn: `reports/tables/ahp_result.json` (kịch bản a), `reports/kaggle/gnn-iot-ids-19b-ahp-constrained/ahp_constrained.json` (kịch bản b; `scripts/ahp_constrained.py`, `src/ahp.py`). Ở kịch bản (b) bốn phương án bị loại trước khi chuẩn hóa, điểm của bốn phương án còn lại được chuẩn hóa lại trong nhóm, nên không so trực tiếp với cột (a).*
+
+![Hình 5.17](../reports/figures/gd7_ahp_constrained.png)
+
+**Hình 5.17.** Hai kịch bản AHP: (a) không ràng buộc, phương án gạch chéo bị loại ở (b); (b) ràng buộc nhẹ. *Nguồn: `reports/figures/gd7_ahp_constrained.png`.*
+
+**(a) Không ràng buộc: gợi ý hybrid chính** (0,831, cách hạng hai 0,166). Hạng nhất không đổi khi tăng hoặc giảm từng trọng số 20%, và chỉ đổi khi trọng số độ trễ tăng từ 0,07 lên 0,20, kích thước từ 0,11 lên 0,32 hoặc FPR lên 0,84 (đều sang MLP), hoặc recall lên 0,83 (sang (c)). Kết luận có điều kiện: ưu tiên (50% trọng số) F1-macro, FPR hoặc recall thì chọn hybrid chính; ưu tiên độ trễ hoặc kích thước thì chọn MLP. **Kết quả này phụ thuộc cách chuẩn hóa:** với min-max thuần hoặc log min-max hạng nhất vẫn là hybrid chính, nhưng **khi chuẩn hóa theo tỉ lệ (min/x hoặc x/max) hạng nhất đổi sang MLP** (0,949 so với hybrid chính 0,805). Nhóm không khẳng định hybrid chính là lựa chọn bền vững, mà chỉ khẳng định nó thắng theo ma trận và cách chuẩn hóa đã duyệt từ trước.
+
+**(b) Ràng buộc nhẹ: gợi ý MLP** (0,612). Hybrid chính (144.518 tham số, 9,75 MB), (c), LightGBM và Random Forest bị loại vì vượt ngưỡng; còn lại MLP, GraphSAGE, hybrid nhẹ, GAT. MLP đứng đầu ở cả bốn cách chuẩn hóa. Nếu không chuẩn hóa lại (giữ điểm của 8 phương án) thứ hạng trong nhóm là MLP 0,665, hybrid nhẹ 0,564, GAT 0,491, GraphSAGE 0,446: hạng nhất vẫn là MLP nhưng GraphSAGE tụt từ hạng 2 xuống hạng 4, tức **thứ hạng từ hạng 2 trở xuống phụ thuộc việc có chuẩn hóa lại hay không**. Độ nhạy của kịch bản (b) **yếu hơn** kịch bản (a): MLP và GraphSAGE cách nhau chỉ 0,047; giảm trọng số FPR 20% đã đổi hạng nhất sang GraphSAGE (điểm đảo chiều ở trọng số FPR 0,403, tức −6,5%); tăng trọng số F1-macro lên 0,231 (+22%) hoặc recall lên 0,239 (+18%) cũng vậy. Ưu tiên 50% cho F1-macro, recall hoặc kích thước thì chọn GraphSAGE; cho FPR hoặc độ trễ thì chọn MLP.
+
+**Đánh đổi.** Chuyển từ hybrid chính sang MLP giảm F1-macro 1,02 điểm % (0,9677 → 0,9575), **giảm recall tấn công 2,85 điểm % (96,71% → 93,86%, tức dưới chỉ tiêu ≥ 95%)**, FPR gần như bằng nhau (1,88% so với 1,79%), nhưng nhỏ hơn khoảng 25 lần về tham số (5.701 so với 144.518), khoảng 130 lần về kích thước (75 KB so với 9.747 KB) và nhanh hơn khoảng 40 lần (p95 0,61 so với 24,4 ms). AHP chọn MLP chủ yếu nhờ FPR thấp nhất nhóm (trọng số 0,431); điểm recall chuẩn hóa của MLP là 0 trong nhóm (b), nên chọn MLP nghĩa là chấp nhận bỏ sót thêm khoảng 3 điểm % tấn công.
+
+**Phân tích mở rộng (ngoài yêu cầu gốc; nhóm bổ sung sau khi thấy kết quả, không thuộc ma trận đã duyệt).** Nếu ngoài ràng buộc nhẹ còn bắt buộc đạt cả FPR ≤ 4,08% và recall ≥ 95% thì MLP bị loại (recall 93,86%), còn hybrid nhẹ (0,600), GraphSAGE (0,569), GAT (0,446), và AHP chọn **hybrid nhẹ**. Từ đó nhóm đề xuất: **hybrid chính khi gateway đủ tài nguyên; hybrid nhẹ khi cần đạt cả ràng buộc nhẹ lẫn chỉ tiêu FPR và recall**; MLP là lựa chọn của AHP khi chỉ có ràng buộc nhẹ, kèm hệ quả recall dưới chỉ tiêu.
+
+![Hình 5.18](../reports/figures/gd7_ahp_sensitivity.png)
+
+**Hình 5.18.** Độ nhạy của kịch bản (a): điểm AHP theo trọng số từng tiêu chí, đường đỏ là điểm làm hạng nhất đổi. *Nguồn: `reports/figures/gd7_ahp_sensitivity.png` (ngoài ra `gd7_ahp_weights.png`, `gd7_ahp_scores.png`).*
+
+**Hạn chế của AHP này.** Một người chấm, không có ma trận gộp; ma trận ưu tiên FPR cao nên kết quả nghiêng về mô hình chính xác; điểm AHP tính từ trung bình 3 seed nên không có khoảng tin cậy; thứ hạng phụ thuộc cách chuẩn hóa (đã nêu ở trên).
 
 ### 5.11 Mô phỏng thời gian thực **[chờ GĐ I]**
 
@@ -987,7 +1030,7 @@ Bảng liệt kê các notebook chính (bỏ `15c`, `15t` và các lần chạy 
 
 ## Tài liệu tham khảo
 
-Chuẩn trích dẫn: tác giả, năm, nhan đề, nơi đăng, DOI hoặc arXiv. Cột "Kiểm chứng" cho biết đã tra cứu những gì: **Crossref** = DOI đã tra và tiêu đề, tác giả, trang, năm khớp; **arXiv** = mã arXiv đã tra, tiêu đề, tác giả và năm khớp nhưng **nơi đăng chưa tra** (đánh dấu **[cần kiểm tra]**). Tổng cộng 44 tài liệu, trong đó 12 tài liệu từ năm 2022 trở lại (các mục 3, 4, 7, 8, 9, 17, 20, 21, 22, 28, 29, 39).
+Chuẩn trích dẫn: tác giả, năm, nhan đề, nơi đăng, DOI hoặc arXiv. Cột "Kiểm chứng" ghi nguồn đã đối chiếu: **Crossref** hoặc **DataCite** = DOI đã tra, tiêu đề, tác giả, trang, năm khớp; **arXiv** = mã arXiv đã tra, tiêu đề, tác giả, năm khớp, và nơi đăng đối chiếu với trang của nơi đăng hoặc ghi chú trên arXiv. Tổng cộng 44 tài liệu, trong đó 12 tài liệu từ năm 2022 trở lại (các mục 3, 4, 7, 8, 9, 17, 20, 21, 22, 28, 29, 39).
 
 | # | Tài liệu | DOI / arXiv | Kiểm chứng |
 |---|---|---|---|
@@ -995,43 +1038,43 @@ Chuẩn trích dẫn: tác giả, năm, nhan đề, nơi đăng, DOI hoặc arXi
 | 2 | Axelsson, S. (2000). The base-rate fallacy and the difficulty of intrusion detection. *ACM TISSEC* 3(3), 186–205 | 10.1145/357830.357849 | Crossref |
 | 3 | Bilot, T., El Madhoun, N., Al Agha, K., Zouaoui, A. (2023). Graph neural networks for intrusion detection: A survey. *IEEE Access* 11, 49114–49139 | 10.1109/ACCESS.2023.3275789 | Crossref |
 | 4 | Zhong, M., Lin, M., Zhang, C., Xu, Z. (2024). A survey on graph neural networks for intrusion detection systems: Methods, trends and challenges. *Computers & Security* 141, 103821 | 10.1016/j.cose.2024.103821 | Crossref |
-| 5 | Claise, B. (2004). Cisco Systems NetFlow Services Export Version 9. RFC 3954 | 10.17487/RFC3954 | Crossref (chỉ khớp nhan đề; **[cần kiểm tra]** tên tác giả) |
-| 6 | Claise, B., Trammell, B., Aitken, P. (2013). Specification of the IP Flow Information Export (IPFIX) Protocol. RFC 7011 | 10.17487/RFC7011 | Crossref (khớp nhan đề và một tác giả; **[cần kiểm tra]** danh sách tác giả đầy đủ) |
+| 5 | Claise, B., Ed. (2004). Cisco Systems NetFlow Services Export Version 9. RFC 3954 | 10.17487/RFC3954 | Crossref; trang RFC Editor (dòng tác giả chỉ có B. Claise, Ed.) |
+| 6 | Claise, B., Ed., Trammell, B., Ed., Aitken, P. (2013). Specification of the IP Flow Information Export (IPFIX) Protocol for the Exchange of Flow Information. RFC 7011 (STD 77) | 10.17487/RFC7011 | Crossref; IETF Datatracker |
 | 7 | Sarhan, M., Layeghy, S., Portmann, M. (2022). Towards a standard feature set for network intrusion detection system datasets. *Mobile Networks and Applications* 27(1), 357–370 | 10.1007/s11036-021-01843-0; arXiv:2101.11315 | Crossref |
 | 8 | Luay, M., Layeghy, S., Noorbin, N., Sarhan, M., Kulatilleke, G., Moustafa, N., Portmann, M. (2026). Time matters: Temporal NetFlow features for ML-based network intrusion detection. *IEEE Access* 14, 66899–66913. (Bản preprint: arXiv:2503.04404, "Temporal analysis of NetFlow datasets for network intrusion detection systems", 2025) | 10.1109/ACCESS.2026.3688204 | Crossref; arXiv |
-| 9 | Luay, M., Layeghy, S., Sarhan, M., Hoseininoorbin, S., Moustafa, N., Portmann, M. (2025). NF-ToN-IoT-v3 [bộ dữ liệu]. The University of Queensland | 10.48610/44d7c5e | **[cần kiểm tra]**: DOI của UQ eSpace, không tra được qua Crossref; thông tin lấy từ phiếu dataset (task 1.2) |
+| 9 | Luay, M. (2025). NF-ToN-IoT-v3 [bộ dữ liệu]. The University of Queensland | 10.48610/44d7c5e | DataCite (bản ghi của DOI chỉ có một tác giả; nhóm tác giả của bài báo đi kèm xem mục 8) |
 | 10 | Moustafa, N. (2021). A new distributed architecture for evaluating AI-based security systems at the edge: Network TON_IoT datasets. *Sustainable Cities and Society* 72, 102994 | 10.1016/j.scs.2021.102994 | Crossref |
 | 11 | Alsaedi, A., Moustafa, N., Tari, Z., Mahmood, A., Anwar, A. (2020). TON_IoT telemetry dataset: A new generation dataset of IoT and IIoT for data-driven intrusion detection systems. *IEEE Access* 8, 165130–165150 | 10.1109/ACCESS.2020.3022862 | Crossref |
 | 12 | Koroniotis, N., Moustafa, N., Sitnikova, E., Turnbull, B. (2019). Towards the development of realistic botnet dataset in the Internet of Things for network forensic analytics: Bot-IoT dataset. *Future Generation Computer Systems* 100, 779–796 | 10.1016/j.future.2019.05.041 | Crossref |
-| 13 | Gilmer, J., Schoenholz, S. S., Riley, P. F., Vinyals, O., Dahl, G. E. (2017). Neural message passing for quantum chemistry. *ICML 2017* | arXiv:1704.01212 | arXiv; **[cần kiểm tra]** nơi đăng |
-| 14 | Kipf, T. N., Welling, M. (2017). Semi-supervised classification with graph convolutional networks. *ICLR 2017* | arXiv:1609.02907 | arXiv; **[cần kiểm tra]** nơi đăng |
-| 15 | Hamilton, W. L., Ying, R., Leskovec, J. (2017). Inductive representation learning on large graphs. *NeurIPS 2017* | arXiv:1706.02216 | arXiv; **[cần kiểm tra]** nơi đăng |
-| 16 | Veličković, P., Cucurull, G., Casanova, A., Romero, A., Liò, P., Bengio, Y. (2018). Graph attention networks. *ICLR 2018* | arXiv:1710.10903 | arXiv; **[cần kiểm tra]** nơi đăng |
-| 17 | Brody, S., Alon, U., Yahav, E. (2022). How attentive are graph attention networks? *ICLR 2022* | arXiv:2105.14491 | arXiv; **[cần kiểm tra]** nơi đăng |
-| 18 | Zhu, J., Yan, Y., Zhao, L., Heimann, M., Akoglu, L., Koutra, D. (2020). Beyond homophily in graph neural networks: Current limitations and effective designs. *NeurIPS 2020* | arXiv:2006.11468 | arXiv; **[cần kiểm tra]** nơi đăng |
-| 19 | Lim, D., Hohne, F., Li, X., Huang, S. L., Gupta, V., Bhalerao, O., Lim, S. N. (2021). Large scale learning on non-homophilous graphs: New benchmarks and strong simple methods. *NeurIPS 2021* | arXiv:2110.14446 | arXiv; **[cần kiểm tra]** nơi đăng |
-| 20 | Platonov, O., Kuznedelev, D., Babenko, A., Prokhorenkova, L. (2023). Characterizing graph datasets for node classification: Homophily-heterophily dichotomy and beyond. *NeurIPS 2023* (arXiv 2022) | arXiv:2209.06177 | arXiv; **[cần kiểm tra]** nơi đăng |
+| 13 | Gilmer, J., Schoenholz, S. S., Riley, P. F., Vinyals, O., Dahl, G. E. (2017). Neural message passing for quantum chemistry. *ICML 2017* | arXiv:1704.01212 | arXiv; trang của nơi đăng (proceedings, ICLR hoặc USENIX) |
+| 14 | Kipf, T. N., Welling, M. (2017). Semi-supervised classification with graph convolutional networks. *ICLR 2017* | arXiv:1609.02907 | arXiv (ghi chú của chính bài trên arXiv nêu nơi đăng) |
+| 15 | Hamilton, W. L., Ying, R., Leskovec, J. (2017). Inductive representation learning on large graphs. *NeurIPS 2017* | arXiv:1706.02216 | arXiv; trang của nơi đăng (proceedings, ICLR hoặc USENIX) |
+| 16 | Veličković, P., Cucurull, G., Casanova, A., Romero, A., Liò, P., Bengio, Y. (2018). Graph attention networks. *ICLR 2018* | arXiv:1710.10903 | arXiv (ghi chú của chính bài trên arXiv nêu nơi đăng) |
+| 17 | Brody, S., Alon, U., Yahav, E. (2022). How attentive are graph attention networks? *ICLR 2022* | arXiv:2105.14491 | arXiv; trang của nơi đăng (proceedings, ICLR hoặc USENIX) |
+| 18 | Zhu, J., Yan, Y., Zhao, L., Heimann, M., Akoglu, L., Koutra, D. (2020). Beyond homophily in graph neural networks: Current limitations and effective designs. *NeurIPS 2020* | arXiv:2006.11468 | arXiv; trang của nơi đăng (proceedings, ICLR hoặc USENIX) |
+| 19 | Lim, D., Hohne, F., Li, X., Huang, S. L., Gupta, V., Bhalerao, O., Lim, S. N. (2021). Large scale learning on non-homophilous graphs: New benchmarks and strong simple methods. *NeurIPS 2021* | arXiv:2110.14446 | arXiv; trang của nơi đăng (proceedings, ICLR hoặc USENIX) |
+| 20 | Platonov, O., Kuznedelev, D., Babenko, A., Prokhorenkova, L. (2023). Characterizing graph datasets for node classification: Homophily-heterophily dichotomy and beyond. *NeurIPS 2023* (arXiv 2022) | arXiv:2209.06177 | arXiv; trang của nơi đăng (proceedings, ICLR hoặc USENIX) |
 | 21 | Lo, W. W., Layeghy, S., Sarhan, M., Gallagher, M., Portmann, M. (2022). E-GraphSAGE: A graph neural network based intrusion detection system for IoT. *IEEE/IFIP NOMS 2022* | 10.1109/NOMS54207.2022.9789878; arXiv:2103.16329 | Crossref |
 | 22 | Caville, E., Lo, W. W., Layeghy, S., Portmann, M. (2022). Anomal-E: A self-supervised network intrusion detection system based on graph neural networks. *Knowledge-Based Systems* 258, 110030 | 10.1016/j.knosys.2022.110030; arXiv:2207.06819 | Crossref |
 | 23 | Zhou, J., Cui, G., Hu, S., Zhang, Z., Yang, C., Liu, Z., … Sun, M. (2020). Graph neural networks: A review of methods and applications. *AI Open* 1, 57–81 | 10.1016/j.aiopen.2021.01.001 | Crossref |
 | 24 | Wu, Z., Pan, S., Chen, F., Long, G., Zhang, C., Yu, P. S. (2021). A comprehensive survey on graph neural networks. *IEEE TNNLS* 32(1), 4–24 | 10.1109/TNNLS.2020.2978386 | Crossref |
 | 25 | Breiman, L. (2001). Random forests. *Machine Learning* 45(1), 5–32 | 10.1023/A:1010933404324 | Crossref |
 | 26 | Chen, T., Guestrin, C. (2016). XGBoost: A scalable tree boosting system. *KDD 2016*, 785–794 | 10.1145/2939672.2939785 | Crossref |
-| 27 | Ke, G., Meng, Q., Finley, T., Wang, T., Chen, W., Ma, W., Ye, Q., Liu, T.-Y. (2017). LightGBM: A highly efficient gradient boosting decision tree. *NeurIPS 2017* | không có DOI hoặc arXiv | **[cần kiểm tra]**: đã xác nhận trang của NeurIPS có bài này; danh sách tác giả và trang theo trí nhớ |
-| 28 | Grinsztajn, L., Oyallon, E., Varoquaux, G. (2022). Why do tree-based models still outperform deep learning on typical tabular data? *NeurIPS 2022 Datasets and Benchmarks* | arXiv:2207.08815 | arXiv; **[cần kiểm tra]** nơi đăng |
+| 27 | Ke, G., Meng, Q., Finley, T., Wang, T., Chen, W., Ma, W., Ye, Q., Liu, T.-Y. (2017). LightGBM: A highly efficient gradient boosting decision tree. *Advances in Neural Information Processing Systems 30 (NeurIPS 2017)*, 3146–3154 | không có DOI hoặc arXiv | Trang proceedings.neurips.cc (tác giả, trang) |
+| 28 | Grinsztajn, L., Oyallon, E., Varoquaux, G. (2022). Why do tree-based models still outperform deep learning on typical tabular data? *NeurIPS 2022 Datasets and Benchmarks* | arXiv:2207.08815 | arXiv; trang của nơi đăng (proceedings, ICLR hoặc USENIX) |
 | 29 | Shwartz-Ziv, R., Armon, A. (2022). Tabular data: Deep learning is not all you need. *Information Fusion* 81, 84–90 | 10.1016/j.inffus.2021.11.011; arXiv:2106.03253 | Crossref |
-| 30 | Ivanov, S., Prokhorenkova, L. (2021). Boost then convolve: Gradient boosting meets graph neural networks. *ICLR 2021* | arXiv:2101.08543 | arXiv; **[cần kiểm tra]** nơi đăng |
+| 30 | Ivanov, S., Prokhorenkova, L. (2021). Boost then convolve: Gradient boosting meets graph neural networks. *ICLR 2021* | arXiv:2101.08543 | arXiv; trang của nơi đăng (proceedings, ICLR hoặc USENIX) |
 | 31 | Wolpert, D. H. (1992). Stacked generalization. *Neural Networks* 5(2), 241–259 | 10.1016/S0893-6080(05)80023-1 | Crossref |
 | 32 | Saaty, T. L. (1977). A scaling method for priorities in hierarchical structures. *Journal of Mathematical Psychology* 15(3), 234–281 | 10.1016/0022-2496(77)90033-5 | Crossref |
-| 33 | Saaty, T. L. (2008). Decision making with the analytic hierarchy process. *International Journal of Services Sciences* 1(1), 83–98 | 10.1504/IJSSCI.2008.017590 | Crossref (khớp nhan đề, năm, trang đầu 83; **[cần kiểm tra]** trang cuối 98) |
-| 34 | Saaty, T. L. (1980). *The Analytic Hierarchy Process*. McGraw-Hill | không có DOI | **[cần kiểm tra]**: sách, chưa tra nhà xuất bản và bảng RI trong bản gốc; các giá trị RI trong mục 2.7 lấy theo thông lệ AHP |
+| 33 | Saaty, T. L. (2008). Decision making with the analytic hierarchy process. *International Journal of Services Sciences* 1(1), 83–98 | 10.1504/IJSSCI.2008.017590 | Crossref; trang Inderscience (trang 83–98) |
+| 34 | Saaty, T. L. (1980). *The Analytic Hierarchy Process: Planning, Priority Setting, Resource Allocation*. New York: McGraw-Hill | không có DOI | Open Library (nhà xuất bản, năm, số trang) |
 | 35 | McNemar, Q. (1947). Note on the sampling error of the difference between correlated proportions or percentages. *Psychometrika* 12(2), 153–157 | 10.1007/BF02295996 | Crossref |
 | 36 | Dietterich, T. G. (1998). Approximate statistical tests for comparing supervised classification learning algorithms. *Neural Computation* 10(7), 1895–1923 | 10.1162/089976698300017197 | Crossref |
 | 37 | Fawcett, T. (2006). An introduction to ROC analysis. *Pattern Recognition Letters* 27(8), 861–874 | 10.1016/j.patrec.2005.10.010 | Crossref |
 | 38 | Davis, J., Goadrich, M. (2006). The relationship between precision-recall and ROC curves. *ICML 2006*, 233–240 | 10.1145/1143844.1143874 | Crossref |
-| 39 | Arp, D., Quiring, E., Pendlebury, F., Warnecke, A., Pierazzi, F., Wressnegger, C., Cavallaro, L., Rieck, K. (2022). Dos and don'ts of machine learning in computer security. *USENIX Security 2022* | arXiv:2010.09470 | arXiv; **[cần kiểm tra]** nơi đăng |
+| 39 | Arp, D., Quiring, E., Pendlebury, F., Warnecke, A., Pierazzi, F., Wressnegger, C., Cavallaro, L., Rieck, K. (2022). Dos and don'ts of machine learning in computer security. *USENIX Security 2022* | arXiv:2010.09470 | arXiv; trang của nơi đăng (proceedings, ICLR hoặc USENIX) |
 | 40 | Engelen, G., Rimmer, V., Joosen, W. (2021). Troubleshooting an intrusion detection dataset: The CICIDS2017 case study. *IEEE Security and Privacy Workshops* | 10.1109/SPW53761.2021.00009 | Crossref |
 | 41 | Lin, T.-Y., Goyal, P., Girshick, R., He, K., Dollár, P. (2017). Focal loss for dense object detection. *ICCV 2017*, 2999–3007 | 10.1109/ICCV.2017.324; arXiv:1708.02002 | Crossref |
 | 42 | He, K., Zhang, X., Ren, S., Sun, J. (2016). Deep residual learning for image recognition. *CVPR 2016*, 770–778 | 10.1109/CVPR.2016.90 | Crossref |
 | 43 | Ba, J. L., Kiros, J. R., Hinton, G. E. (2016). Layer normalization. arXiv preprint | arXiv:1607.06450 | arXiv |
-| 44 | Kingma, D. P., Ba, J. (2015). Adam: A method for stochastic optimization. *ICLR 2015* | arXiv:1412.6980 | arXiv; **[cần kiểm tra]** nơi đăng |
+| 44 | Kingma, D. P., Ba, J. (2015). Adam: A method for stochastic optimization. *ICLR 2015* | arXiv:1412.6980 | arXiv (ghi chú của chính bài trên arXiv nêu nơi đăng) |

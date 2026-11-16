@@ -2,7 +2,7 @@
  "dataset": "nf_ton_iot_v3",
  "split": "test",
  "flows_csv": "/kaggle/input/datasets/athena21/netflow-v3-datasets/NF-ToN-IoT-v3.csv",
- "expect_commit": "196064a",
+ "expect_commit": "0fa57c1",
  "thresholds": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-16c-aggregate/thresholds.json",
  "thresholds_c": {
   "nf_ton_iot_v3": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-16h-c-threshold/thresholds_c_nf_ton_iot_v3.json"
