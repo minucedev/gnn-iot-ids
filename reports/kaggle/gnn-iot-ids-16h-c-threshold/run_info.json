@@ -1,0 +1,36 @@
+{
+ "steps_s": {
+  "clone_va_cai_goi": 94.1,
+  "pytest": 83.6,
+  "threshold_c_nf_ton_iot_v3": 301.1,
+  "threshold_c_nf_bot_iot_v3": 19.3
+ },
+ "device": "CPU",
+ "gpu": null,
+ "commit": "e5ee6545a7a332f910c28eafcf3fba45a16ee0a9",
+ "total_s": 502.5,
+ "peak_ram_gb": 1.36,
+ "gpu_hours": 0,
+ "cpu_count": 4,
+ "pytest": "111 passed, 4295 warnings in 78.84s (0:01:18)",
+ "datasets": {
+  "nf_ton_iot_v3": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-04-build-graphs/processed/nf_ton_iot_v3",
+  "nf_bot_iot_v3": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-11-build-graphs-bot/processed/nf_bot_iot_v3"
+ },
+ "repro_f1_diff_max_abs": {
+  "nf_ton_iot_v3": 0.0,
+  "nf_bot_iot_v3": 0.0
+ },
+ "thresholds": {
+  "nf_ton_iot_v3": {
+   "42": 0.816584299501904,
+   "43": 0.8238428062522469,
+   "44": 0.814330466796894
+  },
+  "nf_bot_iot_v3": {
+   "42": 0.6997150734803114,
+   "43": 0.6997150734803114,
+   "44": 0.6997150734803114
+  }
+ }
+}

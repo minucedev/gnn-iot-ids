@@ -1,0 +1,90 @@
+{
+ "nf_bot_iot_v3": {
+  "lgbm_neighbor_mean": {
+   "42": {
+    "threshold": 0.6997150734803114,
+    "limit": 0.0408,
+    "feasible": true,
+    "meets_recall_target": false,
+    "n_val_normal": 2918,
+    "n_val_attack": 7708,
+    "before": {
+     "accuracy": 0.9317711274233014,
+     "f1_macro": 0.9334708542318522,
+     "fpr": 0.19910897875257025,
+     "recall_attack": 0.9824857291126102
+    },
+    "after": {
+     "accuracy": 0.5291737248258988,
+     "f1_macro": 0.6461215094471678,
+     "fpr": 0.04043865661411926,
+     "recall_attack": 0.3667618059159315
+    },
+    "repro_f1_diff": 0.0,
+    "lgbm_cfg": {
+     "n": 100,
+     "l": 15
+    },
+    "n_params": 4500,
+    "size_kb": 521.0,
+    "train_s": 1.5
+   },
+   "43": {
+    "threshold": 0.6997150734803114,
+    "limit": 0.0408,
+    "feasible": true,
+    "meets_recall_target": false,
+    "n_val_normal": 2918,
+    "n_val_attack": 7708,
+    "before": {
+     "accuracy": 0.9317711274233014,
+     "f1_macro": 0.9334708542318522,
+     "fpr": 0.19910897875257025,
+     "recall_attack": 0.9824857291126102
+    },
+    "after": {
+     "accuracy": 0.5291737248258988,
+     "f1_macro": 0.6461215094471678,
+     "fpr": 0.04043865661411926,
+     "recall_attack": 0.3667618059159315
+    },
+    "repro_f1_diff": 0.0,
+    "lgbm_cfg": {
+     "n": 100,
+     "l": 15
+    },
+    "n_params": 4500,
+    "size_kb": 521.0,
+    "train_s": 1.4
+   },
+   "44": {
+    "threshold": 0.6997150734803114,
+    "limit": 0.0408,
+    "feasible": true,
+    "meets_recall_target": false,
+    "n_val_normal": 2918,
+    "n_val_attack": 7708,
+    "before": {
+     "accuracy": 0.9317711274233014,
+     "f1_macro": 0.9334708542318522,
+     "fpr": 0.19910897875257025,
+     "recall_attack": 0.9824857291126102
+    },
+    "after": {
+     "accuracy": 0.5291737248258988,
+     "f1_macro": 0.6461215094471678,
+     "fpr": 0.04043865661411926,
+     "recall_attack": 0.3667618059159315
+    },
+    "repro_f1_diff": 0.0,
+    "lgbm_cfg": {
+     "n": 100,
+     "l": 15
+    },
+    "n_params": 4500,
+    "size_kb": 521.0,
+    "train_s": 1.5
+   }
+  }
+ }
+}
