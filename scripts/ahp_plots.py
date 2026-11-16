@@ -142,14 +142,17 @@ def plot_constrained(res, path):
         axes[1].text(left[yi] + 0.01, yi, f"{b['totals'][n]:.3f}", va="center", fontsize=9, fontweight="bold" if n == b["top"] else None)
     axes[1].set_xlim(0, max(left) * 1.12)
     limit = f"{cons['max_params']:,}".replace(",", ".")
-    axes[1].set_title(f"(b) Ràng buộc nhẹ (≤ {limit} tham số, ≤ {cons['max_size_kb']} KB), chuẩn hóa lại: gợi ý {b['top_label']}", fontsize=10)
+    axes[1].set_title(f"(b) Ràng buộc nhẹ (≤ {limit} tham số, ≤ {cons['max_size_kb']} KB): gợi ý {b['top_label']}", fontsize=11)
     for ax in axes:
         ax.set_xlabel("Điểm AHP = Σ trọng số × điểm chuẩn hóa")
         ax.grid(axis="x", alpha=0.3)
-    h, lab = axes[0].get_legend_handles_labels()
-    axes[1].legend(h, lab, fontsize=8, loc="lower right")
+    h, lab = axes[1].get_legend_handles_labels()
+    fig.legend(h, lab, fontsize=9, loc="lower center", ncol=len(lab), frameon=False)
     fig.suptitle("AHP trên NF-ToN-IoT-v3 (test, ngưỡng hiệu chỉnh), cùng ma trận đã duyệt; phương án gạch chéo bị loại ở kịch bản (b)")
-    return _save(fig, path)
+    fig.tight_layout(rect=(0, 0.06, 1, 1))
+    fig.savefig(path, dpi=150)
+    plt.close(fig)
+    return Path(path)
 
 
 def main():

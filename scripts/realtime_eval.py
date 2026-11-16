@@ -132,6 +132,7 @@ def episodes(win, k, gap_s=60.0, window_sec=5):
         start = float(first[col_first]) if col_first in first and first[col_first] == first[col_first] else float(first["t_start"])
         det = next((w for w in ep if w[col_det] > 0), None)
         res.append({"class_code": k, "start_ts": start, "end_ts": float(ep[-1]["t_close"]), "n_windows": len(ep),
+                    "first_window": int(first["win"]), "last_window": int(ep[-1]["win"]),
                     "n_true_nodes": int(sum(w[col_true] for w in ep)), "detected": det is not None,
                     "first_alert_window": None if det is None else int(det["win"]),
                     "detection_s": None if det is None else float(det["t_close"] - start + det["total_ms"] / 1000)})
