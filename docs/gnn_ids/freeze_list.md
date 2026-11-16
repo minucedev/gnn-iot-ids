@@ -1,6 +1,6 @@
 # Danh sách mô hình đề xuất đóng băng (đầu vào của GĐ H)
 
-Lập ngày 16/11/2026 cuối GĐ G. **Đây là đề xuất, chờ Phúc duyệt. Chưa tạo tag `freeze-v1`, chưa chạy test.** Mọi số dưới đây là trên **val**, trung bình 3 seed (42, 43, 44). Nguồn: [reports/kaggle/gnn-iot-ids-16c-aggregate/](../../reports/kaggle/gnn-iot-ids-16c-aggregate/) (`thresholds.json`, `pareto_hybrid_<bộ>.csv`, `light_choice_<bộ>.json`, `ablation_*.csv`).
+Lập ngày 16/11/2026 cuối GĐ G. **Phúc đã duyệt danh sách này ngày 16/11/2026 (nhắn "duyệt", không đổi gì; các điểm ở mục 4 giữ đúng như đề xuất: không đổi cấu hình chính, không thêm (c) vào danh sách chạy test, báo cả ngưỡng argmax và ngưỡng hiệu chỉnh).** Chưa tạo tag `freeze-v1`, chưa chạy test. Mọi số dưới đây là trên **val**, trung bình 3 seed (42, 43, 44). Nguồn: [reports/kaggle/gnn-iot-ids-16c-aggregate/](../../reports/kaggle/gnn-iot-ids-16c-aggregate/) (`thresholds.json`, `pareto_hybrid_<bộ>.csv`, `light_choice_<bộ>.json`, `ablation_*.csv`).
 
 ## 1. Hai mô hình chính
 
