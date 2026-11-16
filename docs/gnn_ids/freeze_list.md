@@ -1,6 +1,6 @@
 # Danh sách mô hình đề xuất đóng băng (đầu vào của GĐ H)
 
-Lập ngày 16/11/2026 cuối GĐ G. **Phúc đã duyệt danh sách này ngày 16/11/2026 (nhắn "duyệt", không đổi gì; các điểm ở mục 4 giữ đúng như đề xuất: không đổi cấu hình chính, không thêm (c) vào danh sách chạy test, báo cả ngưỡng argmax và ngưỡng hiệu chỉnh).** Chưa tạo tag `freeze-v1`, chưa chạy test. Mọi số dưới đây là trên **val**, trung bình 3 seed (42, 43, 44). Nguồn: [reports/kaggle/gnn-iot-ids-16c-aggregate/](../../reports/kaggle/gnn-iot-ids-16c-aggregate/) (`thresholds.json`, `pareto_hybrid_<bộ>.csv`, `light_choice_<bộ>.json`, `ablation_*.csv`).
+Lập ngày 16/11/2026 cuối GĐ G. **Phúc đã duyệt danh sách này ngày 16/11/2026 (nhắn "duyệt"; giữ cấu hình chính, báo cả ngưỡng argmax và ngưỡng hiệu chỉnh).** Sau đó, cùng ngày, Phúc **điều chỉnh 2 điểm** (xem [mục 5](#5-điều-chỉnh-sau-khi-duyệt-16112026)): đưa phương án (c) vào danh sách chạy test, và báo cáo cả hybrid chính lẫn hybrid nhẹ trên NF-ToN-IoT-v3. Chưa tạo tag `freeze-v1`, chưa chạy test. Mọi số dưới đây là trên **val**, trung bình 3 seed (42, 43, 44). Nguồn: [reports/kaggle/gnn-iot-ids-16c-aggregate/](../../reports/kaggle/gnn-iot-ids-16c-aggregate/) (`thresholds.json`, `pareto_hybrid_<bộ>.csv`, `light_choice_<bộ>.json`, `ablation_*.csv`).
 
 ## 1. Hai mô hình chính
 
@@ -60,3 +60,13 @@ Dòng baseline (logreg, random_forest, xgboost, lightgbm, mlp): GĐ H phải hu�
 3. **Đặc trưng hàng xóm tính tay ngang hybrid.** LightGBM + trung bình hàng xóm (c) đạt F1-macro 0,9342 ± 0,0003 trên ToN, không thấp hơn hybrid đầy đủ 0,9326 ± 0,0009, FPR 5,00% so với 4,94%, và chỉ cần 36 đặc trưng, không cần GAT (BoT: 0,9335 so với 0,9357, cũng ngang). Nghĩa là phần lớn lợi thế của hybrid so với baseline đến từ thông tin hàng xóm chứ không phải từ embedding GAT học được. Cần quyết cách trình bày trong báo cáo, và có đưa (c) vào danh sách chạy test như một baseline bổ sung hay không (hiện không có trong bảng 2).
 4. **Cấu hình chính của GAT chưa phải tối ưu theo số head.** 8 head cho F1-macro 0,9153 so với 0,9065 của 4 head (hơn 0,0089, lớn hơn 2 lần std), với 39.813 tham số (vẫn ≤ 100K). Bốn yếu tố còn lại (số lớp, độ rộng, đặc trưng cạnh, cửa sổ 5 giây) không có cấu hình nào hơn cấu hình chính quá 2 std. Đổi sang 8 head nghĩa là phải huấn luyện lại hybrid (khoảng 0,7 giờ GPU cho ToN); mình **không đổi** vì hybrid D13 đã dựng trên cấu hình chính.
 5. **Đặc trưng cạnh không cải thiện**: bỏ đặc trưng cạnh cho F1-macro 0,9076 so với 0,9065 (trong sai số), ít hơn 384 tham số. Ảnh hưởng tới câu chữ trong báo cáo (task 5.3 mô tả GAT "có đặc trưng cạnh").
+
+## 5. Điều chỉnh sau khi duyệt (16/11/2026)
+
+Phúc chọn qua chat ngày 16/11/2026, trước khi tạo tag `freeze-v1`:
+
+1. **Đưa phương án (c) vào danh sách chạy test** như một baseline bổ sung, trên cả 2 bộ: `lgbm_neighbor_mean` (LightGBM với 18 đặc trưng node + trung bình 18 đặc trưng của các node kề, tính tay, không học; cấu hình đúng như bản đã chạy trong ablation ở GĐ G, file kết quả `ablation_hybrid_<bộ>.csv`).
+   - **Lý do:** trên val, (c) ngang hoặc nhỉnh hơn hybrid (ToN 0,9342 ± 0,0003 so với 0,9326 ± 0,0009; BoT 0,9335 so với 0,9357). Đây là đối thủ mạnh nhất nhóm đã biết; không có số test của (c) thì minh chứng "hybrid hơn baseline" thiếu trung thực. Cấu hình của (c) đã chốt trên val nên thêm trước tag là hợp lệ.
+   - **Việc phải làm trước khi tag** (đầu GĐ H, CPU): tính ngưỡng hiệu chỉnh của (c) trên **val** theo đúng quy tắc ở mục 2 (FPR val ≤ 4,08%, 3 seed), thêm dòng `lgbm_neighbor_mean` vào bảng 2 của cả 2 bộ, kèm file mô hình hoặc cách huấn luyện lại, ngưỡng và commit. Không được nhìn tập test ở bước này.
+2. **Cả hai bản hybrid đều đứng tên trong báo cáo** trên NF-ToN-IoT-v3: hybrid chính (mô hình mạnh nhất, 144.715 tham số, 9,77 MB, không đạt ngưỡng nhẹ) và hybrid nhẹ (bản triển khai, 30.934 tham số, 986 KB). Báo cáo nói rõ đánh đổi: bản nhẹ giảm 1,45 điểm % F1-macro, tăng 1,73 điểm % FPR, nhanh hơn khoảng 4 lần. **Bản gợi ý triển khai do AHP quyết định ở GĐ I.**
+3. **Cách trình bày minh chứng trong báo cáo** (theo kết quả ablation): thông tin **cấu trúc đồ thị** (hàng xóm) là thứ giúp vượt các baseline ML, DL và GNN đơn; hybrid GAT + LightGBM là một cách khai thác thông tin đó; tổng hợp hàng xóm bằng tay (c) là cách rẻ hơn và cho kết quả tương đương. Không viết rằng embedding GAT tốt hơn tổng hợp tay nếu số test không cho thấy điều đó.
