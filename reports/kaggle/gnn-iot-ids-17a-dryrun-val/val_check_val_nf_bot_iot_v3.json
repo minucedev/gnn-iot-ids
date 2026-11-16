@@ -1,0 +1,182 @@
+{
+ "logreg/s42": {
+  "ref": 0.8923291497255835,
+  "rebuilt": 0.8923291497255835,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.03461274845784784
+ },
+ "logreg/s43": {
+  "ref": 0.8923291497255835,
+  "rebuilt": 0.8923291497255835,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.03461274845784784
+ },
+ "logreg/s44": {
+  "ref": 0.8923291497255835,
+  "rebuilt": 0.8923291497255835,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.03461274845784784
+ },
+ "random_forest/s42": {
+  "ref": 0.938684674498147,
+  "rebuilt": 0.938684674498147,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.02878684030157642
+ },
+ "random_forest/s43": {
+  "ref": 0.9376067634996766,
+  "rebuilt": 0.9376067634996766,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.0363262508567512
+ },
+ "random_forest/s44": {
+  "ref": 0.9377068910403121,
+  "rebuilt": 0.9377068910403121,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.03050034270047978
+ },
+ "xgboost/s42": {
+  "ref": 0.9376885008108925,
+  "rebuilt": 0.9376885008108925,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.03941055517477725
+ },
+ "xgboost/s43": {
+  "ref": 0.9376885008108925,
+  "rebuilt": 0.9376885008108925,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.03941055517477725
+ },
+ "xgboost/s44": {
+  "ref": 0.9376885008108925,
+  "rebuilt": 0.9376885008108925,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.03941055517477725
+ },
+ "lightgbm/s42": {
+  "ref": 0.9388017950829536,
+  "rebuilt": 0.9388017950829536,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.037011651816312545
+ },
+ "lightgbm/s43": {
+  "ref": 0.9388017950829536,
+  "rebuilt": 0.9388017950829536,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.037011651816312545
+ },
+ "lightgbm/s44": {
+  "ref": 0.9388017950829536,
+  "rebuilt": 0.9388017950829536,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.037011651816312545
+ },
+ "mlp/s42": {
+  "ref": 0.92698855678153,
+  "rebuilt": 0.92698855678153,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.020904729266620972
+ },
+ "mlp/s43": {
+  "ref": 0.9277837504136978,
+  "rebuilt": 0.9277837504136978,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.039753255654557916
+ },
+ "mlp/s44": {
+  "ref": 0.9334016230524526,
+  "rebuilt": 0.9334016230524526,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.025359835503769704
+ },
+ "lgbm_neighbor_mean/s42": {
+  "ref": 0.9334708542318522,
+  "rebuilt": 0.9334708542318522,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.04043865661411926
+ },
+ "lgbm_neighbor_mean/s43": {
+  "ref": 0.9334708542318522,
+  "rebuilt": 0.9334708542318522,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.04043865661411926
+ },
+ "lgbm_neighbor_mean/s44": {
+  "ref": 0.9334708542318522,
+  "rebuilt": 0.9334708542318522,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.04043865661411926
+ },
+ "gcn/s42": {
+  "ref": 0.9185046970317573,
+  "rebuilt": 0.9185046970317573,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.040781357093899934
+ },
+ "gcn/s43": {
+  "ref": 0.9104858358547131,
+  "rebuilt": 0.9104858358547131,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.04043865661411926
+ },
+ "gcn/s44": {
+  "ref": 0.9152102057159581,
+  "rebuilt": 0.9152102057159581,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.040781357093899934
+ },
+ "sage/s42": {
+  "ref": 0.9336237254921027,
+  "rebuilt": 0.9336237254921027,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.04043865661411926
+ },
+ "sage/s43": {
+  "ref": 0.9337710623241592,
+  "rebuilt": 0.9337710623241592,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.040781357093899934
+ },
+ "sage/s44": {
+  "ref": 0.9343452328558078,
+  "rebuilt": 0.9343452328558078,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.040781357093899934
+ },
+ "gat/s42": {
+  "ref": 0.9327699292580308,
+  "rebuilt": 0.9327699292580308,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.04009595613433859
+ },
+ "gat/s43": {
+  "ref": 0.9310844857296218,
+  "rebuilt": 0.9310844857296218,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.040781357093899934
+ },
+ "gat/s44": {
+  "ref": 0.9322404897265537,
+  "rebuilt": 0.9322404897265537,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.040781357093899934
+ },
+ "hybrid_gat_lgbm_oofavg_il/s42": {
+  "ref": 0.9360419917970786,
+  "rebuilt": 0.9360419917970786,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.039753255654557916
+ },
+ "hybrid_gat_lgbm_oofavg_il/s43": {
+  "ref": 0.9336537393279412,
+  "rebuilt": 0.9336537393279412,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.040781357093899934
+ },
+ "hybrid_gat_lgbm_oofavg_il/s44": {
+  "ref": 0.9374158043356123,
+  "rebuilt": 0.9374158043356123,
+  "diff": 0.0,
+  "val_fpr_at_threshold": 0.040781357093899934
+ }
+}

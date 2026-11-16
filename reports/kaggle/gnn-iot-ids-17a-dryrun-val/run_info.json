@@ -1,0 +1,73 @@
+{
+ "steps_s": {
+  "clone_va_cai_goi": 71.1,
+  "pytest": 94.5,
+  "final_test_val": 2276.6
+ },
+ "device": "CPU",
+ "gpu": null,
+ "split": "val",
+ "ref": "main",
+ "commit": "9cae412e048155ef2aa8ef8ab47c33b45bf6769b",
+ "total_s": 2450.3,
+ "peak_ram_gb": 2.5,
+ "gpu_hours": 0,
+ "cpu_count": 4,
+ "pytest": "117 passed, 5657 warnings in 89.73s (0:01:29)",
+ "config": {
+  "split": "val",
+  "out": "/kaggle/working",
+  "cross": true,
+  "expect_commit": "9cae412",
+  "thresholds": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-16c-aggregate/thresholds.json",
+  "thresholds_c": {
+   "nf_ton_iot_v3": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-16h-c-threshold/thresholds_c_nf_ton_iot_v3.json",
+   "nf_bot_iot_v3": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-16h-c-threshold/thresholds_c_nf_bot_iot_v3.json"
+  },
+  "datasets": {
+   "nf_ton_iot_v3": {
+    "data": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-04-build-graphs/processed/nf_ton_iot_v3",
+    "ckpt": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-07-train-gnn/ckpt",
+    "folds": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-15f-hybrid-il-ton/models_hybrid",
+    "light": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-16d-ablation-ton/models_light",
+    "baseline_search": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-05-baselines/baseline_search_nf_ton_iot_v3.json",
+    "ablation_search": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-16d-ablation-ton/ablation_search_nf_ton_iot_v3.json",
+    "gnn_csv": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-07-train-gnn/results_gnn_nf_ton_iot_v3.csv",
+    "hybrid_csv": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-15f-hybrid-il-ton/results_hybrid_oofavg_il_nf_ton_iot_v3.csv",
+    "cross_to": "nf_bot_iot_v3"
+   },
+   "nf_bot_iot_v3": {
+    "data": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-11-build-graphs-bot/processed/nf_bot_iot_v3",
+    "ckpt": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-14-train-gnn-bot/ckpt",
+    "folds": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-15e-hybrid-il/models_hybrid",
+    "light": null,
+    "baseline_search": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-13-baselines/baseline_search_nf_bot_iot_v3.json",
+    "ablation_search": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-16a-ablation-bot/ablation_search_nf_bot_iot_v3.json",
+    "gnn_csv": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-14-train-gnn-bot/results_gnn_nf_bot_iot_v3.csv",
+    "hybrid_csv": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-15e-hybrid-il/results_hybrid_oofavg_il_nf_bot_iot_v3.csv",
+    "cross_to": "nf_ton_iot_v3"
+   }
+  }
+ },
+ "check": {
+  "rows_in_dataset": {
+   "nf_ton_iot_v3": 66,
+   "nf_bot_iot_v3": 60
+  },
+  "rows_cross": {
+   "nf_ton_iot_v3→nf_bot_iot_v3": 24,
+   "nf_bot_iot_v3→nf_ton_iot_v3": 24
+  },
+  "n_ledger": 63,
+  "n_ledger_unique": 63,
+  "commits_in_results": [
+   "9cae412"
+  ],
+  "splits_in_results": [
+   "val"
+  ],
+  "val_f1_diff_max_abs": 0.0,
+  "ts_first": "2026-11-16T02:32:21+00:00",
+  "ts_last": "2026-11-16T03:09:02+00:00"
+ }
+}
