@@ -337,7 +337,8 @@ def fig_bars(summary_test, ds, path, plt, label_split):
     a2.set_xlabel(f"FPR trên {label_split} (3 seed ± std)")
     a1.set_yticks(y, [LABEL[m] for m in models])
     a1.invert_yaxis()
-    a1.legend(fontsize=8, loc="lower left", title="cột nhạt = argmax, cột đậm = ngưỡng hiệu chỉnh", title_fontsize=7)
+    handles, labels = a1.get_legend_handles_labels()
+    a2.legend(handles, labels, fontsize=8, loc="center right", title="cột nhạt = argmax, cột đậm = ngưỡng hiệu chỉnh", title_fontsize=7)
     fig.suptitle(f"So sánh mọi mô hình trên {label_split}, {ds}", fontsize=11)
     _save(fig, path)
 
