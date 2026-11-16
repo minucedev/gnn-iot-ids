@@ -1,5 +1,7 @@
 # Danh sách mô hình đề xuất đóng băng (đầu vào của GĐ H)
 
+> **ĐÃ ĐÓNG BĂNG (16/11/2026): tag `freeze-v1` = commit `abcb5f84a9dcf0adeb61800aa03c71fb591c2f9a` (`abcb5f8`).** Phúc đồng ý đóng băng đúng danh sách ở bảng 2 (gồm (c) `lgbm_neighbor_mean`). Commit này chứa cả mã chạy test (`scripts/final_test.py`, `scripts/aggregate_h.py`) đã chạy thử trên val (17a, 18a). Từ đây không sửa mô hình, cấu hình hay ngưỡng theo kết quả test; mọi thay đổi sau test phải ghi "sửa sau test".
+
 Lập ngày 16/11/2026 cuối GĐ G. **Phúc đã duyệt danh sách này ngày 16/11/2026 (nhắn "duyệt"; giữ cấu hình chính, báo cả ngưỡng argmax và ngưỡng hiệu chỉnh).** Sau đó, cùng ngày, Phúc **điều chỉnh 2 điểm** (xem [mục 5](#5-điều-chỉnh-sau-khi-duyệt-16112026)): đưa phương án (c) vào danh sách chạy test, và báo cáo cả hybrid chính lẫn hybrid nhẹ trên NF-ToN-IoT-v3. Cùng ngày đã thêm (c) `lgbm_neighbor_mean` vào bảng 2 (ngưỡng tính trên val ở notebook 16h, commit `e5ee654`). Chưa tạo tag `freeze-v1`, chưa chạy test. Mọi số dưới đây là trên **val**, trung bình 3 seed (42, 43, 44). Nguồn: [reports/kaggle/gnn-iot-ids-16c-aggregate/](../../reports/kaggle/gnn-iot-ids-16c-aggregate/) (`thresholds.json`, `pareto_hybrid_<bộ>.csv`, `light_choice_<bộ>.json`, `ablation_*.csv`).
 
 ## 1. Hai mô hình chính
