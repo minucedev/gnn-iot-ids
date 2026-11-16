@@ -53,7 +53,7 @@ from src import threshold as TH  # noqa: E402
 from src import train as T  # noqa: E402
 
 N_WARMUP = 50                       # số cửa sổ đầu không tính vào thống kê độ trễ
-TRIM_EVERY = 0                       # sẽ chốt sau khi chẩn đoán RAM (task 8.1)
+TRIM_EVERY = 200                     # malloc_trim sau mỗi 200 cửa sổ, ngoài khoảng đo độ trễ (chẩn đoán RAM, task 8.1: notebook 20b-20d)
 PERF = time.perf_counter
 
 

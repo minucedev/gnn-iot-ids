@@ -1,0 +1,4 @@
+/usr/local/lib/python3.13/dist-packages/pandas/core/arrays/masked.py:63: UserWarning: Pandas requires version '1.5.0' or newer of 'bottleneck' (version '1.4.2' currently installed).
+  from pandas.core import (
+[diag A_keep_rows] pha stream, mô hình hybrid_gat_lgbm_oofavg_il, RAM trước khi chạy 1609 MB
+[diag A_keep_rows] xong 525 s | RSS sớm 1624 → muộn 1728 MB (+6.4%), độ dốc +36.1 MB/1000 cửa sổ | in_use độ dốc +11.4 MB/1000
