@@ -1,0 +1,11 @@
+{
+ "eval_split": "test",
+ "eval_dir": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-17-final-test",
+ "val_dir": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-17a-dryrun-val",
+ "repo": "/tmp/gnn-iot-ids",
+ "out": "/kaggle/working",
+ "data": {
+  "nf_ton_iot_v3": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-04-build-graphs/processed/nf_ton_iot_v3",
+  "nf_bot_iot_v3": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-11-build-graphs-bot/processed/nf_bot_iot_v3"
+ }
+}

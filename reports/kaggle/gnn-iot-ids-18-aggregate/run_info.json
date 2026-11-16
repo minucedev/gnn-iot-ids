@@ -1,0 +1,78 @@
+{
+ "steps_s": {
+  "clone_va_cai_goi": 125.6,
+  "pytest": 108.8,
+  "aggregate_h": 27.3
+ },
+ "device": "CPU",
+ "gpu": null,
+ "split": "aggregate",
+ "ref": "main",
+ "commit": "da0f05fb83919224cc00166a7f505c5736cdc70b",
+ "total_s": 268.5,
+ "peak_ram_gb": 0.69,
+ "gpu_hours": 0,
+ "cpu_count": 4,
+ "pytest": "123 passed, 5657 warnings in 103.44s (0:01:43)",
+ "config": {
+  "eval_split": "test",
+  "eval_dir": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-17-final-test",
+  "val_dir": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-17a-dryrun-val",
+  "repo": "/tmp/gnn-iot-ids",
+  "out": "/kaggle/working",
+  "data": {
+   "nf_ton_iot_v3": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-04-build-graphs/processed/nf_ton_iot_v3",
+   "nf_bot_iot_v3": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-11-build-graphs-bot/processed/nf_bot_iot_v3"
+  }
+ },
+ "check": {
+  "results_rows": 348,
+  "results_columns": 20,
+  "splits": [
+   "test",
+   "val"
+  ],
+  "commits": {
+   "test": [
+    "abcb5f8"
+   ],
+   "val": [
+    "9cae412"
+   ]
+  },
+  "figures": [
+   "gd6_attention_nf_bot_iot_v3.png",
+   "gd6_attention_nf_ton_iot_v3.png",
+   "gd6_bar_f1_fpr_nf_bot_iot_v3.png",
+   "gd6_bar_f1_fpr_nf_ton_iot_v3.png",
+   "gd6_confusion_hybrid_nf_bot_iot_v3.png",
+   "gd6_confusion_hybrid_nf_ton_iot_v3.png",
+   "gd6_cross_dataset.png",
+   "gd6_f1_per_class_nf_bot_iot_v3.png",
+   "gd6_f1_per_class_nf_ton_iot_v3.png",
+   "gd6_f1_vs_latency_nf_bot_iot_v3.png",
+   "gd6_f1_vs_latency_nf_ton_iot_v3.png",
+   "gd6_f1_vs_params_nf_bot_iot_v3.png",
+   "gd6_f1_vs_params_nf_ton_iot_v3.png",
+   "gd6_f1_vs_size_nf_bot_iot_v3.png",
+   "gd6_f1_vs_size_nf_ton_iot_v3.png",
+   "gd6_roc_pr_nf_bot_iot_v3.png",
+   "gd6_roc_pr_nf_ton_iot_v3.png",
+   "gd6_tiers_nf_bot_iot_v3.png",
+   "gd6_tiers_nf_ton_iot_v3.png",
+   "gd6_train_time_nf_bot_iot_v3.png",
+   "gd6_train_time_nf_ton_iot_v3.png",
+   "gd6_training_curves_nf_bot_iot_v3.png",
+   "gd6_training_curves_nf_ton_iot_v3.png"
+  ],
+  "tables": [
+   "conclusions.csv",
+   "mcnemar.csv",
+   "results.csv",
+   "summary_test.csv",
+   "summary_test_tiers.csv",
+   "summary_val.csv",
+   "targets.csv"
+  ]
+ }
+}

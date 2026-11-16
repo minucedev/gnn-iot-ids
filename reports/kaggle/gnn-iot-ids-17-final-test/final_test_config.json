@@ -1,0 +1,35 @@
+{
+ "split": "test",
+ "out": "/kaggle/working",
+ "cross": true,
+ "expect_commit": "abcb5f8",
+ "thresholds": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-16c-aggregate/thresholds.json",
+ "thresholds_c": {
+  "nf_ton_iot_v3": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-16h-c-threshold/thresholds_c_nf_ton_iot_v3.json",
+  "nf_bot_iot_v3": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-16h-c-threshold/thresholds_c_nf_bot_iot_v3.json"
+ },
+ "datasets": {
+  "nf_ton_iot_v3": {
+   "data": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-04-build-graphs/processed/nf_ton_iot_v3",
+   "ckpt": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-07-train-gnn/ckpt",
+   "folds": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-15f-hybrid-il-ton/models_hybrid",
+   "light": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-16d-ablation-ton/models_light",
+   "baseline_search": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-05-baselines/baseline_search_nf_ton_iot_v3.json",
+   "ablation_search": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-16d-ablation-ton/ablation_search_nf_ton_iot_v3.json",
+   "gnn_csv": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-07-train-gnn/results_gnn_nf_ton_iot_v3.csv",
+   "hybrid_csv": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-15f-hybrid-il-ton/results_hybrid_oofavg_il_nf_ton_iot_v3.csv",
+   "cross_to": "nf_bot_iot_v3"
+  },
+  "nf_bot_iot_v3": {
+   "data": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-11-build-graphs-bot/processed/nf_bot_iot_v3",
+   "ckpt": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-14-train-gnn-bot/ckpt",
+   "folds": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-15e-hybrid-il/models_hybrid",
+   "light": null,
+   "baseline_search": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-13-baselines/baseline_search_nf_bot_iot_v3.json",
+   "ablation_search": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-16a-ablation-bot/ablation_search_nf_bot_iot_v3.json",
+   "gnn_csv": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-14-train-gnn-bot/results_gnn_nf_bot_iot_v3.csv",
+   "hybrid_csv": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-15e-hybrid-il/results_hybrid_oofavg_il_nf_bot_iot_v3.csv",
+   "cross_to": "nf_ton_iot_v3"
+  }
+ }
+}

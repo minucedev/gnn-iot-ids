@@ -1,0 +1,57 @@
+target,dataset,model,mode,value,threshold,unit,passed,result,official,note,split
+Accuracy đa lớp ≥ 91%,nf_ton_iot_v3,hybrid_gat_lgbm_oofavg_il,argmax,0.9629766499685198,0.91,tỉ lệ,True,đạt,True,,test
+"FPR nhị phân ≤ 4,08%",nf_ton_iot_v3,hybrid_gat_lgbm_oofavg_il,argmax,0.04199807742995798,0.0408,tỉ lệ,False,không đạt,True,,test
+Recall tấn công ≥ 95%,nf_ton_iot_v3,hybrid_gat_lgbm_oofavg_il,argmax,0.9765099420435699,0.95,tỉ lệ,True,đạt,True,,test
+"F1-macro (lớp chính) ≥ 0,80",nf_ton_iot_v3,hybrid_gat_lgbm_oofavg_il,argmax,0.9472369343537957,0.8,điểm F1,True,đạt,True,,test
+"Độ ổn định: std accuracy ≤ 1,5 điểm %",nf_ton_iot_v3,hybrid_gat_lgbm_oofavg_il,argmax,0.0006493528572133116,0.015,tỉ lệ (std 3 seed),True,đạt,True,,test
+Tổng tham số ≤ 100.000,nf_ton_iot_v3,hybrid_gat_lgbm_oofavg_il,argmax,144517.66666666666,100000.0,tham số,False,không đạt,True,hybrid = tham số các GAT + số lá LightGBM (như GĐ F),test
+Kích thước file ≤ 1 MB,nf_ton_iot_v3,hybrid_gat_lgbm_oofavg_il,argmax,9746.866666666667,1024.0,KB,False,không đạt,True,,test
+Độ trễ p95 ≤ 1 s mỗi cửa sổ,nf_ton_iot_v3,hybrid_gat_lgbm_oofavg_il,argmax,24.374666666666666,1000.0,ms,True,đạt,True,"đo sơ bộ: p95 của 200 lần trên 1 cửa sổ trung vị, CPU Kaggle 1 luồng; chưa phải ≥ 1.000 cửa sổ (đo đủ ở GĐ I, task 8.x)",test
+Accuracy đa lớp ≥ 91%,nf_ton_iot_v3,hybrid_gat_lgbm_oofavg_il,thr,0.976940133037694,0.91,tỉ lệ,True,đạt,True,,test
+"FPR nhị phân ≤ 4,08%",nf_ton_iot_v3,hybrid_gat_lgbm_oofavg_il,thr,0.01879932399956587,0.0408,tỉ lệ,True,đạt,True,,test
+Recall tấn công ≥ 95%,nf_ton_iot_v3,hybrid_gat_lgbm_oofavg_il,thr,0.9670990104545201,0.95,tỉ lệ,True,đạt,True,,test
+"F1-macro (lớp chính) ≥ 0,80",nf_ton_iot_v3,hybrid_gat_lgbm_oofavg_il,thr,0.9677494255978475,0.8,điểm F1,True,đạt,True,,test
+"Độ ổn định: std accuracy ≤ 1,5 điểm %",nf_ton_iot_v3,hybrid_gat_lgbm_oofavg_il,thr,0.0003649582991424653,0.015,tỉ lệ (std 3 seed),True,đạt,True,,test
+Tổng tham số ≤ 100.000,nf_ton_iot_v3,hybrid_gat_lgbm_oofavg_il,thr,144517.66666666666,100000.0,tham số,False,không đạt,True,hybrid = tham số các GAT + số lá LightGBM (như GĐ F),test
+Kích thước file ≤ 1 MB,nf_ton_iot_v3,hybrid_gat_lgbm_oofavg_il,thr,9746.866666666667,1024.0,KB,False,không đạt,True,,test
+Độ trễ p95 ≤ 1 s mỗi cửa sổ,nf_ton_iot_v3,hybrid_gat_lgbm_oofavg_il,thr,24.374666666666666,1000.0,ms,True,đạt,True,"đo sơ bộ: p95 của 200 lần trên 1 cửa sổ trung vị, CPU Kaggle 1 luồng; chưa phải ≥ 1.000 cửa sổ (đo đủ ở GĐ I, task 8.x)",test
+Accuracy đa lớp ≥ 91%,nf_ton_iot_v3,hybrid_light,argmax,0.9523856450685719,0.91,tỉ lệ,True,đạt,True,,test
+"FPR nhị phân ≤ 4,08%",nf_ton_iot_v3,hybrid_light,argmax,0.05688249065848024,0.0408,tỉ lệ,False,không đạt,True,,test
+Recall tấn công ≥ 95%,nf_ton_iot_v3,hybrid_light,argmax,0.978280315312797,0.95,tỉ lệ,True,đạt,True,,test
+"F1-macro (lớp chính) ≥ 0,80",nf_ton_iot_v3,hybrid_light,argmax,0.934105930558523,0.8,điểm F1,True,đạt,True,,test
+"Độ ổn định: std accuracy ≤ 1,5 điểm %",nf_ton_iot_v3,hybrid_light,argmax,0.00508690814710117,0.015,tỉ lệ (std 3 seed),True,đạt,True,,test
+Tổng tham số ≤ 100.000,nf_ton_iot_v3,hybrid_light,argmax,30934.0,100000.0,tham số,True,đạt,True,hybrid = tham số các GAT + số lá LightGBM (như GĐ F),test
+Kích thước file ≤ 1 MB,nf_ton_iot_v3,hybrid_light,argmax,985.6999999999999,1024.0,KB,True,đạt,True,,test
+Độ trễ p95 ≤ 1 s mỗi cửa sổ,nf_ton_iot_v3,hybrid_light,argmax,7.322,1000.0,ms,True,đạt,True,"đo sơ bộ: p95 của 200 lần trên 1 cửa sổ trung vị, CPU Kaggle 1 luồng; chưa phải ≥ 1.000 cửa sổ (đo đủ ở GĐ I, task 8.x)",test
+Accuracy đa lớp ≥ 91%,nf_ton_iot_v3,hybrid_light,thr,0.9710820946593305,0.91,tỉ lệ,True,đạt,True,,test
+"FPR nhị phân ≤ 4,08%",nf_ton_iot_v3,hybrid_light,thr,0.022721987069166005,0.0408,tỉ lệ,True,đạt,True,,test
+Recall tấn công ≥ 95%,nf_ton_iot_v3,hybrid_light,thr,0.9564674530851084,0.95,tỉ lệ,True,đạt,True,,test
+"F1-macro (lớp chính) ≥ 0,80",nf_ton_iot_v3,hybrid_light,thr,0.9587985559651738,0.8,điểm F1,True,đạt,True,,test
+"Độ ổn định: std accuracy ≤ 1,5 điểm %",nf_ton_iot_v3,hybrid_light,thr,0.0006698023937041008,0.015,tỉ lệ (std 3 seed),True,đạt,True,,test
+Tổng tham số ≤ 100.000,nf_ton_iot_v3,hybrid_light,thr,30934.0,100000.0,tham số,True,đạt,True,hybrid = tham số các GAT + số lá LightGBM (như GĐ F),test
+Kích thước file ≤ 1 MB,nf_ton_iot_v3,hybrid_light,thr,985.6999999999999,1024.0,KB,True,đạt,True,,test
+Độ trễ p95 ≤ 1 s mỗi cửa sổ,nf_ton_iot_v3,hybrid_light,thr,7.322,1000.0,ms,True,đạt,True,"đo sơ bộ: p95 của 200 lần trên 1 cửa sổ trung vị, CPU Kaggle 1 luồng; chưa phải ≥ 1.000 cửa sổ (đo đủ ở GĐ I, task 8.x)",test
+"Hybrid > baseline tốt nhất (ML, MLP, GNN đơn, và (c)): chênh F1-macro > 2·std và McNemar p < 0,05",nf_ton_iot_v3,hybrid_gat_lgbm_oofavg_il,argmax,2.0,4.0,số nhóm vượt / số nhóm,False,không đạt,True,"ML tốt nhất: random_forest +0.0254 (2·std 0.0014), McNemar 3/3 seed, hybrid VƯỢT; MLP: mlp +0.0050 (2·std 0.0079), McNemar 3/3 seed, hỗn hợp (không đủ điều kiện vượt); (c) lgbm_neighbor_mean: lgbm_neighbor_mean -0.0005 (2·std 0.0014), McNemar 3/3 seed, hỗn hợp (không đủ điều kiện vượt); GNN đơn tốt nhất: sage +0.0145 (2·std 0.0014), McNemar 3/3 seed, hybrid VƯỢT",test
+"Hybrid > baseline tốt nhất (ML, MLP, GNN đơn, và (c)): chênh F1-macro > 2·std và McNemar p < 0,05",nf_ton_iot_v3,hybrid_gat_lgbm_oofavg_il,thr,3.0,4.0,số nhóm vượt / số nhóm,False,không đạt,True,"ML tốt nhất: random_forest +0.0136 (2·std 0.0010), McNemar 3/3 seed, hybrid VƯỢT; MLP: mlp +0.0102 (2·std 0.0031), McNemar 3/3 seed, hybrid VƯỢT; (c) lgbm_neighbor_mean: lgbm_neighbor_mean +0.0025 (2·std 0.0010), McNemar 3/3 seed, hybrid VƯỢT; GNN đơn tốt nhất: sage +0.0078 (2·std 0.0083), McNemar 3/3 seed, hỗn hợp (không đủ điều kiện vượt)",test
+"Hybrid > baseline tốt nhất (ML, MLP, GNN đơn, và (c)): chênh F1-macro > 2·std và McNemar p < 0,05",nf_ton_iot_v3,hybrid_light,argmax,1.0,4.0,số nhóm vượt / số nhóm,False,không đạt,True,"ML tốt nhất: random_forest +0.0123 (2·std 0.0086), McNemar 3/3 seed, hybrid VƯỢT; MLP: mlp -0.0081 (2·std 0.0086), McNemar 0/3 seed, hỗn hợp (không đủ điều kiện vượt); (c) lgbm_neighbor_mean: lgbm_neighbor_mean -0.0136 (2·std 0.0086), McNemar 0/3 seed, baseline VƯỢT; GNN đơn tốt nhất: sage +0.0014 (2·std 0.0086), McNemar 3/3 seed, hỗn hợp (không đủ điều kiện vượt)",test
+"Hybrid > baseline tốt nhất (ML, MLP, GNN đơn, và (c)): chênh F1-macro > 2·std và McNemar p < 0,05",nf_ton_iot_v3,hybrid_light,thr,1.0,4.0,số nhóm vượt / số nhóm,False,không đạt,True,"ML tốt nhất: random_forest +0.0046 (2·std 0.0022), McNemar 3/3 seed, hybrid VƯỢT; MLP: mlp +0.0013 (2·std 0.0031), McNemar 3/3 seed, hỗn hợp (không đủ điều kiện vượt); (c) lgbm_neighbor_mean: lgbm_neighbor_mean -0.0065 (2·std 0.0022), McNemar 0/3 seed, baseline VƯỢT; GNN đơn tốt nhất: sage -0.0012 (2·std 0.0083), McNemar 1/3 seed, hỗn hợp (không đủ điều kiện vượt)",test
+Accuracy đa lớp ≥ 91%,nf_bot_iot_v3,hybrid_gat_lgbm_oofavg_il,argmax,0.9119862478512267,0.91,tỉ lệ,True,đạt,False,,test
+"FPR nhị phân ≤ 4,08%",nf_bot_iot_v3,hybrid_gat_lgbm_oofavg_il,argmax,0.17971743295019157,0.0408,tỉ lệ,False,không đạt,False,,test
+Recall tấn công ≥ 95%,nf_bot_iot_v3,hybrid_gat_lgbm_oofavg_il,argmax,0.9478915535253564,0.95,tỉ lệ,False,không đạt,False,,test
+"F1-macro (lớp chính) ≥ 0,80",nf_bot_iot_v3,hybrid_gat_lgbm_oofavg_il,argmax,0.9163548393239722,0.8,điểm F1,True,đạt,False,,test
+"Độ ổn định: std accuracy ≤ 1,5 điểm %",nf_bot_iot_v3,hybrid_gat_lgbm_oofavg_il,argmax,0.0014043845562532482,0.015,tỉ lệ (std 3 seed),True,đạt,False,,test
+Tổng tham số ≤ 100.000,nf_bot_iot_v3,hybrid_gat_lgbm_oofavg_il,argmax,62435.0,100000.0,tham số,True,đạt,False,hybrid = tham số các GAT + số lá LightGBM (như GĐ F),test
+Kích thước file ≤ 1 MB,nf_bot_iot_v3,hybrid_gat_lgbm_oofavg_il,argmax,776.3666666666667,1024.0,KB,True,đạt,False,,test
+Độ trễ p95 ≤ 1 s mỗi cửa sổ,nf_bot_iot_v3,hybrid_gat_lgbm_oofavg_il,argmax,13.359,1000.0,ms,True,đạt,False,"đo sơ bộ: p95 của 200 lần trên 1 cửa sổ trung vị, CPU Kaggle 1 luồng; chưa phải ≥ 1.000 cửa sổ (đo đủ ở GĐ I, task 8.x)",test
+Accuracy đa lớp ≥ 91%,nf_bot_iot_v3,hybrid_gat_lgbm_oofavg_il,thr,0.6065010157837162,0.91,tỉ lệ,False,không đạt,False,,test
+"FPR nhị phân ≤ 4,08%",nf_bot_iot_v3,hybrid_gat_lgbm_oofavg_il,thr,0.01185344827586207,0.0408,tỉ lệ,True,đạt,False,,test
+Recall tấn công ≥ 95%,nf_bot_iot_v3,hybrid_gat_lgbm_oofavg_il,thr,0.4747282493761367,0.95,tỉ lệ,False,không đạt,False,,test
+"F1-macro (lớp chính) ≥ 0,80",nf_bot_iot_v3,hybrid_gat_lgbm_oofavg_il,thr,0.708361897755663,0.8,điểm F1,False,không đạt,False,,test
+"Độ ổn định: std accuracy ≤ 1,5 điểm %",nf_bot_iot_v3,hybrid_gat_lgbm_oofavg_il,thr,0.01694271283336092,0.015,tỉ lệ (std 3 seed),False,không đạt,False,,test
+Tổng tham số ≤ 100.000,nf_bot_iot_v3,hybrid_gat_lgbm_oofavg_il,thr,62435.0,100000.0,tham số,True,đạt,False,hybrid = tham số các GAT + số lá LightGBM (như GĐ F),test
+Kích thước file ≤ 1 MB,nf_bot_iot_v3,hybrid_gat_lgbm_oofavg_il,thr,776.3666666666667,1024.0,KB,True,đạt,False,,test
+Độ trễ p95 ≤ 1 s mỗi cửa sổ,nf_bot_iot_v3,hybrid_gat_lgbm_oofavg_il,thr,13.359,1000.0,ms,True,đạt,False,"đo sơ bộ: p95 của 200 lần trên 1 cửa sổ trung vị, CPU Kaggle 1 luồng; chưa phải ≥ 1.000 cửa sổ (đo đủ ở GĐ I, task 8.x)",test
+"Hybrid > baseline tốt nhất (ML, MLP, GNN đơn, và (c)): chênh F1-macro > 2·std và McNemar p < 0,05",nf_bot_iot_v3,hybrid_gat_lgbm_oofavg_il,argmax,2.0,4.0,số nhóm vượt / số nhóm,False,không đạt,False,"ML tốt nhất: lightgbm -0.0127 (2·std 0.0023), McNemar 0/3 seed, baseline VƯỢT; MLP: mlp +0.0041 (2·std 0.0218), McNemar 2/3 seed, hỗn hợp (không đủ điều kiện vượt); (c) lgbm_neighbor_mean: lgbm_neighbor_mean +0.0264 (2·std 0.0023), McNemar 3/3 seed, hybrid VƯỢT; GNN đơn tốt nhất: sage +0.0293 (2·std 0.0053), McNemar 3/3 seed, hybrid VƯỢT",test
+"Hybrid > baseline tốt nhất (ML, MLP, GNN đơn, và (c)): chênh F1-macro > 2·std và McNemar p < 0,05",nf_bot_iot_v3,hybrid_gat_lgbm_oofavg_il,thr,3.0,4.0,số nhóm vượt / số nhóm,False,không đạt,False,"ML tốt nhất: lightgbm +0.0135 (2·std 0.0245), McNemar 2/3 seed, hỗn hợp (không đủ điều kiện vượt); MLP: mlp +0.0743 (2·std 0.0659), McNemar 3/3 seed, hybrid VƯỢT; (c) lgbm_neighbor_mean: lgbm_neighbor_mean +0.0534 (2·std 0.0245), McNemar 3/3 seed, hybrid VƯỢT; GNN đơn tốt nhất: sage +0.0634 (2·std 0.0245), McNemar 3/3 seed, hybrid VƯỢT",test
+Số bộ dữ liệu ≥ 2,cả hai bộ,—,—,2.0,2.0,bộ,True,đạt,False,NF-ToN-IoT-v3 và NF-BoT-IoT-v3 đều có kết quả test,test
+"Tái lập: chạy lại lệch ≤ 0,5 điểm %",cả hai bộ,mọi mô hình,argmax,0.0,0.005,F1-macro val,True,đạt,False,sơ bộ: mô hình dựng lại ở notebook 17 lệch F1-macro val tối đa so với lúc hiệu chỉnh ngưỡng; GĐ J chạy lại đầy đủ (task 9.x),test
