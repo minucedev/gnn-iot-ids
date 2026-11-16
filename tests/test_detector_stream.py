@@ -10,7 +10,6 @@ import torch
 from sklearn.preprocessing import StandardScaler
 
 from src import build_graph as bg
-from tests.test_stream_features import make_flows
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -23,6 +22,10 @@ def _load(name):
 
 
 D = _load("detector")
+_SF_SPEC = importlib.util.spec_from_file_location("test_stream_features_helpers", ROOT / "tests" / "test_stream_features.py")
+_SF_TEST = importlib.util.module_from_spec(_SF_SPEC)
+_SF_SPEC.loader.exec_module(_SF_TEST)
+make_flows = _SF_TEST.make_flows
 CLASSES = ["Normal", "DoS_DDoS", "Botnet_Backdoor", "Truy_cap_trai_phep", "Khac"]
 
 
