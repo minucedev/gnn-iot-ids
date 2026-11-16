@@ -103,7 +103,9 @@ python -I scripts/detector.py --config detector_config.json --model hybrid_gat_l
 
 ## Báo cáo và slide
 
-- Báo cáo cuối kỳ: [report/BAO_CAO.docx](report/BAO_CAO.docx) (bản nộp), nguồn [report/BAO_CAO.md](report/BAO_CAO.md).
+- **Báo cáo nộp (Word và PDF, không trích file nguồn):** [report/BAO_CAO_NOP.docx](report/BAO_CAO_NOP.docx), [report/BAO_CAO_NOP.pdf](report/BAO_CAO_NOP.pdf).
+  Tạo lại bằng một lệnh (cần uv và Microsoft Word): `powershell -ExecutionPolicy Bypass -File report\tao_bao_cao.ps1` (thêm `-KhongTaiLieuThamKhao` để bỏ mục tài liệu tham khảo).
+- Bản có truy vết nguồn số liệu (dùng khi kiểm tra): [report/BAO_CAO.docx](report/BAO_CAO.docx), nguồn [report/BAO_CAO.md](report/BAO_CAO.md).
 - Slide: [report/SLIDE.pptx](report/SLIDE.pptx), nguồn [report/SLIDE_DAN_Y.md](report/SLIDE_DAN_Y.md).
 - Tạo lại hai file này (từ thư mục ngoài repo, vì Windows có thể chặn `python.exe` của `.venv`):
   `uv run --no-project --python 3.11 --with pypandoc_binary --with python-docx python <repo>/report/build_docx.py` và
