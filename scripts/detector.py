@@ -26,6 +26,8 @@ dựng Data) + `infer_ms` (suy luận mô hình và áp ngưỡng). Việc ghi c
 
 import argparse
 import csv
+import ctypes
+import gc
 import importlib.util
 import json
 import os
@@ -51,6 +53,7 @@ from src import threshold as TH  # noqa: E402
 from src import train as T  # noqa: E402
 
 N_WARMUP = 50                       # số cửa sổ đầu không tính vào thống kê độ trễ
+TRIM_EVERY = 0                       # sẽ chốt sau khi chẩn đoán RAM (task 8.1)
 PERF = time.perf_counter
 
 
@@ -72,6 +75,44 @@ def rss_mb():
             return int(f.read().split()[1]) * os.sysconf("SC_PAGE_SIZE") / 2**20
     except (OSError, ValueError):
         return float("nan")
+
+
+_LIBC = None
+
+
+def _libc():
+    global _LIBC
+    if _LIBC is None:
+        _LIBC = ctypes.CDLL("libc.so.6")
+    return _LIBC
+
+
+def trim_memory():
+    """Trả vùng rỗi của bộ cấp phát glibc cho hệ điều hành (malloc_trim). Ngoài Linux/glibc thì không làm gì; trả về True nếu gọi được."""
+    try:
+        _libc().malloc_trim(0)
+        return True
+    except (OSError, AttributeError):
+        return False
+
+
+class _MallInfo2(ctypes.Structure):
+    _fields_ = [(n, ctypes.c_size_t) for n in ("arena", "ordblks", "smblks", "hblks", "hblkhd", "usmblks", "fsmblks", "uordblks", "fordblks", "keepcost")]
+
+
+def heap_stats():
+    """Số liệu chẩn đoán RAM: rss_mb; in_use_mb = bộ nhớ native đang cấp phát (heap + mmap); free_mb = vùng rỗi glibc còn giữ; heap_arena_mb =
+    heap do hệ điều hành cấp; py_blocks = số khối của bộ cấp phát Python; gc_objects = số đối tượng gc theo dõi.
+    rss lớn hơn nhiều so với heap_arena + mmap nghĩa là bộ nhớ nằm ngoài heap glibc."""
+    out = {"rss_mb": rss_mb(), "py_blocks": sys.getallocatedblocks(), "gc_objects": len(gc.get_objects())}
+    try:
+        fn = _libc().mallinfo2
+        fn.restype = _MallInfo2
+        m = fn()
+        out.update(heap_arena_mb=m.arena / 2**20, in_use_mb=(m.uordblks + m.hblkhd) / 2**20, free_mb=m.fordblks / 2**20)
+    except (OSError, AttributeError):
+        pass
+    return out
 
 
 def env_info():
@@ -183,23 +224,47 @@ class Reference:
 
 
 # ---------------------------------------------------------------- vòng chạy
-def run_stream(model, flows, scaler, classes, out_dir, ref=None, window_sec=5, batch_sec=1.0, speedup=None, max_windows=None, warmup=N_WARMUP):
-    """Phát lại `flows`, xử lý từng cửa sổ khi đóng. Trả về (bảng cửa sổ, số flow đã phát)."""
+def window_columns(K, has_label, has_ref):
+    """Cột của windows.csv (cố định từ đầu để ghi từng dòng khi cửa sổ vừa xử lý xong, không giữ danh sách trong RAM)."""
+    cols = ["win", "t_start", "t_close", "n_flows", "n_nodes", "n_edges", "build_ms", "infer_ms", "total_ms", "rss_mb", "n_alert"]
+    if has_label:
+        cols += [f"first_ts_{k}" for k in range(1, K)]
+    cols.append("ref_found")
+    if has_ref:
+        cols += ["n_normal", "n_true_attack", "n_fp", "n_tp"]
+        for k in range(1, K):
+            cols += [f"n_true_{k}", f"n_det_{k}"]
+        cols += ["struct_ok", "max_dx", "max_de", "n_mis_thr", "n_mis_arg", "max_dproba"]
+    return cols + ["warmup"]
+
+
+def run_stream(model, flows, scaler, classes, out_dir, ref=None, window_sec=5, batch_sec=1.0, speedup=None, max_windows=None, warmup=N_WARMUP,
+               trim_every=0, probe=None, keep_rows=False):
+    """Phát lại `flows`, xử lý từng cửa sổ khi đóng. Trả về (bảng cửa sổ đọc lại từ windows.csv, số flow đã phát).
+
+    Bộ nhớ: mỗi cửa sổ xử lý xong được ghi thẳng vào windows.csv, không giữ trong RAM (bản trước giữ một dict mỗi cửa sổ).
+    `trim_every` > 0: cứ sau chừng đó cửa sổ gọi `malloc_trim` (ngoài khoảng đo độ trễ).
+    `probe(n_cửa_sổ_đã_xử_lý)` được gọi sau mỗi cửa sổ (chẩn đoán RAM). `keep_rows=True` giữ thêm danh sách dict như bản cũ, chỉ để tái hiện
+    bản cũ trong chẩn đoán (scripts/ram_diag.py)."""
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     K = len(classes)
     attack_names = classes[1:]
     has_label = "label" in flows.columns
-    rows = []
+    kept_rows = []
+    n_done = 0
     n_flows_total = 0
     asm = SF.WindowAssembler(window_sec)
+    fw = open(out_dir / "windows.csv", "w", newline="", encoding="utf-8")
+    ww = csv.DictWriter(fw, fieldnames=window_columns(K, has_label, ref is not None), restval="")
+    ww.writeheader()
     fa = open(out_dir / "alerts.csv", "w", newline="", encoding="utf-8")
     wa = csv.writer(fa)
     wa.writerow(["t_close", "window", "ip", "pred_class", "p_attack", "p_class", "proc_ms"])
     done = False
 
     def process(cw):
-        nonlocal n_flows_total
+        nonlocal n_flows_total, n_done
         t0 = PERF()
         fl = cw.flows()
         g = SF.build_window_graph(cw.win, fl, scaler, window_sec)
@@ -247,13 +312,23 @@ def run_stream(model, flows, scaler, classes, out_dir, ref=None, window_sec=5, b
                 row.update(n_mis_thr=len(po), n_mis_arg=len(po), max_dproba=float("inf"))
         else:
             row["ref_found"] = 0
-        row["warmup"] = int(len(rows) < warmup)
-        rows.append(row)
+        row["warmup"] = int(n_done < warmup)
+        ww.writerow(row)
+        if keep_rows:
+            kept_rows.append(row)
+        n_done += 1
+        if n_done % 500 == 0:
+            fw.flush()
+            fa.flush()
+        if trim_every and n_done % trim_every == 0:
+            trim_memory()
+        if probe is not None:
+            probe(n_done)
 
     for batch in SF.replay_batches(flows, batch_sec, speedup):
         for cw in asm.push(batch):
             process(cw)
-            if max_windows and len(rows) >= max_windows:
+            if max_windows and n_done >= max_windows:
                 done = True
                 break
         if done:
@@ -262,7 +337,8 @@ def run_stream(model, flows, scaler, classes, out_dir, ref=None, window_sec=5, b
         for cw in asm.flush():
             process(cw)
     fa.close()
-    return pd.DataFrame(rows), n_flows_total
+    fw.close()
+    return pd.read_csv(out_dir / "windows.csv"), n_flows_total
 
 
 def main():
@@ -277,6 +353,7 @@ def main():
     ap.add_argument("--speedup", type=float, default=None, help="chờ để thời gian thật chậm hơn thời gian dữ liệu N lần (mặc định: không chờ)")
     ap.add_argument("--max-windows", type=int, default=None)
     ap.add_argument("--no-reference", action="store_true", help="không nạp đồ thị offline để đối chiếu (demo trên flow bất kỳ)")
+    ap.add_argument("--trim-every", type=int, default=TRIM_EVERY, help="gọi malloc_trim sau mỗi N cửa sổ (0 = không), ngoài khoảng đo độ trễ")
     a = ap.parse_args()
 
     cfg = json.loads(Path(a.config).read_text(encoding="utf-8"))
@@ -317,12 +394,11 @@ def main():
     ram_start = rss_mb()
     print(f"[detector] RAM trước khi phát lại: {ram_start:.0f} MB")
     t0 = time.time()
-    win, n_flows = run_stream(model, flows, scaler, classes, a.out, ref, window_sec, a.batch_sec, a.speedup, a.max_windows)
+    win, n_flows = run_stream(model, flows, scaler, classes, a.out, ref, window_sec, a.batch_sec, a.speedup, a.max_windows, trim_every=a.trim_every)
     run_s = time.time() - t0
-    win.to_csv(Path(a.out) / "windows.csv", index=False)
     summary = {"dataset": ds, "split": split, "model": a.model, "seed": a.seed, "threshold": model.threshold, "n_params": model.n_params,
                "size_kb": model.size_kb, "classes": classes, "window_sec": window_sec, "n_windows": int(len(win)), "n_flows": int(n_flows),
-               "warmup_windows": N_WARMUP, "restrict": a.restrict, "speedup": a.speedup, "reference": ref is not None,
+               "warmup_windows": N_WARMUP, "trim_every": a.trim_every, "restrict": a.restrict, "speedup": a.speedup, "reference": ref is not None,
                "n_ref_windows": None if ref is None else len(ref.index),
                "n_ref_windows_not_streamed": None if ref is None else len(set(ref.index) - set(int(w) for w in win["win"])),
                "frozen_style_p95_ms": frozen_p95, "stream_seconds": round(run_s, 1), "total_seconds": round(time.time() - t_start, 1),
