@@ -1,0 +1,103 @@
+{
+ "heads": {
+  "values": [
+   "1",
+   "2",
+   "4",
+   "8"
+  ],
+  "main_value": "4",
+  "main_f1": 0.9064908280424505,
+  "main_f1_std": 0.0019296707798566021,
+  "best_value": "8",
+  "best_f1": 0.9153475316439709,
+  "gap_best_minus_main": 0.008856703601520355,
+  "main_within_2std_of_best": false,
+  "cheaper_within_1pt": [
+   {
+    "value": "2",
+    "n_params": 3813,
+    "f1_macro_mean": 0.8973365699582629
+   }
+  ]
+ },
+ "layers": {
+  "values": [
+   "1",
+   "2",
+   "3"
+  ],
+  "main_value": "2",
+  "main_f1": 0.9064908280424505,
+  "main_f1_std": 0.0019296707798566021,
+  "best_value": "2",
+  "best_f1": 0.9064908280424505,
+  "gap_best_minus_main": 0.0,
+  "main_within_2std_of_best": true,
+  "cheaper_within_1pt": [
+   {
+    "value": "1",
+    "n_params": 3077,
+    "f1_macro_mean": 0.9041788163972395
+   }
+  ]
+ },
+ "hidden": {
+  "values": [
+   "8",
+   "16",
+   "32",
+   "64"
+  ],
+  "main_value": "16",
+  "main_f1": 0.9064908280424505,
+  "main_f1_std": 0.0019296707798566021,
+  "best_value": "32",
+  "best_f1": 0.9078008397165792,
+  "gap_best_minus_main": 0.0013100116741286971,
+  "main_within_2std_of_best": true,
+  "cheaper_within_1pt": [
+   {
+    "value": "8",
+    "n_params": 3813,
+    "f1_macro_mean": 0.9015404442962359
+   }
+  ]
+ },
+ "edge": {
+  "values": [
+   "yes",
+   "no"
+  ],
+  "main_value": "yes",
+  "main_f1": 0.9064908280424505,
+  "main_f1_std": 0.0019296707798566021,
+  "best_value": "no",
+  "best_f1": 0.9075692183285873,
+  "gap_best_minus_main": 0.0010783902861367656,
+  "main_within_2std_of_best": true,
+  "cheaper_within_1pt": [
+   {
+    "value": "no",
+    "n_params": 11333,
+    "f1_macro_mean": 0.9075692183285873
+   }
+  ]
+ },
+ "window": {
+  "values": [
+   "1",
+   "2",
+   "5",
+   "10"
+  ],
+  "main_value": "5",
+  "main_f1": 0.9064908280424505,
+  "main_f1_std": 0.0019296707798566021,
+  "best_value": "5",
+  "best_f1": 0.9064908280424505,
+  "gap_best_minus_main": 0.0,
+  "main_within_2std_of_best": true,
+  "cheaper_within_1pt": []
+ }
+}
