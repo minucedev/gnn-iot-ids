@@ -328,6 +328,86 @@ def run_ahp(matrix_json, summary_csv, dataset="nf_ton_iot_v3", mode="thr"):
     }
 
 
+def screen(data, max_params=MAX_PARAMS, max_size_kb=MAX_SIZE_KB):
+    """Sàng lọc cứng: (phương án giữ lại, {phương án bị loại: [lý do]}). Giữ khi n_params ≤ max_params VÀ size ≤ max_size_kb."""
+    kept, dropped = [], {}
+    for n, d in data.items():
+        why = []
+        if d["n_params"] > max_params:
+            why.append(f"{d['n_params']:,.0f} tham số > {max_params:,}".replace(",", "."))
+        if d["size"] > max_size_kb:
+            why.append(f"{d['size']:,.0f} KB > {max_size_kb:,} KB".replace(",", "."))
+        if why:
+            dropped[n] = why
+        else:
+            kept.append(n)
+    return kept, dropped
+
+
+def run_constrained(matrix_json, summary_csv, dataset="nf_ton_iot_v3", mode="thr", max_params=MAX_PARAMS, max_size_kb=MAX_SIZE_KB,
+                    fpr_limit=0.0408, recall_min=0.95):
+    """Kịch bản "sàng lọc rồi xếp hạng" (GĐ J): dùng đúng ma trận đã duyệt, LOẠI phương án vượt ràng buộc cứng rồi mới chuẩn hóa và xếp hạng
+    trong nhóm còn lại (chuẩn hóa lại trong nhóm). Trả về cả kịch bản (a) không ràng buộc để so sánh cạnh nhau.
+
+    Ngoài ra ghi: (1) thứ hạng của nhóm còn lại nếu GIỮ điểm chuẩn hóa của 8 phương án (không chuẩn hóa lại), để thấy kết quả phụ thuộc
+    việc chuẩn hóa lại; (2) độ bền theo cách chuẩn hóa; (3) độ nhạy ±20% và kết luận có điều kiện trong nhóm; (4) từng phương án có đạt
+    chỉ tiêu nghiệm thu FPR ≤ fpr_limit và recall tấn công ≥ recall_min hay không (số trung bình 3 seed, chế độ ngưỡng) và thứ hạng nếu
+    ngoài ràng buộc nhẹ còn bắt buộc đạt cả hai chỉ tiêu đó (phân tích mở rộng, ngoài yêu cầu gốc)."""
+    ids, A, spec = load_matrix(matrix_json)
+    w, _ = priority_vector(A)
+    data = load_alternatives(summary_csv, dataset, mode)
+    labels = dict(ALTERNATIVES)
+    norm = spec.get("normalization", {}).get("per_criterion", DEFAULT_NORM)
+    S_all = score_table(data, ids, norm)
+    tot_all = totals(S_all, w)
+    rk_all = ranking(tot_all)
+    kept, dropped = screen(data, max_params, max_size_kb)
+    if len(kept) < 2:
+        raise ValueError(f"Chỉ còn {len(kept)} phương án sau sàng lọc: không xếp hạng được")
+    sub = {n: data[n] for n in kept}
+    S = score_table(sub, ids, norm)
+    tot = totals(S, w)
+    rk = ranking(tot)
+    robust = {}
+    for key, nm in (("per_criterion", norm), ("minmax", "minmax"), ("log_minmax", "log_minmax"), ("ratio", "ratio")):
+        t2 = totals(score_table(sub, ids, nm), w)
+        robust[key] = {"ranking": ranking(t2), "top": ranking(t2)[0], "totals": t2}
+    keep_scores = {n: S_all[n] for n in kept}                       # điểm của 8 phương án, không chuẩn hóa lại
+    t_keep = totals(keep_scores, w)
+    cond = conditional_choices(S, w, ids)
+    sens = {"perturbation": perturbation(S, w, ids), "tipping": tipping_points(S, w, ids)}
+    flips = [p for p in sens["perturbation"] if p["top_changed"]]
+    meets = {n: {"fpr": data[n]["fpr"], "recall_attack": data[n]["recall_attack"], "meets_fpr": data[n]["fpr"] <= fpr_limit,
+                 "meets_recall": data[n]["recall_attack"] >= recall_min} for n in data}
+    both = [n for n in kept if meets[n]["meets_fpr"] and meets[n]["meets_recall"]]
+    plus = None
+    if len(both) >= 2:
+        S3 = score_table({n: data[n] for n in both}, ids, norm)
+        t3 = totals(S3, w)
+        plus = {"alternatives": both, "ranking": ranking(t3), "top": ranking(t3)[0], "totals": t3}
+    top_all, top = rk_all[0], rk[0]
+    top_row, all_row = data[top], data[top_all]
+    delta = {c: top_row[c] - all_row[c] for c in ("f1_macro", "fpr", "recall_attack", "latency_p95", "size", "n_params")}
+    return {
+        "dataset": dataset, "mode": mode, "criteria": ids, "criteria_labels": {c["id"]: c["label"] for c in spec["criteria"]},
+        "weights": dict(zip(ids, w)), "normalization": norm,
+        "constraints": {"max_params": max_params, "max_size_kb": max_size_kb,
+                        "note": "ngưỡng nhẹ của KE_HOACH mục 3; 1 MB = 1.024 KB (kết quả không đổi nếu dùng 1.000 KB vì mọi phương án giữ lại đều ≤ 986 KB)"},
+        "alternatives": {n: {"label": labels[n], "raw": data[n], "feasible": n in kept, "excluded_because": dropped.get(n, []),
+                             "meets_targets": meets[n]} for n in data},
+        "scenario_a_unconstrained": {"ranking": rk_all, "top": top_all, "top_label": labels[top_all], "totals": tot_all,
+                                     "scores": {n: dict(zip(ids, S_all[n])) for n in data}},
+        "scenario_b_constrained": {"alternatives": kept, "excluded": dropped, "ranking": rk, "top": top, "top_label": labels[top],
+                                   "totals": tot, "scores": {n: dict(zip(ids, S[n])) for n in kept},
+                                   "ranking_without_renormalization": ranking(t_keep), "totals_without_renormalization": t_keep,
+                                   "normalization_robustness": robust, "conditional": cond, "sensitivity": sens,
+                                   "top_flips_under_20pct": [{"criterion": p["criterion"], "change": p["change"], "new_top": p["top"]} for p in flips]},
+        "tradeoff_b_vs_a": {"from": top_all, "to": top, "delta": delta},
+        "extension_constrained_and_targets": {"fpr_limit": fpr_limit, "recall_min": recall_min, "result": plus,
+                                              "kept_meeting_both": both},
+    }
+
+
 def _label(spec, cid):
     return next(c["label"] for c in spec["criteria"] if c["id"] == cid)
 

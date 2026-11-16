@@ -107,10 +107,58 @@ def plot_sensitivity(res, path):
     return _save(fig, path)
 
 
+def _stacked(ax, order, scores, w, ids, labels, criteria_labels, hatch_names=()):
+    """Thanh chồng điểm AHP (trọng số × điểm chuẩn hóa) theo tiêu chí; `hatch_names` vẽ nhạt có gạch (phương án bị loại)."""
+    left = [0.0] * len(order)
+    for k, cid in enumerate(ids):
+        for yi, n in enumerate(order):
+            p = w[cid] * scores[n][cid]
+            cut = n in hatch_names
+            ax.barh(yi, p, left=left[yi], color=COLORS[k], alpha=0.35 if cut else 1.0, hatch="//" if cut else None,
+                    edgecolor="white", label=f"{criteria_labels[cid]} (w = {w[cid]:.2f})" if yi == 0 else None)
+            left[yi] += p
+    ax.set_yticks(range(len(order)), [labels[n] + (" (loại)" if n in hatch_names else "") for n in order])
+    return left
+
+
+def plot_constrained(res, path):
+    """Hai kịch bản cạnh nhau: (a) không ràng buộc, 8 phương án (phương án vượt ràng buộc vẽ nhạt); (b) sàng lọc rồi xếp hạng."""
+    ids = res["criteria"]
+    cl = res["criteria_labels"]
+    w = res["weights"]
+    labels = {n: a["label"] for n, a in res["alternatives"].items()}
+    a, b = res["scenario_a_unconstrained"], res["scenario_b_constrained"]
+    cons = res["constraints"]
+    fig, axes = plt.subplots(1, 2, figsize=(15, 5.6), gridspec_kw={"width_ratios": [1.15, 1]})
+    order_a = a["ranking"][::-1]
+    left = _stacked(axes[0], order_a, a["scores"], w, ids, labels, cl, hatch_names=set(b["excluded"]))
+    for yi, n in enumerate(order_a):
+        axes[0].text(left[yi] + 0.01, yi, f"{a['totals'][n]:.3f}", va="center", fontsize=9, fontweight="bold" if n == a["top"] else None)
+    axes[0].set_xlim(0, max(left) * 1.12)
+    axes[0].set_title(f"(a) Không ràng buộc: gợi ý {a['top_label']}", fontsize=11)
+    order_b = b["ranking"][::-1]
+    left = _stacked(axes[1], order_b, b["scores"], w, ids, labels, cl)
+    for yi, n in enumerate(order_b):
+        axes[1].text(left[yi] + 0.01, yi, f"{b['totals'][n]:.3f}", va="center", fontsize=9, fontweight="bold" if n == b["top"] else None)
+    axes[1].set_xlim(0, max(left) * 1.12)
+    limit = f"{cons['max_params']:,}".replace(",", ".")
+    axes[1].set_title(f"(b) Ràng buộc nhẹ (≤ {limit} tham số, ≤ {cons['max_size_kb']} KB), chuẩn hóa lại: gợi ý {b['top_label']}", fontsize=10)
+    for ax in axes:
+        ax.set_xlabel("Điểm AHP = Σ trọng số × điểm chuẩn hóa")
+        ax.grid(axis="x", alpha=0.3)
+    h, lab = axes[0].get_legend_handles_labels()
+    axes[1].legend(h, lab, fontsize=8, loc="lower right")
+    fig.suptitle("AHP trên NF-ToN-IoT-v3 (test, ngưỡng hiệu chỉnh), cùng ma trận đã duyệt; phương án gạch chéo bị loại ở kịch bản (b)")
+    return _save(fig, path)
+
+
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
     res = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
     out = Path(sys.argv[2])
+    if "scenario_b_constrained" in res:                                      # ahp_constrained.json
+        print(plot_constrained(res, out / "gd7_ahp_constrained.png"))
+        return 0
     for fn, name in ((plot_weights, "gd7_ahp_weights.png"), (plot_scores, "gd7_ahp_scores.png"), (plot_sensitivity, "gd7_ahp_sensitivity.png")):
         print(fn(res, out / name))
     return 0

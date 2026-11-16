@@ -187,3 +187,55 @@ def test_run_ahp_synthetic_csv_and_missing_alternative():
         assert res["alternatives"]["gat"]["raw"]["f1_macro"] == 0.9 + 0.01 * 7
         assert res["feasible_only"]["alternatives"] == [n for n, _ in ahp.ALTERNATIVES]    # mọi phương án đạt ngưỡng nhẹ
         assert raises(lambda: ahp.run_ahp(ROOT / "docs" / "ahp_matrix.json", p, dataset="khong_co"))
+
+
+# ---------------------------------------------------------------- AHP có ràng buộc cứng (GĐ J)
+def test_screen_hard_constraints():
+    data = {"a": {"n_params": 100_000, "size": 1024}, "b": {"n_params": 100_001, "size": 10}, "c": {"n_params": 10, "size": 1024.5},
+            "d": {"n_params": 5, "size": 5}}
+    kept, dropped = ahp.screen(data)
+    assert kept == ["a", "d"] and set(dropped) == {"b", "c"}                     # biên: đúng bằng ngưỡng thì giữ
+    assert len(dropped["b"]) == 1 and "tham số" in dropped["b"][0] and "KB" in dropped["c"][0]
+
+
+def test_run_constrained_on_real_summary():
+    res = ahp.run_constrained(ROOT / "docs" / "ahp_matrix.json", ROOT / "reports" / "tables" / "summary_test.csv")
+    a, b = res["scenario_a_unconstrained"], res["scenario_b_constrained"]
+    full = ahp.run_ahp(ROOT / "docs" / "ahp_matrix.json", ROOT / "reports" / "tables" / "summary_test.csv")
+    assert a["ranking"] == full["ranking"] and a["top"] == full["recommended"]           # kịch bản (a) = kết quả đã chốt ở 7.2
+    assert res["weights"] == full["weights"]                                             # cùng ma trận đã duyệt
+    assert a["top"] == "hybrid_gat_lgbm_oofavg_il" and a["top"] in b["excluded"]         # hybrid chính vượt ràng buộc nên bị loại
+    assert set(b["excluded"]) == {"hybrid_gat_lgbm_oofavg_il", "lgbm_neighbor_mean", "lightgbm", "random_forest"}
+    assert sorted(b["alternatives"]) == ["gat", "hybrid_light", "mlp", "sage"] and sorted(b["ranking"]) == sorted(b["alternatives"])
+    for n in b["alternatives"]:                                                          # mọi phương án giữ lại thật sự thỏa ràng buộc
+        raw = res["alternatives"][n]["raw"]
+        assert raw["n_params"] <= 100_000 and raw["size"] <= 1024 and res["alternatives"][n]["feasible"]
+    for n in b["excluded"]:
+        raw = res["alternatives"][n]["raw"]
+        assert (raw["n_params"] > 100_000 or raw["size"] > 1024) and not res["alternatives"][n]["feasible"]
+    assert b["ranking"] == full["feasible_only"]["ranking"] and b["top"] == full["feasible_only"]["top"]   # khớp phân tích phụ 7.2
+    for cid in res["criteria"]:                                                          # chuẩn hóa lại trong nhóm: mỗi tiêu chí có điểm 1 và 0
+        col = [b["scores"][n][cid] for n in b["alternatives"]]
+        assert close(max(col), 1.0) and close(min(col), 0.0)
+    assert set(b["normalization_robustness"]) == {"per_criterion", "minmax", "log_minmax", "ratio"}
+    assert len(b["sensitivity"]["perturbation"]) == 10 and set(b["conditional"]) == set(res["criteria"])
+    ext = res["extension_constrained_and_targets"]
+    assert ext["kept_meeting_both"] == [n for n in b["alternatives"] if res["alternatives"][n]["meets_targets"]["meets_fpr"]
+                                        and res["alternatives"][n]["meets_targets"]["meets_recall"]]
+    assert res["tradeoff_b_vs_a"]["from"] == a["top"] and res["tradeoff_b_vs_a"]["to"] == b["top"]
+    json.dumps(res)
+
+
+def test_run_constrained_needs_two_alternatives():
+    cols = ["dataset", "base", "mode", "f1_macro_mean", "fpr_mean", "recall_attack_mean", "infer_ms_per_window_mean",
+            "size_kb_mean", "n_params_mean"]
+    with tempfile.TemporaryDirectory() as d:
+        p = Path(d) / "s.csv"
+        with open(p, "w", newline="", encoding="utf-8") as f:
+            w = csv.DictWriter(f, fieldnames=cols)
+            w.writeheader()
+            for k, (name, _) in enumerate(ahp.ALTERNATIVES):                              # chỉ phương án đầu nhẹ, còn lại nặng
+                w.writerow({"dataset": "ds", "base": name, "mode": "thr", "f1_macro_mean": 0.9 + 0.01 * k, "fpr_mean": 0.05 - 0.002 * k,
+                            "recall_attack_mean": 0.9 + 0.005 * k, "infer_ms_per_window_mean": 1 + k, "size_kb_mean": 10 if k == 0 else 5000,
+                            "n_params_mean": 1000 if k == 0 else 10**6})
+        assert raises(lambda: ahp.run_constrained(ROOT / "docs" / "ahp_matrix.json", p, dataset="ds"))
