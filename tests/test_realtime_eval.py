@@ -110,6 +110,8 @@ def test_node_report_and_ram():
     grow = win.assign(rss_mb=np.linspace(1000, 1500, len(win)))
     g = RE.ram_report(grow)
     assert g["stable"] is False and g["growth_late_vs_early"] > 0.3 and g["slope_mb_per_1000_windows_second_half"] > 0
+    shrink = RE.ram_report(win.assign(rss_mb=np.linspace(2000, 1000, len(win))))
+    assert shrink["stable"] is True and shrink["growth_late_vs_early"] < 0                   # RAM giảm không vi phạm chỉ tiêu
 
 
 def test_targets_table_marks_pass_and_fail():

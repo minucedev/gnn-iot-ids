@@ -77,7 +77,7 @@ def ram_report(win, early_frac=0.10):
     growth = late / early - 1 if early == early and early > 0 else float("nan")
     return {"ram_first_window_mb": float(r[0]), "ram_last_window_mb": float(r[-1]), "ram_max_mb": float(np.nanmax(r)),
             "ram_early_median_mb": early, "ram_late_median_mb": late, "growth_late_vs_early": growth,
-            "slope_mb_per_1000_windows_second_half": slope, "tolerance": RAM_TOL, "stable": bool(growth == growth and abs(growth) <= RAM_TOL),
+            "slope_mb_per_1000_windows_second_half": slope, "tolerance": RAM_TOL, "stable": bool(growth == growth and growth <= RAM_TOL),    # chỉ tăng mới vi phạm; giảm (giải phóng bộ nhớ) là ổn
             "definition": f"trung vị RSS {k} cửa sổ ngay sau warm-up so với {k} cửa sổ cuối"}
 
 

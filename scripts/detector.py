@@ -308,7 +308,14 @@ def main():
     t0 = time.time()
     flows = load_stream_flows(cfg, ctx, a.restrict)
     print(f"[detector] đọc và làm sạch flow: {len(flows):,} flow trong {time.time() - t0:.0f} s, RAM {rss_mb():.0f} MB")
+    gc.collect()
+    try:                                                                # trả bộ nhớ đã giải phóng (bảng flow gốc, dữ liệu huấn luyện) cho hệ điều hành
+        import ctypes
+        ctypes.CDLL("libc.so.6").malloc_trim(0)
+    except OSError:
+        pass
     ram_start = rss_mb()
+    print(f"[detector] RAM trước khi phát lại: {ram_start:.0f} MB")
     t0 = time.time()
     win, n_flows = run_stream(model, flows, scaler, classes, a.out, ref, window_sec, a.batch_sec, a.speedup, a.max_windows)
     run_s = time.time() - t0
