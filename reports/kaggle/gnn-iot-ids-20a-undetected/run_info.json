@@ -1,0 +1,79 @@
+{
+ "steps_s": {
+  "clone_va_cai_goi": 67.9,
+  "undetected_episodes": 217.8
+ },
+ "device": "CPU",
+ "gpu": null,
+ "commit": "8e3372e29796ed300dc2436a40b15905255385b5",
+ "total_s": 289.3,
+ "peak_ram_gb": 18.86,
+ "gpu_hours": 0,
+ "cpu": "AMD EPYC 7B12",
+ "cpu_count": 4,
+ "config": {
+  "dataset": "nf_ton_iot_v3",
+  "split": "test",
+  "flows_csv": "/kaggle/input/datasets/athena21/netflow-v3-datasets/NF-ToN-IoT-v3.csv",
+  "expect_commit": "8e3372e",
+  "thresholds": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-16c-aggregate/thresholds.json",
+  "thresholds_c": {
+   "nf_ton_iot_v3": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-16h-c-threshold/thresholds_c_nf_ton_iot_v3.json"
+  },
+  "datasets": {
+   "nf_ton_iot_v3": {
+    "data": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-04-build-graphs/processed/nf_ton_iot_v3",
+    "ckpt": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-07-train-gnn/ckpt",
+    "folds": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-15f-hybrid-il-ton/models_hybrid",
+    "light": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-16d-ablation-ton/models_light",
+    "baseline_search": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-05-baselines/baseline_search_nf_ton_iot_v3.json",
+    "ablation_search": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-16d-ablation-ton/ablation_search_nf_ton_iot_v3.json",
+    "gnn_csv": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-07-train-gnn/results_gnn_nf_ton_iot_v3.csv",
+    "hybrid_csv": "/tmp/gnn-iot-ids/reports/kaggle/gnn-iot-ids-15f-hybrid-il-ton/results_hybrid_oofavg_il_nf_ton_iot_v3.csv"
+   }
+  }
+ },
+ "result": {
+  "n_episodes": 27,
+  "n_detected": 13,
+  "n_undetected": 14,
+  "consistent_with_realtime_eval": {
+   "n_episodes": 27,
+   "n_undetected": 14,
+   "same": true
+  },
+  "summary": {
+   "n_undetected": 14,
+   "by_class": {
+    "Botnet_Backdoor": {
+     "n_undetected": 1,
+     "reasons": {
+      "bi_gan_normal": 1
+     },
+     "score_max_median": 0.326170828185397
+    },
+    "Truy_cap_trai_phep": {
+     "n_undetected": 3,
+     "reasons": {
+      "bi_gan_normal": 3
+     },
+     "score_max_median": 0.0072152568802834605
+    },
+    "Khac": {
+     "n_undetected": 10,
+     "reasons": {
+      "bi_gan_normal": 8,
+      "duoi_nguong": 2
+     },
+     "score_max_median": 0.2409421937340112
+    }
+   },
+   "reasons_primary": {
+    "bi_gan_normal": 12,
+    "duoi_nguong": 2
+   },
+   "n_single_window": 6,
+   "n_receive_only_majority": 4
+  }
+ }
+}

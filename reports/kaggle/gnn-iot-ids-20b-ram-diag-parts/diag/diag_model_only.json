@@ -1,0 +1,52 @@
+{
+ "tag": "model_only",
+ "phase": "model_only",
+ "model": "hybrid_gat_lgbm_oofavg_il",
+ "max_windows": 4000,
+ "keep_rows": false,
+ "trim_every": 0,
+ "seconds": 108.6,
+ "n_probes": 21,
+ "rss_mb": {
+  "first": 871.14453125,
+  "early_median": 916.21875,
+  "late_median": 941.65234375,
+  "growth_late_vs_early": 0.027759302841161126,
+  "slope_per_1000_windows_second_half": 10.252485795454392
+ },
+ "in_use_mb": {
+  "first": 231.11338806152344,
+  "early_median": 235.17745971679688,
+  "late_median": 251.61235809326172,
+  "growth_late_vs_early": 0.0698829658091209,
+  "slope_per_1000_windows_second_half": 10.456072720614332
+ },
+ "free_mb": {
+  "first": 242.13270568847656,
+  "early_median": 238.06863403320312,
+  "late_median": 221.63373565673828,
+  "growth_late_vs_early": -0.06903428686944413,
+  "slope_per_1000_windows_second_half": -10.456072720614408
+ },
+ "heap_arena_mb": {
+  "first": 458.06640625,
+  "early_median": 458.06640625,
+  "late_median": 458.06640625,
+  "growth_late_vs_early": 0.0,
+  "slope_per_1000_windows_second_half": -2.6178645046297236e-14
+ },
+ "py_blocks": {
+  "first": 2190393.0,
+  "early_median": 2193020.5,
+  "late_median": 2192886.5,
+  "growth_late_vs_early": -6.110293998617955e-05,
+  "slope_per_1000_windows_second_half": 191.63636363630653
+ },
+ "gc_objects": {
+  "first": 643882.0,
+  "early_median": 645080.0,
+  "late_median": 644890.0,
+  "growth_late_vs_early": -0.0002945371116760409,
+  "slope_per_1000_windows_second_half": 71.99999999990723
+ }
+}

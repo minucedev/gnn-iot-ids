@@ -685,9 +685,9 @@ Năm phương án trên **val**, cùng cách chia, cùng 3 seed: (a) LightGBM tr
 
 *Nguồn: `reports/kaggle/gnn-iot-ids-16c-aggregate/ablation_hybrid_<bộ>.csv`.*
 
-![Hình 5.10](../reports/kaggle/gnn-iot-ids-16c-aggregate/gd5_ablation_hybrid_nf_ton_iot_v3.png)
+![Hình 5.10](../reports/figures/gd5_ablation_hybrid_nf_ton_iot_v3.png)
 
-**Hình 5.10.** Ablation hybrid trên NF-ToN-IoT-v3. *Nguồn: `reports/kaggle/gnn-iot-ids-16c-aggregate/gd5_ablation_hybrid_nf_ton_iot_v3.png` (BoT: `gd5_ablation_hybrid_nf_bot_iot_v3.png`).*
+**Hình 5.10.** Ablation hybrid trên NF-ToN-IoT-v3. *Nguồn: `reports/figures/gd5_ablation_hybrid_nf_ton_iot_v3.png` (BoT: `gd5_ablation_hybrid_nf_bot_iot_v3.png`).*
 
 **Kết luận của ablation.**
 
@@ -730,9 +730,9 @@ Cấu hình chính hợp lý ở số lớp, độ rộng và cửa sổ (5 giâ
 
 *Nguồn: `reports/kaggle/gnn-iot-ids-16c-aggregate/light_choice_nf_ton_iot_v3.json`, `pareto_hybrid_nf_ton_iot_v3.csv` (val); `reports/tables/summary_test.csv` (test). Có 37/50 điểm Pareto đạt cả ≤ 100.000 tham số và ≤ 1 MB.*
 
-![Hình 5.11](../reports/kaggle/gnn-iot-ids-16c-aggregate/gd5_pareto_nf_ton_iot_v3.png)
+![Hình 5.11](../reports/figures/gd5_pareto_nf_ton_iot_v3.png)
 
-**Hình 5.11.** Đường Pareto F1-macro theo kích thước hybrid trên NF-ToN-IoT-v3. *Nguồn: `reports/kaggle/gnn-iot-ids-16c-aggregate/gd5_pareto_nf_ton_iot_v3.png`.*
+**Hình 5.11.** Đường Pareto F1-macro theo kích thước hybrid trên NF-ToN-IoT-v3. *Nguồn: `reports/figures/gd5_pareto_nf_ton_iot_v3.png`.*
 
 Hybrid nhẹ giảm 1,3 điểm % F1-macro test ở argmax và 0,9 điểm % ở ngưỡng, FPR tăng 0,4–1,5 điểm %, nhưng nhỏ hơn khoảng 4,7 lần về tham số, nhỏ hơn khoảng 10 lần về kích thước file và nhanh khoảng 3,3 lần trên test (4,0 lần trên val). Một phát hiện phụ: ở ToN, dùng một GAT huấn luyện trên toàn bộ train (`gatfull`) tệ hơn một GAT nhóm 0,8–3,6 điểm % và không ổn định giữa seed (vì LightGBM học trên embedding OOF của các GAT khác); nên không dùng `gatfull` ở ToN. Trên BoT, hybrid chính (62.435 tham số, 777 KB) đã đạt ngưỡng nhẹ; bản nhỏ nhất 12.112 tham số, 126 KB có F1-macro val 0,9286 (−0,71 điểm %), FPR +2,17 điểm %.
 
@@ -822,9 +822,9 @@ Trên test BoT, FPR argmax của mọi mô hình nằm trong 17–24% (hybrid 17
 
 Kết luận: các IP của máy tấn công cũng sinh flow Normal (Benign chỉ 0,3% số flow) có đặc trưng cấp node giống hệt lúc tấn công, nên bộ 18 đặc trưng không tách được; mọi mô hình kẹt cùng một mức. Hệ quả: ngưỡng 4,08% kéo recall xuống chỉ 47,5% (hybrid) trên test BoT. Cần nói rõ rằng đây là phân tích trên val; con số trên test (17,97%) khớp mức đó. *(Nguồn: `reports/kaggle/gnn-iot-ids-15a-fpr-analysis/fpr_analysis_nf_bot_iot_v3.json` và 4 hình `gd5_fpr_nf_bot_iot_v3_{ip,purity,centroid,relabel}.png` cùng thư mục.)*
 
-![Hình 5.16](../reports/kaggle/gnn-iot-ids-15a-fpr-analysis/gd5_fpr_nf_bot_iot_v3_ip.png)
+![Hình 5.16](../reports/figures/gd5_fpr_nf_bot_iot_v3_ip.png)
 
-**Hình 5.16.** Phân bố FP theo IP trên NF-BoT-IoT-v3. *Nguồn: `reports/kaggle/gnn-iot-ids-15a-fpr-analysis/gd5_fpr_nf_bot_iot_v3_ip.png`.*
+**Hình 5.16.** Phân bố FP theo IP trên NF-BoT-IoT-v3. *Nguồn: `reports/figures/gd5_fpr_nf_bot_iot_v3_ip.png`.*
 
 ### 5.9 Hiệu năng và độ trễ
 

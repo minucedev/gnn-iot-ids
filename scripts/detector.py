@@ -172,6 +172,7 @@ class OnlineModel:
             lgbm_path = (Path(ctx.spec["light"]) / f"{ctx.ds}_s{seed}" / FT.LIGHT_CELL) if light else (d / "lgbm_oofavg_il.pkl")
             lgbm = pickle.load(open(lgbm_path, "rb"))
             lgbm.set_params(n_jobs=1)
+            self.gats, self.lgbm = gats, lgbm                        # để scripts/ram_diag.py đo riêng từng phần
             self._fast = lambda g: H.predict_window_ensemble(gats, lgbm, g, ctx.K)
         elif name in FT.GNNS:
             model = M.GNN(name, in_dim=len(ctx.meta["features"]), n_classes=ctx.K)

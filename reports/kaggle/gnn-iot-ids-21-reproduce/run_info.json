@@ -1,0 +1,59 @@
+{
+ "steps_s": {
+  "clone_va_cai_goi": 75.6,
+  "pytest": 7.1,
+  "aggregate_h": 28.8,
+  "reproduce_check": 1.0
+ },
+ "device": "CPU",
+ "gpu": null,
+ "commit": "8e3372e29796ed300dc2436a40b15905255385b5",
+ "total_s": 114.3,
+ "peak_ram_gb": 0.46,
+ "gpu_hours": 0,
+ "cpu": "Intel(R) Xeon(R) CPU @ 2.20GHz",
+ "cpu_count": 4,
+ "pytest": "9 passed, 1 warning in 3.82s",
+ "config": {
+  "eval_split": "test",
+  "eval_dir": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-17-final-test",
+  "val_dir": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-17a-dryrun-val",
+  "repo": "/tmp/gnn-iot-ids",
+  "out": "/kaggle/working/regen",
+  "data": {
+   "nf_ton_iot_v3": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-04-build-graphs/processed/nf_ton_iot_v3",
+   "nf_bot_iot_v3": "/kaggle/input/notebooks/minucelowcode/gnn-iot-ids-11-build-graphs-bot/processed/nf_bot_iot_v3"
+  }
+ },
+ "reproduce": {
+  "passed": true,
+  "max_abs_diff_f1_macro": 0.0,
+  "max_abs_diff_any_numeric_column": 0.0,
+  "tables": {
+   "results.csv": {
+    "rows_new": 348,
+    "rows_ref": 348,
+    "same_rows": true,
+    "max_abs_diff_f1_macro": 0.0
+   },
+   "summary_test.csv": {
+    "rows_new": 58,
+    "rows_ref": 58,
+    "same_rows": true,
+    "max_abs_diff_f1_macro": 0.0
+   },
+   "summary_val.csv": {
+    "rows_new": 58,
+    "rows_ref": 58,
+    "same_rows": true,
+    "max_abs_diff_f1_macro": 0.0
+   },
+   "summary_test_tiers.csv": {
+    "rows_new": 126,
+    "rows_ref": 126,
+    "same_rows": true,
+    "max_abs_diff_f1_macro": 0.0
+   }
+  }
+ }
+}

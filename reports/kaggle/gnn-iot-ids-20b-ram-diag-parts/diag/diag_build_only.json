@@ -1,0 +1,52 @@
+{
+ "tag": "build_only",
+ "phase": "build_only",
+ "model": "hybrid_gat_lgbm_oofavg_il",
+ "max_windows": 4000,
+ "keep_rows": false,
+ "trim_every": 0,
+ "seconds": 352.3,
+ "n_probes": 21,
+ "rss_mb": {
+  "first": 1557.70703125,
+  "early_median": 1575.275390625,
+  "late_median": 1594.912109375,
+  "growth_late_vs_early": 0.012465578315299597,
+  "slope_per_1000_windows_second_half": 8.024857954545354
+ },
+ "in_use_mb": {
+  "first": 378.82167053222656,
+  "early_median": 379.3005142211914,
+  "late_median": 380.93896484375,
+  "growth_late_vs_early": 0.004319663594242185,
+  "slope_per_1000_windows_second_half": 0.9184611927379237
+ },
+ "free_mb": {
+  "first": 323.67051696777344,
+  "early_median": 323.1916732788086,
+  "late_median": 321.55322265625,
+  "growth_late_vs_early": -0.005069594169727076,
+  "slope_per_1000_windows_second_half": -0.9184611927379348
+ },
+ "heap_arena_mb": {
+  "first": 687.3125,
+  "early_median": 687.3125,
+  "late_median": 687.3125,
+  "growth_late_vs_early": 0.0,
+  "slope_per_1000_windows_second_half": -9.174727235477988e-14
+ },
+ "py_blocks": {
+  "first": 1920749.0,
+  "early_median": 1934965.0,
+  "late_median": 1934252.5,
+  "growth_late_vs_early": -0.00036822371464084735,
+  "slope_per_1000_windows_second_half": 2708.18181818136
+ },
+ "gc_objects": {
+  "first": 440089.0,
+  "early_median": 448214.0,
+  "late_median": 446748.5,
+  "growth_late_vs_early": -0.0032696435184979,
+  "slope_per_1000_windows_second_half": 2801.2727272726743
+ }
+}

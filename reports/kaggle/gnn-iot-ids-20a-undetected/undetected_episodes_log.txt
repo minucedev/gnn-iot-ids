@@ -1,0 +1,53 @@
+/usr/local/lib/python3.13/dist-packages/pandas/core/arrays/masked.py:63: UserWarning: Pandas requires version '1.5.0' or newer of 'bottleneck' (version '1.4.2' currently installed).
+  from pandas.core import (
+{
+ "n_episodes": 27,
+ "n_undetected": 14,
+ "summary": {
+  "n_undetected": 14,
+  "by_class": {
+   "Botnet_Backdoor": {
+    "n_undetected": 1,
+    "reasons": {
+     "bi_gan_normal": 1
+    },
+    "score_max_median": 0.326170828185397
+   },
+   "Truy_cap_trai_phep": {
+    "n_undetected": 3,
+    "reasons": {
+     "bi_gan_normal": 3
+    },
+    "score_max_median": 0.0072152568802834605
+   },
+   "Khac": {
+    "n_undetected": 10,
+    "reasons": {
+     "bi_gan_normal": 8,
+     "duoi_nguong": 2
+    },
+    "score_max_median": 0.2409421937340112
+   }
+  },
+  "reasons_primary": {
+   "bi_gan_normal": 12,
+   "duoi_nguong": 2
+  },
+  "n_single_window": 6,
+  "n_receive_only_majority": 4
+ }
+}
+Botnet_Backdoor      2019-04-28T07:41:31+00:00 win=  8 flows=     11/    117 nodes=  12 recv=33% max=0.326 med=0.025 → bi_gan_normal ['bi_gan_normal']
+Truy_cap_trai_phep   2019-04-23T22:33:35+00:00 win=  1 flows=      1/     47 nodes=   2 recv=50% max=0.093 med=0.069 → bi_gan_normal ['bi_gan_normal', 'qua_ngan']
+Truy_cap_trai_phep   2019-04-23T22:43:35+00:00 win=  1 flows=      1/     29 nodes=   2 recv=50% max=0.007 med=0.007 → bi_gan_normal ['bi_gan_normal', 'qua_ngan']
+Truy_cap_trai_phep   2019-04-23T23:07:22+00:00 win=  1 flows=      2/     27 nodes=   1 recv=100% max=0.002 med=0.002 → bi_gan_normal ['bi_gan_normal', 'qua_ngan']
+Khac                 2019-04-28T05:23:02+00:00 win= 24 flows=    150/    527 nodes=  30 recv=10% max=0.284 med=0.004 → bi_gan_normal ['bi_gan_normal']
+Khac                 2019-04-28T05:31:14+00:00 win=  1 flows=      1/      3 nodes=   2 recv=50% max=0.000 med=0.000 → bi_gan_normal ['bi_gan_normal', 'qua_ngan']
+Khac                 2019-04-28T06:05:23+00:00 win=  1 flows=      1/      3 nodes=   2 recv=50% max=0.000 med=0.000 → bi_gan_normal ['bi_gan_normal', 'qua_ngan']
+Khac                 2019-04-29T13:16:05+00:00 win=  6 flows=      7/     57 nodes=  12 recv=50% max=0.329 med=0.176 → bi_gan_normal ['bi_gan_normal']
+Khac                 2019-04-29T13:18:23+00:00 win= 80 flows=    186/    755 nodes= 170 recv=52% max=0.520 med=0.239 → duoi_nguong ['duoi_nguong']
+Khac                 2019-04-29T13:36:05+00:00 win= 32 flows=     72/    333 nodes=  71 recv=55% max=0.672 med=0.376 → duoi_nguong ['duoi_nguong']
+Khac                 2019-04-29T13:52:46+00:00 win=  8 flows=     37/     67 nodes=  15 recv=47% max=0.189 med=0.025 → bi_gan_normal ['bi_gan_normal']
+Khac                 2019-04-29T13:56:56+00:00 win=  2 flows=      3/     90 nodes=   6 recv=50% max=0.325 med=0.062 → bi_gan_normal ['bi_gan_normal']
+Khac                 2019-04-29T14:07:36+00:00 win=  5 flows=     12/     34 nodes=  11 recv=55% max=0.198 med=0.037 → bi_gan_normal ['bi_gan_normal']
+Khac                 2019-04-29T14:43:05+00:00 win=  1 flows=      2/      3 nodes=   2 recv=50% max=0.008 med=0.005 → bi_gan_normal ['bi_gan_normal', 'qua_ngan']

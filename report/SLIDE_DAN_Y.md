@@ -118,7 +118,7 @@ Quy ước: mỗi slide có tiêu đề, 3–4 ý và hình dùng (đường d�
 - Ablation: (c) LightGBM + trung bình đặc trưng hàng xóm tính tay ngang hybrid (val ToN 0,9342 so với 0,9326). Lợi thế đến từ **thông tin hàng xóm**, không chứng minh được embedding GAT tốt hơn.
 - Giả thuyết ở slide 5 đúng một phần.
 
-**Hình:** bảng 5.4 (McNemar), `../reports/kaggle/gnn-iot-ids-16c-aggregate/gd5_ablation_hybrid_nf_ton_iot_v3.png`.
+**Hình:** bảng 5.4 (McNemar), `../reports/figures/gd5_ablation_hybrid_nf_ton_iot_v3.png`.
 
 ### Slide 14. Kết quả trên NF-BoT-IoT-v3 và vì sao FPR ≈ 18%
 
@@ -127,7 +127,7 @@ Quy ước: mỗi slide có tiêu đề, 3–4 ý và hình dùng (đường d�
 - Ngưỡng 4,08% kéo recall hybrid xuống 47,5%.
 - Nguyên nhân là dữ liệu, không phải nhãn: mọi cách gán nhãn thay thế đều làm FPR tệ hơn.
 
-**Hình:** `../reports/figures/gd6_bar_f1_fpr_nf_bot_iot_v3.png`, `../reports/kaggle/gnn-iot-ids-15a-fpr-analysis/gd5_fpr_nf_bot_iot_v3_ip.png`.
+**Hình:** `../reports/figures/gd6_bar_f1_fpr_nf_bot_iot_v3.png`, `../reports/figures/gd5_fpr_nf_bot_iot_v3_ip.png`.
 
 ### Slide 15. Độ nhẹ (Pareto), theo tầng node và thử chéo
 
@@ -136,7 +136,7 @@ Quy ước: mỗi slide có tiêu đề, 3–4 ý và hình dùng (đường d�
 - Thử chéo giữa hai bộ rất kém: F1-macro 0,15–0,38.
 - Không đổi cách gán nhãn: giảm FPR chỉ do thu hẹp phạm vi đánh giá.
 
-**Hình:** `../reports/kaggle/gnn-iot-ids-16c-aggregate/gd5_pareto_nf_ton_iot_v3.png`, `../reports/figures/gd6_tiers_nf_ton_iot_v3.png`, `../reports/figures/gd6_cross_dataset.png`.
+**Hình:** `../reports/figures/gd5_pareto_nf_ton_iot_v3.png`, `../reports/figures/gd6_tiers_nf_ton_iot_v3.png`, `../reports/figures/gd6_cross_dataset.png`.
 
 ### Slide 16. Phân tích lỗi
 

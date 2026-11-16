@@ -7,6 +7,9 @@ Chạy (Kaggle CPU, cùng detector_config.json của notebook 20):
 Các pha (mỗi pha chạy trong MỘT tiến trình riêng để RSS không lẫn nhau):
   model_only   lặp lại suy luận mô hình trên các đồ thị test đã dựng sẵn (không dựng đồ thị từ flow)
   build_only   phát lại flow, gom cửa sổ, dựng đồ thị rồi bỏ, không suy luận
+  gat_only     (chỉ hybrid) chỉ chạy các GAT nhóm: embedding của từng đồ thị test, không gọi LightGBM
+  lgbm_only    (chỉ hybrid) chỉ gọi LightGBM trên đặc trưng dựng sẵn từ 300 cửa sổ đầu, lặp lại; --lgbm-path sklearn (predict_proba, như detector)
+               hoặc booster (booster_.predict, bỏ lớp bọc sklearn) hoặc fixed (cùng một mảng đặc trưng, kiểm xem hình dạng đầu vào có liên quan không)
   stream       toàn bộ đường của detector.run_stream (không nạp đồ thị offline tham chiếu); --keep-rows tái hiện bản cũ (giữ dict mỗi cửa sổ),
                --trim-every N gọi malloc_trim sau mỗi N cửa sổ
 
@@ -76,13 +79,14 @@ def main():
     ap.add_argument("--config", required=True)
     ap.add_argument("--model", default="hybrid_gat_lgbm_oofavg_il")
     ap.add_argument("--seed", type=int, default=42)
-    ap.add_argument("--phase", required=True, choices=["model_only", "build_only", "stream"])
+    ap.add_argument("--phase", required=True, choices=["model_only", "build_only", "stream", "gat_only", "lgbm_only"])
     ap.add_argument("--tag", required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--max-windows", type=int, default=4000)
     ap.add_argument("--keep-rows", action="store_true")
     ap.add_argument("--trim-every", type=int, default=0)
     ap.add_argument("--flows-cache", default=None)
+    ap.add_argument("--lgbm-path", default="sklearn", choices=["sklearn", "booster", "fixed"])
     a = ap.parse_args()
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -98,13 +102,13 @@ def main():
     target = ctx.target                                                    # đồ thị test đã dựng sẵn (cho pha model_only)
     for attr in ("train", "val", "Xtr", "ytr", "Xva", "yva", "Ftr_nbr", "window", "target_raw"):
         setattr(ctx, attr, None)
-    if a.phase != "model_only":
+    if a.phase not in ("model_only", "gat_only", "lgbm_only"):
         ctx.target = None
         target = None
     D.gc.collect()
     D.trim_memory()
 
-    flows = load_flows(cfg, ctx, a.flows_cache) if a.phase != "model_only" else None
+    flows = load_flows(cfg, ctx, a.flows_cache) if a.phase in ("build_only", "stream") else None
     if flows is not None:
         D.gc.collect()
         D.trim_memory()
@@ -120,6 +124,35 @@ def main():
         n = len(target)
         for i in range(a.max_windows):
             model.proba_window(target[i % n])
+            probe(i + 1)
+    elif a.phase == "gat_only":
+        import torch
+        from src import hybrid as H
+        n = len(target)
+        with torch.no_grad():
+            for i in range(a.max_windows):
+                g = target[i % n]
+                for gat in model.gats:
+                    gat.embed(g.x, g.edge_index, g.edge_attr).numpy()
+                probe(i + 1)
+    elif a.phase == "lgbm_only":
+        import torch
+        from src import hybrid as H
+        views_list = []
+        with torch.no_grad():
+            for g in target[:300]:
+                x = g.x.numpy()
+                views_list.append([H.build_features(gat.embed(g.x, g.edge_index, g.edge_attr).numpy(), x) for gat in model.gats])
+        m = len(views_list)
+        K = len(classes)
+        D.gc.collect()
+        D.trim_memory()
+        for i in range(a.max_windows):
+            views = views_list[0] if a.lgbm_path == "fixed" else views_list[i % m]
+            if a.lgbm_path == "booster":
+                model.lgbm.booster_.predict(np.vstack(views))
+            else:
+                H.predict_proba_views(model.lgbm, views, K)
             probe(i + 1)
     elif a.phase == "build_only":
         asm = SF.WindowAssembler(window_sec)
