@@ -1,0 +1,35 @@
+{
+ "steps_s": {
+  "clone_va_cai_goi": 56.6,
+  "pytest": 80.3,
+  "gat_window_10s": 163.7,
+  "gat_window_2s": 560.2,
+  "gat_window_1s": 842.9
+ },
+ "device": "GPU",
+ "gpu": "Tesla T4",
+ "commit": "5169a1dbdcd383dc77c95fb8749221ccf5821aa8",
+ "total_s": 1713.3,
+ "peak_ram_gb": 3.65,
+ "gpu_hours": 0.476,
+ "cpu_count": 4,
+ "pytest": "110 passed, 4295 warnings in 76.32s (0:01:16)",
+ "windows": [
+  10,
+  2,
+  1
+ ],
+ "grid": {
+  "rows": 9,
+  "windows": [
+   1,
+   2,
+   10
+  ],
+  "seeds": [
+   42,
+   43,
+   44
+  ]
+ }
+}

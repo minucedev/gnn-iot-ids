@@ -1,0 +1,66 @@
+{
+ "nf_ton_iot_v3_w2": {
+  "gat_default": {
+   "42": {
+    "threshold": 0.965984620153904,
+    "limit": 0.0408,
+    "feasible": true,
+    "meets_recall_target": false,
+    "n_val_normal": 158346,
+    "n_val_attack": 75965,
+    "before": {
+     "accuracy": 0.9093683181754164,
+     "f1_macro": 0.8969205014263183,
+     "fpr": 0.08079143142232832,
+     "recall_attack": 0.9219114065688145
+    },
+    "after": {
+     "accuracy": 0.9013832043736743,
+     "f1_macro": 0.8842292446950024,
+     "fpr": 0.040796736261099115,
+     "recall_attack": 0.7897189495162246
+    }
+   },
+   "43": {
+    "threshold": 0.90446537733078,
+    "limit": 0.0408,
+    "feasible": true,
+    "meets_recall_target": false,
+    "n_val_normal": 158346,
+    "n_val_attack": 75965,
+    "before": {
+     "accuracy": 0.9118863390963292,
+     "f1_macro": 0.8965266858022168,
+     "fpr": 0.07824637186919783,
+     "recall_attack": 0.9277035476864346
+    },
+    "after": {
+     "accuracy": 0.9146092159565705,
+     "f1_macro": 0.8988829070853998,
+     "fpr": 0.040796736261099115,
+     "recall_attack": 0.8390442967155927
+    }
+   },
+   "44": {
+    "threshold": 0.9721969123929739,
+    "limit": 0.0408,
+    "feasible": true,
+    "meets_recall_target": false,
+    "n_val_normal": 158346,
+    "n_val_attack": 75965,
+    "before": {
+     "accuracy": 0.9119887670659935,
+     "f1_macro": 0.902144700767956,
+     "fpr": 0.08201028128276054,
+     "recall_attack": 0.925900085565721
+    },
+    "after": {
+     "accuracy": 0.9120741237073804,
+     "f1_macro": 0.900063164207374,
+     "fpr": 0.040790420976848166,
+     "recall_attack": 0.8222997433028368
+    }
+   }
+  }
+ }
+}
