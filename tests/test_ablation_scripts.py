@@ -142,3 +142,29 @@ def test_gat_explain_param_table_and_attention_samples(tmp_path):
     assert len(e["layers"]) == 2 and e["n_nodes"] == len(e["ips"]) == len(e["y"]) == len(e["pred"])
     for layer in e["layers"]:
         assert np.array(layer["alpha"]).shape == (len(layer["edge_index"][0]), 4)
+
+
+def test_run_threshold_c_matches_ablation_features_and_checks_val_f1(tmp_path):
+    rc = _load_script("run_threshold_c")
+    data_dir = _dataset(tmp_path)
+    search = {rc.ABLATION_MODEL: {"best": {"n": 5, "l": 4}}}
+    (tmp_path / "search.json").write_text(json.dumps(search), encoding="utf-8")
+    out = tmp_path / "out"
+    res = rc.run(data_dir, "fake", out, tmp_path / "search.json", None, seeds=(42,))
+    c = res["42"]
+    assert set(c) >= {"threshold", "feasible", "before", "after", "repro_f1_diff", "lgbm_cfg", "n_params", "size_kb"}
+    assert c["repro_f1_diff"] is None and c["lgbm_cfg"] == {"n": 5, "l": 4} and c["n_params"] > 0
+    assert c["after"]["fpr"] <= 0.0408 or not c["feasible"]
+    saved = json.loads((out / "thresholds_c_fake.json").read_text(encoding="utf-8"))["fake"]
+    assert set(saved) == {rc.MODEL} and saved[rc.MODEL]["42"]["threshold"] == c["threshold"]
+    assert (out / "models_c" / "fake_s42" / f"{rc.MODEL}.pkl").exists()
+    # F1 val khớp ablation -> không lỗi; lệch -> RuntimeError
+    f1 = c["before"]["f1_macro"]
+    for value, ok in ((f1, True), (f1 + 0.1, False)):
+        (tmp_path / "abl.csv").write_text(
+            f"dataset,model,task,seed,split,f1_macro\nfake,{rc.ABLATION_MODEL},multiclass,42,val,{value!r}\n", encoding="utf-8")
+        if ok:
+            assert rc.run(data_dir, "fake", tmp_path / "out2", tmp_path / "search.json", tmp_path / "abl.csv", seeds=(42,))["42"]["repro_f1_diff"] == pytest.approx(0, abs=1e-9)
+        else:
+            with pytest.raises(RuntimeError):
+                rc.run(data_dir, "fake", tmp_path / "out3", tmp_path / "search.json", tmp_path / "abl.csv", seeds=(42,))
