@@ -88,6 +88,44 @@ def shrink_graph(g, max_nodes=MAX_GRAPH_NODES):
             "edges": [[idx[a], idx[b]] for a, b in edges if a in idx and b in idx]}
 
 
+def plot_first_alert(g, path, title_prefix="", max_nodes=MAX_GRAPH_NODES):
+    """Vẽ đồ thị cửa sổ có cảnh báo đầu tiên (`detector.graph_dump`) ra file PNG: node bị cảnh báo màu đỏ, node còn lại màu xanh, mũi tên là flow.
+
+    Trả về dict {in_max, out_max, n_nodes, n_edges, n_alert, t}: số IP nhiều nhất gửi tới một node (fan-in) và một node gửi tới (fan-out)."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import networkx as nx
+
+    s = shrink_graph(g, max_nodes)
+    n = len(s["nodes"])
+    G = nx.DiGraph()
+    G.add_nodes_from(range(n))
+    G.add_edges_from(s["edges"])
+    red = [i for i, x in enumerate(s["nodes"]) if x["pred"] != "Normal"]
+    redset = set(red)
+    blue = [i for i in range(n) if i not in redset]
+    pos = nx.spring_layout(G.to_undirected(), seed=7, k=1.6 / max(1.0, float(np.sqrt(n))), iterations=200)
+    fig, ax = plt.subplots(figsize=(11, 7.5))
+    nx.draw_networkx_edges(G, pos, ax=ax, edge_color="#9aa0a6", alpha=0.6, arrows=True, arrowsize=9, width=0.9)
+    nx.draw_networkx_nodes(G, pos, nodelist=blue, ax=ax, node_color="#5b8def", node_size=110, label="IP bình thường")
+    nx.draw_networkx_nodes(G, pos, nodelist=red, ax=ax, node_color="#d93025", node_size=260, label="IP bị cảnh báo (dự đoán tấn công)")
+    hubs = [h for h in sorted(range(n), key=lambda i: -G.in_degree(i))[:2] if h not in red[:8]]
+    nx.draw_networkx_labels(G, pos, labels={i: s["nodes"][i]["ip"] for i in red[:8] + hubs}, ax=ax, font_size=8, verticalalignment="bottom")
+    classes = sorted({x["pred"] for x in s["nodes"] if x["pred"] != "Normal"})
+    note = f", vẽ {n} trong {s['n_nodes_total']} node" if s["truncated"] else ""
+    ax.set_title(f"{title_prefix}cửa sổ đóng lúc {s['t']} UTC: {s['n_nodes_total']} node, {s['n_edges_total']} cạnh, "
+                 f"{s['n_alert_total']} node bị cảnh báo {classes}{note}", fontsize=11)
+    ax.legend(loc="upper right")
+    ax.axis("off")
+    fig.tight_layout()
+    fig.savefig(path, dpi=110)
+    plt.close(fig)
+    return {"in_max": max((G.in_degree(i) for i in range(n)), default=0), "out_max": max((G.out_degree(i) for i in range(n)), default=0),
+            "n_nodes": s["n_nodes_total"], "n_edges": s["n_edges_total"], "n_alert": s["n_alert_total"], "t": s["t"]}
+
+
 def pick_episode(episodes, onset_ts, tol=1.0):
     """Đợt tấn công (từ `realtime_eval.episodes`) bắt đầu tại mốc `onset_ts` (giây epoch, sai số ≤ tol giây)."""
     best = min(episodes, key=lambda e: abs(e["start_ts"] - onset_ts), default=None)

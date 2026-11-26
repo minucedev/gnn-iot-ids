@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demo phát lại: phát hiện xâm nhập IoT</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --ink: #1f2328; --muted: #5c6670; --line: #d7dce1;
+    --blue: #3367d6; --blue-soft: #e8effc; --red: #d93025; --red-soft: #fde7e9; --green: #1e8e3e; --amber: #b06000;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, Menlo, "DejaVu Sans Mono", monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14171a; --panel: #1d2125; --ink: #e8eaed; --muted: #9aa4af; --line: #343b43;
+      --blue: #8ab4f8; --blue-soft: #1e2a44; --red: #ff6b60; --red-soft: #3b1f20; --green: #6fcf8c; --amber: #f2b45a;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14171a; --panel: #1d2125; --ink: #e8eaed; --muted: #9aa4af; --line: #343b43;
+    --blue: #8ab4f8; --blue-soft: #1e2a44; --red: #ff6b60; --red-soft: #3b1f20; --green: #6fcf8c; --amber: #f2b45a;
+  }
+  * { box-sizing: border-box; }
+  html { font-size: 17px; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.45; }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 1.5rem; margin: 0 0 4px; }
+  h2 { font-size: 1.05rem; margin: 0 0 8px; }
+  .sub { color: var(--muted); font-size: .9rem; margin: 0 0 14px; }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: center; margin-bottom: 12px; }
+  .controls label { font-size: .9rem; color: var(--muted); display: inline-flex; gap: 6px; align-items: center; }
+  .seg-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+  button, select { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 7px 12px; cursor: pointer; }
+  button:hover, select:hover { border-color: var(--blue); }
+  button:focus-visible, select:focus-visible, input:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+  .seg-buttons button[aria-pressed="true"] { background: var(--blue); border-color: var(--blue); color: #fff; font-weight: 600; }
+  :root[data-theme="dark"] .seg-buttons button[aria-pressed="true"] { color: #10161f; }
+  button.primary { background: var(--blue); border-color: var(--blue); color: #fff; font-weight: 600; min-width: 130px; }
+  :root[data-theme="dark"] button.primary { color: #10161f; }
+  .status { display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; align-items: center; margin-bottom: 12px; }
+  .clock { font-family: var(--mono); font-size: 2rem; font-weight: 700; letter-spacing: .02em; }
+  .clock small { font-size: .8rem; font-weight: 400; color: var(--muted); letter-spacing: 0; }
+  .bar { position: relative; height: 14px; background: var(--blue-soft); border-radius: 7px; overflow: visible; }
+  .bar > i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--blue); border-radius: 7px; width: 0; }
+  .bar > b { position: absolute; top: -5px; bottom: -5px; width: 3px; background: var(--red); border-radius: 2px; }
+  .bar-legend { grid-column: 2; display: flex; justify-content: space-between; font-size: .78rem; color: var(--muted); font-family: var(--mono); }
+  .stats { grid-column: 1 / -1; display: flex; gap: 22px; flex-wrap: wrap; font-size: .92rem; }
+  .stats span b { font-family: var(--mono); }
+  .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; margin-bottom: 14px; align-items: start; }
+  @media (max-width: 920px) { .grid { grid-template-columns: 1fr; } }
+  #log { height: 560px; overflow-y: auto; font-family: var(--mono); font-size: .86rem; line-height: 1.5; border: 1px solid var(--line); border-radius: 8px; padding: 6px 0; background: var(--bg); }
+  .ln { padding: 1px 10px; white-space: pre; }
+  .ln.alert { background: var(--red-soft); color: var(--red); font-weight: 700; }
+  .ln.sub { background: var(--red-soft); color: var(--red); }
+  .ln.mark { color: var(--amber); font-weight: 700; border-top: 1px dashed var(--amber); border-bottom: 1px dashed var(--amber); margin: 3px 0; padding: 2px 10px; background: transparent; }
+  .ln.empty { color: var(--muted); white-space: normal; padding: 20px 14px; }
+  #detectCard { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; font-size: .95rem; min-height: 3.2em; color: var(--muted); }
+  #detectCard.hit { border-color: var(--red); background: var(--red-soft); color: var(--ink); }
+  #detectCard strong { color: var(--red); font-size: 1.15rem; }
+  #graph { width: 100%; height: auto; aspect-ratio: 900 / 600; display: block; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+  #graph text { font-family: var(--sans); fill: var(--ink); paint-order: stroke; stroke: var(--bg); stroke-width: 3px; stroke-linejoin: round; }
+  .legend { display: flex; gap: 16px; font-size: .85rem; color: var(--muted); margin-top: 6px; flex-wrap: wrap; }
+  .legend i { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
+  table { border-collapse: collapse; width: 100%; font-size: .93rem; }
+  th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; }
+  td.num, th.num { text-align: right; font-family: var(--mono); white-space: nowrap; }
+  tr.total td { font-weight: 700; border-top: 2px solid var(--line); }
+  .tables { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 920px) { .tables { grid-template-columns: 1fr; } }
+  .note { color: var(--muted); font-size: .82rem; margin-top: 8px; }
+  footer { color: var(--muted); font-size: .82rem; margin: 14px 2px; }
+  .kbd { font-family: var(--mono); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; font-size: .8rem; }
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Demo phát lại: phát hiện xâm nhập IoT thời gian thực</h1>
+  <p class="sub" id="subtitle"></p>
+
+  <section class="panel" aria-label="Điều khiển">
+    <div class="controls">
+      <div class="seg-buttons" id="segButtons" role="group" aria-label="Chọn đoạn dữ liệu"></div>
+      <label>Mô hình <select id="modelSel"></select></label>
+      <label>Tốc độ <select id="speedSel"></select></label>
+      <label><input type="checkbox" id="stopChk" checked> Dừng ở cảnh báo đầu tiên từ mốc tấn công</label>
+      <button id="playBtn" class="primary" type="button">▶ Phát</button>
+      <button id="resetBtn" type="button">⟲ Về đầu</button>
+      <button id="themeBtn" type="button" aria-label="Đổi nền sáng/tối">◐</button>
+    </div>
+    <div class="status">
+      <div class="clock" id="clock">--:--:--<small> UTC, giờ dữ liệu</small></div>
+      <div>
+        <div class="bar" id="bar"><i id="barFill"></i><b id="barOnset" title="Mốc tấn công thật"></b></div>
+      </div>
+      <div></div>
+      <div class="bar-legend"><span id="barStart"></span><span id="barOnsetLabel"></span><span id="barEnd"></span></div>
+      <div class="stats">
+        <span>Cửa sổ đã xử lý: <b id="stWin">0</b></span>
+        <span>Cảnh báo: <b id="stAlert">0</b></span>
+        <span>Xử lý cửa sổ vừa rồi: <b id="stMs">–</b></span>
+        <span>Chậm nhất: <b id="stMax">–</b></span>
+        <span>Phím: <span class="kbd">Space</span> phát/dừng, <span class="kbd">R</span> về đầu, <span class="kbd">1</span>–<span class="kbd">3</span> chọn đoạn</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="grid" style="margin-top:14px">
+    <section class="panel" aria-label="Nhật ký cửa sổ">
+      <h2>Từng cửa sổ 5 giây khi đóng</h2>
+      <div id="log" role="log" aria-live="off"></div>
+    </section>
+    <section class="panel" aria-label="Đồ thị cửa sổ cảnh báo đầu tiên">
+      <h2>Đồ thị của cửa sổ có cảnh báo đầu tiên</h2>
+      <div id="detectCard">Bấm Phát. Đồ thị hiện ra khi có cảnh báo đầu tiên kể từ mốc tấn công.</div>
+      <svg id="graph" viewBox="0 0 900 600" role="img" aria-label="Đồ thị các IP trong cửa sổ có cảnh báo đầu tiên"></svg>
+      <div class="legend"><span><i style="background:var(--blue)"></i>IP bình thường</span><span><i style="background:var(--red)"></i>IP bị cảnh báo (dự đoán tấn công)</span><span>Mũi tên: flow từ nguồn tới đích</span></div>
+      <div class="note" id="graphNote"></div>
+    </section>
+  </div>
+
+  <div class="tables">
+    <section class="panel" aria-label="Tốc độ và độ nhẹ">
+      <h2>Tốc độ và độ nhẹ (cảnh 4)</h2>
+      <table id="speedTable"></table>
+      <div class="note" id="speedNote"></div>
+    </section>
+    <section class="panel" aria-label="Giới hạn">
+      <h2>Giới hạn: các đợt tấn công bị bỏ sót (cảnh 5)</h2>
+      <table id="limitTable"></table>
+      <div class="note" id="limitNote"></div>
+    </section>
+  </div>
+
+  <footer id="footer"></footer>
+</div>
+
+<script id="replay-data" type="application/json">{"error":"chưa nhúng dữ liệu: chạy report/demo/embed_replay.py"}</script>
+<script>
+(function () {
+  "use strict";
+  var DATA = JSON.parse(document.getElementById("replay-data").textContent);
+  function $(id) { return document.getElementById(id); }
+  if (DATA.error || !DATA.segments) { $("subtitle").textContent = DATA.error || "Dữ liệu trống"; return; }
+
+  // ---------- định dạng số kiểu Việt Nam (không phụ thuộc locale của trình duyệt)
+  function vn(x, nd) {
+    nd = nd || 0;
+    var s = Math.abs(x).toFixed(nd), parts = s.split("."), ip = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    return (x < 0 ? "-" : "") + ip + (parts[1] ? "," + parts[1] : "");
+  }
+  function pad(s, n) { s = String(s); while (s.length < n) s = " " + s; return s; }
+  function padr(s, n) { s = String(s); while (s.length < n) s += " "; return s; }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function hmsOf(ms) { return new Date(ms).toISOString().substr(11, 8); }
+
+  var META = DATA.meta, SEGS = DATA.segments;
+  var MODELS = [META.main_model, META.light_model];
+  var MODEL_NAME = {}; MODEL_NAME[META.main_model] = "Hybrid chính (GAT + LightGBM)"; MODEL_NAME[META.light_model] = "Hybrid nhẹ";
+  var S = { seg: 0, model: META.main_model, idx: 0, playing: false, timer: null, speed: META.speedup_default || 5, stop: true, shown: false, totalAlerts: 0, maxMs: 0, lastMs: null };
+
+  // ---------- khởi tạo giao diện
+  $("subtitle").textContent = "Phát lại kết quả đã chạy trên Kaggle (CPU " + META.cpu + ", " + META.threads + " luồng) với mô hình đã đóng băng; trang này không chạy mô hình và không tải gì từ Internet.";
+  var segBox = $("segButtons");
+  SEGS.forEach(function (sg, i) {
+    var b = document.createElement("button"); b.type = "button"; b.dataset.i = i;
+    b.textContent = sg.id + ": " + sg.title; b.addEventListener("click", function () { selectSegment(i); });
+    segBox.appendChild(b);
+  });
+  MODELS.forEach(function (m) { var o = document.createElement("option"); o.value = m; o.textContent = MODEL_NAME[m]; $("modelSel").appendChild(o); });
+  [1, 2, 5, 10, 20, 50].forEach(function (v) { var o = document.createElement("option"); o.value = v; o.textContent = "×" + v + (v === 5 ? " (như demo)" : ""); if (v === S.speed) o.selected = true; $("speedSel").appendChild(o); });
+  $("modelSel").addEventListener("change", function () { S.model = this.value; selectSegment(S.seg); });
+  $("speedSel").addEventListener("change", function () { S.speed = +this.value; });
+  $("stopChk").addEventListener("change", function () { S.stop = this.checked; });
+  $("playBtn").addEventListener("click", togglePlay);
+  $("resetBtn").addEventListener("click", function () { selectSegment(S.seg); });
+  $("themeBtn").addEventListener("click", function () {
+    var root = document.documentElement, dark = root.dataset.theme ? root.dataset.theme === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    root.dataset.theme = dark ? "light" : "dark";
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.target && /^(SELECT|INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
+    if (e.code === "Space") { e.preventDefault(); togglePlay(); }
+    else if (e.key === "r" || e.key === "R") selectSegment(S.seg);
+    else if (e.key >= "1" && e.key <= String(SEGS.length)) selectSegment(+e.key - 1);
+  });
+
+  function run() { return SEGS[S.seg].runs[S.model]; }
+  function onsetMs() { return Date.parse(SEGS[S.seg].onset); }
+  function firstAlertIndex() {
+    var r = run(), w0 = Math.floor(onsetMs() / 5000) * 5;           // đầu cửa sổ chứa mốc tấn công (giây epoch)
+    for (var i = 0; i < r.windows.length; i++) if (r.windows[i].n_alert > 0 && r.windows[i].t_close - 5 >= w0) return i;
+    return -1;
+  }
+
+  // ---------- chọn đoạn, về đầu
+  function selectSegment(i) {
+    pause();
+    S.seg = i; S.idx = 0; S.shown = false; S.totalAlerts = 0; S.maxMs = 0; S.lastMs = null;
+    var sg = SEGS[i], r = run(), n = r.windows.length;
+    Array.prototype.forEach.call(segBox.children, function (b, k) { b.setAttribute("aria-pressed", k === i ? "true" : "false"); });
+    $("modelSel").value = S.model;
+    $("log").innerHTML = '<div class="ln empty">' + esc(sg.id + ": " + sg.title) + ". Dữ liệu " + esc(sg.start.substr(11, 8)) + " → " + esc(sg.end.substr(11, 8)) + " UTC (" + vn(sg.n_flows) +
+      " flow), đợt " + esc(sg.cls) + " bắt đầu lúc " + esc(sg.onset.substr(11, 12).replace(".", ",")) + ". Bấm Phát (hoặc phím Space).</div>";
+    $("clock").innerHTML = "--:--:--<small> UTC, giờ dữ liệu</small>";
+    $("barFill").style.width = "0";
+    var first = r.windows[0].t_close - 5, last = r.windows[n - 1].t_close, on = onsetMs() / 1000;
+    var pct = Math.max(0, Math.min(100, (on - first) / (last - first) * 100));
+    $("barOnset").style.left = pct + "%";
+    $("barStart").textContent = hmsOf(first * 1000); $("barEnd").textContent = hmsOf(last * 1000);
+    $("barOnsetLabel").textContent = "▲ mốc tấn công " + sg.onset.substr(11, 8);
+    $("stWin").textContent = "0"; $("stAlert").textContent = "0"; $("stMs").textContent = "–"; $("stMax").textContent = "–";
+    $("detectCard").className = ""; $("detectCard").textContent = "Bấm Phát. Đồ thị hiện ra khi có cảnh báo đầu tiên kể từ mốc tấn công.";
+    $("graph").innerHTML = ""; $("graphNote").textContent = "";
+    setPlayLabel();
+  }
+
+  // ---------- phát lại
+  function setPlayLabel() {
+    var n = run().windows.length;
+    $("playBtn").textContent = S.playing ? "⏸ Dừng" : (S.idx >= n ? "▶ Phát lại" : (S.idx > 0 ? "▶ Phát tiếp" : "▶ Phát"));
+  }
+  function togglePlay() {
+    if (S.playing) { pause(); return; }
+    if (S.idx >= run().windows.length) selectSegment(S.seg);
+    if (S.idx === 0) $("log").innerHTML = "";
+    S.playing = true; setPlayLabel(); tick();
+  }
+  function pause() { S.playing = false; if (S.timer) { clearTimeout(S.timer); S.timer = null; } setPlayLabel(); }
+
+  function addLine(cls, text) { var d = document.createElement("div"); d.className = "ln " + cls; d.textContent = text; $("log").appendChild(d); return d; }
+
+  function tick() {
+    var r = run(), W = r.windows, i = S.idx;
+    if (i >= W.length) { pause(); return; }
+    var w = W[i], prev = i > 0 ? W[i - 1] : null, on = onsetMs() / 1000;
+    if (w.t_close > on && (!prev || prev.t_close <= on)) addLine("mark", "⏱ " + SEGS[S.seg].onset.substr(11, 12).replace(".", ",") + "  mốc tấn công thật (" + SEGS[S.seg].cls + ")");
+    var head = "[" + w.t + "] cửa sổ " + pad(w.nodes, 4) + " node " + pad(w.edges, 4) + " cạnh " + pad(Math.round(w.ms), 5) + " ms   " + (w.n_alert ? "⚠ " + w.n_alert + " cảnh báo" : "cảnh báo: 0");
+    addLine(w.n_alert ? "alert" : "", head);
+    w.alerts.forEach(function (a) { addLine("sub", "           ⚠ " + padr(a.ip, 15) + " " + padr(a.cls, 19) + " p = " + vn(a.p, 2)); });
+    if (w.n_alert > w.alerts.length) addLine("sub", "           … và " + (w.n_alert - w.alerts.length) + " cảnh báo khác");
+    $("log").scrollTop = $("log").scrollHeight;
+    S.idx = i + 1; S.totalAlerts += w.n_alert; S.lastMs = w.ms; S.maxMs = Math.max(S.maxMs, w.ms);
+    $("clock").innerHTML = w.t + "<small> UTC, giờ dữ liệu</small>";
+    $("barFill").style.width = ((S.idx / W.length) * 100) + "%";
+    $("stWin").textContent = vn(S.idx); $("stAlert").textContent = vn(S.totalAlerts); $("stMs").textContent = vn(w.ms) + " ms"; $("stMax").textContent = vn(S.maxMs) + " ms";
+
+    var fa = firstAlertIndex();
+    if (!S.shown && i === fa) {
+      S.shown = true; showFirstAlert(r, w);
+      if (S.stop) { pause(); return; }
+    }
+    if (S.idx >= W.length) { pause(); return; }
+    var gap = Math.max(1, W[S.idx].t_close - w.t_close);               // giây dữ liệu tới cửa sổ kế tiếp
+    S.timer = setTimeout(function () { S.timer = null; if (S.playing) tick(); }, Math.max(25, gap * 1000 / S.speed));
+  }
+
+  function showFirstAlert(r, w) {
+    var sg = SEGS[S.seg], g = r.first_alert_graph, d = r.detection_s;
+    var card = $("detectCard"); card.className = "hit";
+    var wait = (w.t_close - onsetMs() / 1000), dd = wait + w.ms / 1000;
+    card.innerHTML = "<strong>Phát hiện sau " + vn(dd, 2) + " giây</strong> kể từ mốc tấn công " + esc(sg.onset.substr(11, 12).replace(".", ",")) +
+      " (" + esc(sg.cls) + "). Cảnh báo đầu tiên lúc " + esc(w.t) + ": chờ đóng cửa sổ " + vn(wait, 2) + " giây + xử lý " + vn(w.ms) + " ms." +
+      (d != null && Math.abs(d - dd) > 0.02 ? " (Theo định nghĩa đánh giá, tính cảnh báo đúng lớp: " + vn(d, 2) + " giây.)" : "");
+    drawGraph(g);
+  }
+
+  // ---------- vẽ đồ thị bằng SVG (bố cục lực đẩy-hút, hạt giống cố định nên lần nào cũng như nhau)
+  function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  function layout(n, edges, W, H, seed) {
+    var rnd = mulberry32(seed), p = [], i, j, it;
+    for (i = 0; i < n; i++) p.push({ x: (rnd() - 0.5) * W * 0.8, y: (rnd() - 0.5) * H * 0.8, dx: 0, dy: 0 });
+    var k = Math.sqrt(W * H / Math.max(n, 1)) * 0.55, temp = W / 6;
+    for (it = 0; it < 320; it++) {
+      for (i = 0; i < n; i++) { p[i].dx = 0; p[i].dy = 0; }
+      for (i = 0; i < n; i++) for (j = i + 1; j < n; j++) {
+        var ex = p[i].x - p[j].x, ey = p[i].y - p[j].y, d2 = ex * ex + ey * ey + 0.01, d = Math.sqrt(d2), f = k * k / d2;
+        p[i].dx += ex * f; p[i].dy += ey * f; p[j].dx -= ex * f; p[j].dy -= ey * f;
+      }
+      edges.forEach(function (e) {
+        var a = p[e[0]], b = p[e[1]], ex = a.x - b.x, ey = a.y - b.y, d = Math.sqrt(ex * ex + ey * ey) + 0.01, f = d / k;
+        a.dx -= ex * f; a.dy -= ey * f; b.dx += ex * f; b.dy += ey * f;
+      });
+      for (i = 0; i < n; i++) {
+        p[i].dx -= p[i].x * 0.04; p[i].dy -= p[i].y * 0.04;                       // lực kéo nhẹ về giữa
+        var len = Math.sqrt(p[i].dx * p[i].dx + p[i].dy * p[i].dy) + 0.01, m = Math.min(len, temp);
+        p[i].x += p[i].dx / len * m; p[i].y += p[i].dy / len * m;
+      }
+      temp *= 0.985;
+    }
+    var minx = Infinity, maxx = -Infinity, miny = Infinity, maxy = -Infinity;
+    p.forEach(function (q) { minx = Math.min(minx, q.x); maxx = Math.max(maxx, q.x); miny = Math.min(miny, q.y); maxy = Math.max(maxy, q.y); });
+    var sx = (maxx - minx) || 1, sy = (maxy - miny) || 1, mx = 60, my = 45;
+    return p.map(function (q) { return { x: mx + (q.x - minx) / sx * (W - 2 * mx), y: my + (q.y - miny) / sy * (H - 2 * my) }; });
+  }
+  function drawGraph(g) {
+    var W = 900, H = 600, n = g.nodes.length, svg = $("graph"), NS = "http://www.w3.org/2000/svg";
+    svg.innerHTML = "";
+    var pos = layout(n, g.edges, W, H, (g.win % 100000) + 7);
+    var inDeg = new Array(n).fill(0), outDeg = new Array(n).fill(0);
+    g.edges.forEach(function (e) { outDeg[e[0]]++; inDeg[e[1]]++; });
+    function el(tag, attrs, parent) { var x = document.createElementNS(NS, tag); for (var k in attrs) x.setAttribute(k, attrs[k]); (parent || svg).appendChild(x); return x; }
+    var defs = el("defs", {}); var mk = el("marker", { id: "arr", viewBox: "0 0 10 10", refX: "9", refY: "5", markerWidth: "6", markerHeight: "6", orient: "auto-start-reverse" }, defs);
+    el("path", { d: "M0,0 L10,5 L0,10 z", fill: "#8a939c" }, mk);
+    g.edges.forEach(function (e) {
+      var a = pos[e[0]], b = pos[e[1]], dx = b.x - a.x, dy = b.y - a.y, len = Math.sqrt(dx * dx + dy * dy) || 1, rb = g.nodes[e[1]].pred !== "Normal" ? 12 : 8;
+      el("line", { x1: a.x, y1: a.y, x2: b.x - dx / len * rb, y2: b.y - dy / len * rb, stroke: "#8a939c", "stroke-opacity": "0.55", "stroke-width": "1", "marker-end": "url(#arr)" });
+    });
+    var red = [], hub = 0;
+    g.nodes.forEach(function (nd, i) { if (nd.pred !== "Normal") red.push(i); if (inDeg[i] > inDeg[hub]) hub = i; });
+    g.nodes.forEach(function (nd, i) {
+      var isRed = nd.pred !== "Normal", c = el("circle", { cx: pos[i].x, cy: pos[i].y, r: isRed ? 10 : 6, style: "fill:" + (isRed ? "var(--red)" : "var(--blue)") + ";stroke:var(--panel);stroke-width:1.5" });
+      var t = document.createElementNS(NS, "title"); t.textContent = nd.ip + " | " + nd.pred + " | p = " + vn(nd.p, 3) + " | nhận từ " + inDeg[i] + " IP, gửi tới " + outDeg[i] + " IP"; c.appendChild(t);
+    });
+    var labelled = {}; red.slice(0, 8).forEach(function (i) { labelled[i] = 1; }); labelled[hub] = 1;
+    Object.keys(labelled).forEach(function (k) {
+      var i = +k, nd = g.nodes[i], tx = el("text", { x: pos[i].x + 13, y: pos[i].y + 4, "font-size": "13", "font-weight": nd.pred !== "Normal" ? "700" : "400" });
+      tx.textContent = nd.ip + (nd.pred !== "Normal" ? "  " + nd.pred : "");
+    });
+    var maxIn = Math.max.apply(null, inDeg), maxOut = Math.max.apply(null, outDeg), cls = {};
+    g.nodes.forEach(function (nd) { if (nd.pred !== "Normal") cls[nd.pred] = 1; });
+    $("graphNote").textContent = "Cửa sổ đóng lúc " + g.t + " UTC: " + vn(g.n_nodes_total) + " node, " + vn(g.n_edges_total) + " cạnh, " + vn(g.n_alert_total) + " node bị cảnh báo (" + Object.keys(cls).join(", ") + "). " +
+      (g.truncated ? "Đang vẽ " + n + " trong " + vn(g.n_nodes_total) + " node (giữ các node bị cảnh báo và node nhiều cạnh nhất). " : "") +
+      "Một IP nhận flow từ tối đa " + maxIn + " IP khác (fan-in); một IP gửi flow tới tối đa " + maxOut + " IP (fan-out).";
+  }
+
+  // ---------- bảng tốc độ và giới hạn
+  var sp = DATA.speed, st = $("speedTable");
+  st.innerHTML = "<thead><tr><th></th><th>Hybrid chính</th><th>Hybrid nhẹ</th></tr></thead><tbody>" +
+    sp.rows.map(function (r) { return "<tr><td>" + esc(r[0]) + '</td><td class="num">' + esc(r[1]) + '</td><td class="num">' + esc(r[2]) + "</td></tr>"; }).join("") + "</tbody>";
+  var nm = sp.numbers[META.main_model];
+  $("speedNote").textContent = "Đo trên " + vn(nm.n_windows) + " cửa sổ của toàn bộ tập test NF-ToN-IoT-v3, " + nm.threads + " luồng CPU; ngưỡng cho phép " + vn(nm.limit_ms) + " ms mỗi cửa sổ (p95). Nguồn: reports/tables/latency.json.";
+  var lt = $("limitTable");
+  lt.innerHTML = "<thead><tr><th>Nhóm</th><th class=\"num\">Số đợt</th><th class=\"num\">Phát hiện</th><th>Ghi chú</th></tr></thead><tbody>" +
+    DATA.limits.map(function (r) { return "<tr" + (r["class"] === "all" ? ' class="total"' : "") + "><td>" + esc(r.label) + '</td><td class="num">' + r.n + '</td><td class="num">' + r.detected + "</td><td>" + esc(r.note) + "</td></tr>"; }).join("") + "</tbody>";
+  $("limitNote").textContent = "Đợt = các cửa sổ có tấn công cách nhau không quá 60 giây. Nguồn: reports/tables/undetected_episodes.json.";
+  $("footer").textContent = "Dữ liệu phát lại do notebook 22a_demo_prep sinh trên Kaggle (commit " + META.commit.substr(0, 7) + ", " + META.generated_utc.replace("T", " ").replace("+00:00", " UTC") +
+    "), mô hình đóng băng tag freeze-v1, ngưỡng " + vn(META.models[META.main_model].threshold, 4) + " (chính) và " + vn(META.models[META.light_model].threshold, 4) + " (nhẹ). Cảnh báo: p = 1 − P(Normal) vượt ngưỡng.";
+
+  selectSegment(0);
+})();
+</script>
+</body>
+</html>

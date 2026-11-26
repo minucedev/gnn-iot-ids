@@ -74,6 +74,18 @@ def test_shrink_graph_many_alerts_capped_to_half():
     assert len(s["nodes"]) == 10 and sum(x["pred"] != "Normal" for x in s["nodes"]) >= 5 and s["n_alert_total"] == 30
 
 
+def test_plot_first_alert_writes_png(tmp_path):
+    pytest.importorskip("networkx")
+    pytest.importorskip("matplotlib")
+    n = 30
+    edges = [[i, 0] for i in range(1, n)] + [[0, 1], [2, 3]]
+    g = graph(n, {0, 1}, edges)
+    info = DR.plot_first_alert(g, tmp_path / "g.png", title_prefix="D1 ", max_nodes=20)
+    assert (tmp_path / "g.png").read_bytes()[:8] == b"\x89PNG\r\n\x1a\n"
+    assert info == {"in_max": info["in_max"], "out_max": info["out_max"], "n_nodes": 30, "n_edges": len(edges), "n_alert": 2, "t": "20:09:20"}
+    assert info["in_max"] >= 15 and info["out_max"] >= 1                      # node 0 là đích chung của các node còn lại (fan-in) trong phần được vẽ
+
+
 def test_pick_episode():
     eps = [{"start_ts": 100.0, "detection_s": 5.0}, {"start_ts": 5000.2, "detection_s": 4.9}]
     assert DR.pick_episode(eps, 5000.0, tol=1.0)["detection_s"] == 4.9
