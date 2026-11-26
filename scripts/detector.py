@@ -13,8 +13,20 @@ chỉ giữ flow của các cửa sổ thuộc tập test (`--restrict none` đ�
 (`--speedup N` chờ cho thời gian thật chậm hơn thời gian dữ liệu N lần; mặc định không chờ) → `WindowAssembler` đóng cửa sổ 5 s →
 `build_window_graph` (scaler đã fit trên train) → dự đoán → ngưỡng đã đóng băng.
 
+Tùy chọn cho demo (task 8.2, kịch bản report/KICH_BAN_DEMO.md); không dùng thì kết quả y hệt bản trước:
+  --start, --end        giờ UTC dạng ISO ("2019-04-24T20:07:00"); chỉ phát lại flow có start <= ts < end (nên là bội của 5 s để cửa sổ đầu/cuối đủ)
+  --flows-csv           thay `flows_csv` của config (ví dụ file đoạn đã cắt sẵn của notebook 22a_demo_prep)
+  --partial-flows       file flow là đoạn cắt sẵn, có thể thiếu một số lớp (mặc định yêu cầu đủ lớp như mô hình)
+  --print-windows       in mỗi cửa sổ một dòng ngay khi xử lý xong: [giờ UTC đóng cửa sổ] số node, số cạnh, ms, số cảnh báo; cảnh báo in IP, lớp, p = 1 - P(Normal)
+  --color               tô đỏ dòng cảnh báo bằng mã ANSI (dùng trong notebook)
+  --max-alert-lines     số dòng cảnh báo tối đa in dưới mỗi cửa sổ (mặc định 5, theo p giảm dần)
+  --stop-after-alert    dừng ngay sau cửa sổ đầu tiên có cảnh báo
+  --dump-first-alert    ghi đồ thị (IP, cạnh, lớp dự đoán, p) của cửa sổ đầu tiên có cảnh báo ra file JSON, để vẽ
+  --alert-from          giờ UTC ISO: hai tùy chọn trên chỉ tính cửa sổ bắt đầu từ giờ này (bỏ qua báo nhầm trước mốc tấn công); mọi cửa sổ vẫn được in
+Ngoài dòng lệnh, `prepare()` nạp mô hình một lần và `main(argv, session)` chạy nhiều đoạn trên phiên đã nạp (notebook 22_demo).
+
 Ghi vào --out:
-  alerts.csv          mỗi node bị dự đoán là tấn công: t_close (UTC, thời điểm đóng cửa sổ theo thời gian dữ liệu), window, ip, pred_class,
+  alerts.csv         mỗi node bị dự đoán là tấn công: t_close (UTC, thời điểm đóng cửa sổ theo thời gian dữ liệu), window, ip, pred_class,
                       p_attack (= 1 - P(Normal)), p_class (xác suất lớp dự đoán), proc_ms (dựng đồ thị + suy luận của cửa sổ đó)
   windows.csv         mỗi cửa sổ một dòng: số flow/node/cạnh, build_ms, infer_ms, total_ms, RAM, số cảnh báo; khi có đồ thị offline để đối chiếu
                       (tập test): nhãn thật, sai khác đặc trưng và dự đoán so với offline
@@ -198,15 +210,80 @@ class OnlineModel:
 
 
 # ---------------------------------------------------------------- dữ liệu
-def load_stream_flows(cfg, ctx, restrict="test"):
-    """Flow đã làm sạch bằng đúng hàm offline (`build_graph.load_clean`), sắp theo thời gian; restrict="test": chỉ flow của cửa sổ tập test."""
+def load_stream_flows(cfg, ctx, restrict="test", allow_partial=False):
+    """Flow đã làm sạch bằng đúng hàm offline (`build_graph.load_clean`), sắp theo thời gian; restrict="test": chỉ flow của cửa sổ tập test.
+
+    allow_partial=True: file là đoạn cắt sẵn nên có thể thiếu lớp (chỉ cần các lớp có mặt nằm trong lớp của mô hình). Cột `y` khi đó lệch mã lớp,
+    nhưng bộ phát hiện chỉ dùng tên lớp trong cột `label`, không dùng `y`."""
     flows, classes, _ = bg.load_clean(ctx.ds, cfg["flows_csv"])
-    if list(classes) != list(ctx.classes):
+    if list(classes) != list(ctx.classes) and not (allow_partial and set(classes) <= set(ctx.classes)):
         raise RuntimeError(f"Lớp của dữ liệu {classes} khác lớp của mô hình {ctx.classes}")
     if restrict == "test":
         keep = np.isin(SF.window_ids(flows["ts"].to_numpy(), ctx.meta["window_sec"]), np.asarray(ctx.meta["test"]["windows"], dtype=np.int64))
         flows = flows[keep].reset_index(drop=True)
     return flows
+
+
+def parse_utc(s):
+    """Giờ UTC dạng ISO ("2019-04-24T20:07:00", có thể kèm "Z" hoặc "+00:00") → giây epoch. Chuỗi không có múi giờ được hiểu là UTC."""
+    d = datetime.fromisoformat(str(s).strip().replace("Z", "+00:00"))
+    if d.tzinfo is None:
+        d = d.replace(tzinfo=timezone.utc)
+    return d.timestamp()
+
+
+def slice_time(flows, start=None, end=None):
+    """Giữ flow có start <= ts < end (giây epoch; None = không chặn phía đó). `flows` đã sắp theo ts."""
+    if start is None and end is None:
+        return flows
+    ts = flows["ts"].to_numpy(np.float64)
+    a = 0 if start is None else int(np.searchsorted(ts, start, "left"))
+    b = len(ts) if end is None else int(np.searchsorted(ts, end, "left"))
+    return flows.iloc[a:b].reset_index(drop=True)
+
+
+# ---------------------------------------------------------------- in từng cửa sổ (demo)
+RED, RESET = "\033[1;31m", "\033[0m"
+
+
+def _vn(x, nd=2):
+    return f"{x:.{nd}f}".replace(".", ",")
+
+
+def format_window_line(t_close, n_nodes, n_edges, total_ms, n_alert, color=False):
+    """Một dòng cho một cửa sổ: `[20:07:05] cửa sổ   12 node   11 cạnh   103 ms   cảnh báo: 0` (giờ UTC lúc đóng cửa sổ)."""
+    t = datetime.fromtimestamp(t_close, tz=timezone.utc).strftime("%H:%M:%S")
+    head = f"[{t}] cửa sổ {n_nodes:4d} node {n_edges:4d} cạnh {total_ms:5.0f} ms   "
+    if n_alert:
+        tail = f"⚠ {n_alert} cảnh báo"
+        return head + (RED + tail + RESET if color else tail)
+    return head + "cảnh báo: 0"
+
+
+def format_alert_line(ip, cls, p_attack, color=False):
+    """Dòng cảnh báo của một node: `           ⚠ 192.168.1.39   DoS_DDoS   p = 1,00` (p = 1 - P(Normal))."""
+    s = f"⚠ {ip:<15} {cls:<19} p = {_vn(p_attack)}"
+    return " " * 11 + (RED + s + RESET if color else s)
+
+
+def window_report(info, max_alert_lines=5, color=False):
+    """Các dòng in ra cho một cửa sổ (`info` do run_stream truyền cho on_window): dòng cửa sổ, rồi tối đa max_alert_lines cảnh báo mạnh nhất."""
+    r = info["row"]
+    lines = [format_window_line(r["t_close"], r["n_nodes"], r["n_edges"], r["total_ms"], r["n_alert"], color)]
+    alerts = sorted(info["alerts"], key=lambda a: -a[2])
+    lines += [format_alert_line(ip, cls, p, color) for ip, cls, p, _ in alerts[:max_alert_lines]]
+    if len(alerts) > max_alert_lines:
+        lines.append(" " * 11 + f"… và {len(alerts) - max_alert_lines} cảnh báo khác")
+    return lines
+
+
+def graph_dump(info, classes):
+    """Đồ thị của một cửa sổ để vẽ: node (IP, lớp dự đoán, p tấn công), cạnh (chỉ số node nguồn, đích), giờ đóng cửa sổ."""
+    g, pred, score, r = info["graph"], info["pred"], info["score"], info["row"]
+    ei = g.edge_index.numpy()
+    return {"win": int(r["win"]), "t_close": info["iso"], "n_nodes": int(g.num_nodes), "n_edges": int(g.num_edges), "total_ms": float(r["total_ms"]),
+            "nodes": [{"ip": ip, "pred": classes[int(pred[j])], "p_attack": float(score[j])} for j, ip in enumerate(g.ips)],
+            "edges": [[int(a), int(b)] for a, b in zip(ei[0], ei[1])]}
 
 
 class Reference:
@@ -240,8 +317,12 @@ def window_columns(K, has_label, has_ref):
 
 
 def run_stream(model, flows, scaler, classes, out_dir, ref=None, window_sec=5, batch_sec=1.0, speedup=None, max_windows=None, warmup=N_WARMUP,
-               trim_every=0, probe=None, keep_rows=False):
+               trim_every=0, probe=None, keep_rows=False, on_window=None, stop_after_alert=False, alert_from=None):
     """Phát lại `flows`, xử lý từng cửa sổ khi đóng. Trả về (bảng cửa sổ đọc lại từ windows.csv, số flow đã phát).
+
+    `on_window(info)` (demo) được gọi sau khi cửa sổ đã xử lý và ghi xong, ngoài khoảng đo độ trễ; info = {row, alerts [(ip, lớp, p_attack, p_lớp)], graph,
+    pred, score, iso}. `stop_after_alert=True`: dừng sau cửa sổ đầu tiên có cảnh báo (chỉ tính cửa sổ bắt đầu từ `alert_from`, giây epoch, nếu có).
+    Mặc định (None, False, None) không đổi gì so với bản trước.
 
     Bộ nhớ: mỗi cửa sổ xử lý xong được ghi thẳng vào windows.csv, không giữ trong RAM (bản trước giữ một dict mỗi cửa sổ).
     `trim_every` > 0: cứ sau chừng đó cửa sổ gọi `malloc_trim` (ngoài khoảng đo độ trễ).
@@ -263,9 +344,10 @@ def run_stream(model, flows, scaler, classes, out_dir, ref=None, window_sec=5, b
     wa = csv.writer(fa)
     wa.writerow(["t_close", "window", "ip", "pred_class", "p_attack", "p_class", "proc_ms"])
     done = False
+    stop = False
 
     def process(cw):
-        nonlocal n_flows_total, n_done
+        nonlocal n_flows_total, n_done, stop
         t0 = PERF()
         fl = cw.flows()
         g = SF.build_window_graph(cw.win, fl, scaler, window_sec)
@@ -281,8 +363,11 @@ def run_stream(model, flows, scaler, classes, out_dir, ref=None, window_sec=5, b
         t_close = (cw.win + 1) * window_sec
         iso = datetime.fromtimestamp(t_close, tz=timezone.utc).isoformat(timespec="seconds")
         score = TH.attack_score(proba)
+        alerts = []
         for j in np.flatnonzero(pred != 0):
             wa.writerow([iso, cw.win, g.ips[j], classes[pred[j]], f"{score[j]:.6f}", f"{proba[j, pred[j]]:.6f}", f"{total_ms:.3f}"])
+            if on_window is not None:
+                alerts.append((g.ips[j], classes[pred[j]], float(score[j]), float(proba[j, pred[j]])))
         row = {"win": cw.win, "t_start": cw.win * window_sec, "t_close": t_close, "n_flows": len(fl), "n_nodes": g.num_nodes,
                "n_edges": g.num_edges, "build_ms": (t1 - t0) * 1000, "infer_ms": (t2 - t1) * 1000, "total_ms": total_ms,
                "rss_mb": rss_mb(), "n_alert": int((pred != 0).sum())}
@@ -325,11 +410,15 @@ def run_stream(model, flows, scaler, classes, out_dir, ref=None, window_sec=5, b
             trim_memory()
         if probe is not None:
             probe(n_done)
+        if on_window is not None:
+            on_window({"row": row, "alerts": alerts, "graph": g, "pred": pred, "score": score, "iso": iso})
+        if stop_after_alert and row["n_alert"] > 0 and (alert_from is None or row["t_start"] >= alert_from):
+            stop = True
 
     for batch in SF.replay_batches(flows, batch_sec, speedup):
         for cw in asm.push(batch):
             process(cw)
-            if max_windows and n_done >= max_windows:
+            if (max_windows and n_done >= max_windows) or stop:
                 done = True
                 break
         if done:
@@ -342,8 +431,38 @@ def run_stream(model, flows, scaler, classes, out_dir, ref=None, window_sec=5, b
     return pd.read_csv(out_dir / "windows.csv"), n_flows_total
 
 
-def main():
-    sys.stdout.reconfigure(encoding="utf-8")
+class Session:
+    """Mô hình đã đóng băng đã nạp xong (và tham chiếu offline nếu cần): nạp một lần bằng `prepare`, chạy nhiều đoạn bằng `main(argv, session)`."""
+
+    def __init__(self, name, seed, ctx, model, ref, frozen_p95):
+        self.name, self.seed, self.ctx, self.model, self.ref, self.frozen_p95 = name, seed, ctx, model, ref, frozen_p95
+        self.classes, self.scaler, self.window_sec = ctx.classes, ctx.scaler, ctx.meta["window_sec"]
+
+
+def prepare(cfg, model_name, seed, reference=True):
+    """Nạp ngữ cảnh, mô hình đã đóng băng và ngưỡng của nó; tùy chọn dự đoán offline cả tập (tham chiếu); chuyển sang 1 luồng; giải phóng dữ liệu huấn luyện."""
+    ds = cfg["dataset"]
+    split = cfg.get("split", "test")
+    print(f"[detector] {ds} mô hình {model_name} seed {seed}, RAM {rss_mb():.0f} MB")
+    ctx = FT.Context(cfg, ds, cfg["datasets"][ds], split)
+    model = OnlineModel(ctx, model_name, seed)
+    print(f"[detector] ngưỡng đóng băng {model.threshold:.6f}, {model.n_params:,} tham số, {model.size_kb:.1f} KB")
+
+    ref = None
+    if reference:
+        t0 = time.time()
+        ref = Reference(ctx, model)
+        print(f"[detector] dự đoán offline {len(ref.proba):,} node trong {time.time() - t0:.0f} s")
+    frozen_p95 = model.single_thread()                                  # từ đây mọi mô hình chạy 1 luồng
+    from threadpoolctl import threadpool_limits
+    threadpool_limits(1)
+    for attr in ("train", "val", "Xtr", "ytr", "Xva", "yva", "Ftr_nbr", "window"):    # giải phóng dữ liệu huấn luyện: tiến trình chỉ giữ mô hình và tham chiếu
+        setattr(ctx, attr, None)
+    gc.collect()
+    return Session(model_name, seed, ctx, model, ref, frozen_p95)
+
+
+def build_parser():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--config", required=True)
     ap.add_argument("--model", default=FT.LIGHT, choices=FT.MODELS)
@@ -355,48 +474,74 @@ def main():
     ap.add_argument("--max-windows", type=int, default=None)
     ap.add_argument("--no-reference", action="store_true", help="không nạp đồ thị offline để đối chiếu (demo trên flow bất kỳ)")
     ap.add_argument("--trim-every", type=int, default=TRIM_EVERY, help="gọi malloc_trim sau mỗi N cửa sổ (0 = không), ngoài khoảng đo độ trễ")
-    a = ap.parse_args()
+    ap.add_argument("--start", default=None, help="giờ UTC ISO: chỉ phát lại flow có ts >= start")
+    ap.add_argument("--end", default=None, help="giờ UTC ISO: chỉ phát lại flow có ts < end")
+    ap.add_argument("--flows-csv", default=None, help="thay flows_csv của config")
+    ap.add_argument("--partial-flows", action="store_true", help="file flow là đoạn cắt sẵn, có thể thiếu một số lớp")
+    ap.add_argument("--print-windows", action="store_true", help="in mỗi cửa sổ một dòng khi xử lý xong, kèm dòng cảnh báo")
+    ap.add_argument("--color", action="store_true", help="tô đỏ dòng cảnh báo (mã ANSI)")
+    ap.add_argument("--max-alert-lines", type=int, default=5, help="số dòng cảnh báo tối đa dưới mỗi cửa sổ khi --print-windows")
+    ap.add_argument("--stop-after-alert", action="store_true", help="dừng sau cửa sổ đầu tiên có cảnh báo")
+    ap.add_argument("--dump-first-alert", default=None, help="ghi đồ thị của cửa sổ đầu tiên có cảnh báo ra file JSON này")
+    ap.add_argument("--alert-from", default=None, help="giờ UTC ISO: --stop-after-alert và --dump-first-alert chỉ tính cửa sổ bắt đầu từ giờ này "
+                                                        "(bỏ qua báo nhầm trong đoạn yên tĩnh trước mốc tấn công); mọi cửa sổ vẫn được in")
+    return ap
+
+
+def main(argv=None, session=None):
+    if hasattr(sys.stdout, "reconfigure"):                              # notebook (OutStream) không có reconfigure
+        sys.stdout.reconfigure(encoding="utf-8")
+    a = build_parser().parse_args(argv)
 
     cfg = json.loads(Path(a.config).read_text(encoding="utf-8"))
+    if a.flows_csv:
+        cfg["flows_csv"] = a.flows_csv
+    t_lo = parse_utc(a.start) if a.start else None
+    t_hi = parse_utc(a.end) if a.end else None
+    if t_lo is not None and t_hi is not None and t_lo >= t_hi:
+        raise SystemExit(f"--start {a.start} phải trước --end {a.end}")
     ds = cfg["dataset"]
     split = cfg.get("split", "test")
     t_start = time.time()
-    print(f"[detector] {ds} mô hình {a.model} seed {a.seed}, RAM {rss_mb():.0f} MB")
-    ctx = FT.Context(cfg, ds, cfg["datasets"][ds], split)
-    model = OnlineModel(ctx, a.model, a.seed)
-    classes = ctx.classes
-    scaler = ctx.scaler
-    print(f"[detector] ngưỡng đóng băng {model.threshold:.6f}, {model.n_params:,} tham số, {model.size_kb:.1f} KB")
-
-    ref = None
-    frozen_p95 = None
-    if not a.no_reference:
-        t0 = time.time()
-        ref = Reference(ctx, model)
-        print(f"[detector] dự đoán offline {len(ref.proba):,} node trong {time.time() - t0:.0f} s")
-    frozen_p95 = model.single_thread()                                  # từ đây mọi mô hình chạy 1 luồng
-    from threadpoolctl import threadpool_limits
-    threadpool_limits(1)
-    window_sec = ctx.meta["window_sec"]
-    for attr in ("train", "val", "Xtr", "ytr", "Xva", "yva", "Ftr_nbr", "window"):    # giải phóng dữ liệu huấn luyện: tiến trình chỉ giữ mô hình và tham chiếu
-        setattr(ctx, attr, None)
-    import gc
-    gc.collect()
+    if session is None:
+        session = prepare(cfg, a.model, a.seed, reference=not a.no_reference)
+    elif (session.name, session.seed) != (a.model, a.seed):
+        raise SystemExit(f"Phiên đã nạp {session.name} seed {session.seed}, không phải {a.model} seed {a.seed}")
+    ctx, model, classes, scaler = session.ctx, session.model, session.classes, session.scaler
+    window_sec, frozen_p95 = session.window_sec, session.frozen_p95
+    ref = None if a.no_reference else session.ref
 
     t0 = time.time()
-    flows = load_stream_flows(cfg, ctx, a.restrict)
+    flows = load_stream_flows(cfg, ctx, a.restrict, allow_partial=a.partial_flows)
     print(f"[detector] đọc và làm sạch flow: {len(flows):,} flow trong {time.time() - t0:.0f} s, RAM {rss_mb():.0f} MB")
+    if t_lo is not None or t_hi is not None:
+        n_all = len(flows)
+        flows = slice_time(flows, t_lo, t_hi)
+        print(f"[detector] đoạn UTC {a.start or '...'} → {a.end or '...'}: giữ {len(flows):,} / {n_all:,} flow")
     gc.collect()
     try:                                                                # trả bộ nhớ đã giải phóng (bảng flow gốc, dữ liệu huấn luyện) cho hệ điều hành
-        import ctypes
         ctypes.CDLL("libc.so.6").malloc_trim(0)
     except OSError:
         pass
     ram_start = rss_mb()
     print(f"[detector] RAM trước khi phát lại: {ram_start:.0f} MB")
+
+    first_alert = {}
+    t_alert = parse_utc(a.alert_from) if a.alert_from else None
+
+    def on_window(info):
+        if a.print_windows:
+            print("\n".join(window_report(info, a.max_alert_lines, a.color)), flush=True)
+        if a.dump_first_alert and not first_alert and info["row"]["n_alert"] > 0 and (t_alert is None or info["row"]["t_start"] >= t_alert):
+            first_alert.update(graph_dump(info, classes))
+
+    use_cb = a.print_windows or bool(a.dump_first_alert)
     t0 = time.time()
-    win, n_flows = run_stream(model, flows, scaler, classes, a.out, ref, window_sec, a.batch_sec, a.speedup, a.max_windows, trim_every=a.trim_every)
+    win, n_flows = run_stream(model, flows, scaler, classes, a.out, ref, window_sec, a.batch_sec, a.speedup, a.max_windows, trim_every=a.trim_every,
+                              on_window=on_window if use_cb else None, stop_after_alert=a.stop_after_alert, alert_from=t_alert)
     run_s = time.time() - t0
+    if a.dump_first_alert:
+        Path(a.dump_first_alert).write_text(json.dumps(first_alert or None, ensure_ascii=False), encoding="utf-8")
     summary = {"dataset": ds, "split": split, "model": a.model, "seed": a.seed, "threshold": model.threshold, "n_params": model.n_params,
                "size_kb": model.size_kb, "classes": classes, "window_sec": window_sec, "n_windows": int(len(win)), "n_flows": int(n_flows),
                "warmup_windows": N_WARMUP, "trim_every": a.trim_every, "restrict": a.restrict, "speedup": a.speedup, "reference": ref is not None,
@@ -404,8 +549,13 @@ def main():
                "n_ref_windows_not_streamed": None if ref is None else len(set(ref.index) - set(int(w) for w in win["win"])),
                "frozen_style_p95_ms": frozen_p95, "stream_seconds": round(run_s, 1), "total_seconds": round(time.time() - t_start, 1),
                "ram_start_mb": ram_start, "ram_end_mb": rss_mb(), "env": env_info()}
+    if t_lo is not None or t_hi is not None:                            # chỉ thêm khi chạy một đoạn; chạy mặc định giữ nguyên các khóa như trước
+        summary.update(start=a.start, end=a.end)
     (Path(a.out) / "detector_summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1), encoding="utf-8")
-    print(f"[detector] xong: {len(win):,} cửa sổ, {n_flows:,} flow trong {run_s:.0f} s; p95 tổng {np.percentile(win['total_ms'], 95):.1f} ms")
+    if len(win):
+        print(f"[detector] xong: {len(win):,} cửa sổ, {n_flows:,} flow trong {run_s:.0f} s; p95 tổng {np.percentile(win['total_ms'], 95):.1f} ms")
+    else:
+        print("[detector] xong: 0 cửa sổ (không có flow trong đoạn đã chọn)")
     return 0
 
 
