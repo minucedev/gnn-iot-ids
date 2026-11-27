@@ -116,33 +116,41 @@ def plan_segment(k, raw, tcol, lcol, data_dir):
     t = tm / 1000.0
     lab = np.asarray(bg.to_group(raw[lcol]))
     nominal = epoch(p["onset"])
-    cand = t[(lab == p["cls"]) & (t >= nominal - 1.0)]
+    cand = t[(lab == p["cls"]) & (t >= nominal)]          # mốc kịch bản là đầu một cửa sổ 5 s; mốc thật = flow tấn công đầu tiên từ đó (khớp cách `realtime_eval` tính đợt)
     if not len(cand):
         raise RuntimeError(f"{k}: không có flow {p['cls']} từ mốc {p['onset']}")
     onset = float(cand.min())
-    if not 0 <= onset - nominal < 2.0:
-        raise RuntimeError(f"{k}: mốc thật {iso(onset)} lệch mốc kịch bản {p['onset']}")
+    if onset - nominal >= 2.0:
+        print(f"    CẢNH BÁO {k}: flow {p['cls']} đầu tiên lúc {iso(onset)}, muộn hơn mốc kịch bản {p['onset']} hơn 2 s")
+    w_on = math.floor(onset / WINDOW_S) * WINDOW_S         # đầu cửa sổ chứa mốc tấn công: phần trước đó phải chỉ có Normal
     start0, end = epoch(p["start"]), epoch(p["end"])
-    bad = (t >= start0) & (t < onset) & (lab != "Normal")
-    start, moved = start0, None
-    if bad.any():                                      # có lưu lượng tấn công/khác trước mốc: dời mốc bắt đầu tới cửa sổ ngay sau flow đó
+    bad = (t >= start0) & (t < w_on) & (lab != "Normal")
+    near = (t >= onset - 120) & (t < onset) & (lab != "Normal")
+    print(f"{k}: flow không phải Normal trong 120 s trước mốc thật {iso(onset)}: {int(near.sum())}", flush=True)
+    for i in np.flatnonzero(near)[:40]:
+        print(f"    {t[i] - onset:+9.3f} s so với mốc | {lab[i]} | {raw[lcol].iloc[i]}")
+    start, moved, violation = start0, None, None
+    if bad.any():                                      # có lưu lượng tấn công/khác trước mốc: dời mốc bắt đầu tới cửa sổ ngay sau flow đó nếu còn đủ đoạn yên tĩnh
         last_bad = float(t[bad].max())
-        start = math.ceil((last_bad + 1e-3) / WINDOW_S) * WINDOW_S
-        moved = {"from": p["start"], "to": iso(start), "n_non_normal_before": int(bad.sum()), "labels": pd.Series(lab[bad]).value_counts().to_dict(),
-                 "last_non_normal": iso(last_bad)}
-    if onset - start < MIN_CALM_S:
-        raise RuntimeError(f"{k}: chỉ còn {onset - start:.0f} s yên tĩnh trước mốc tấn công sau khi dời mốc")
+        new_start = math.ceil((last_bad + 1e-3) / WINDOW_S) * WINDOW_S
+        info = {"n_non_normal_before": int(bad.sum()), "labels": pd.Series(lab[bad]).value_counts().to_dict(), "last_non_normal": iso(last_bad),
+                "offsets_s": [round(float(x), 3) for x in (t[bad] - onset)[:40]]}
+        if w_on - new_start >= MIN_CALM_S:
+            start, moved = new_start, {"from": p["start"], "to": iso(new_start), **info}
+        else:
+            violation = {"would_move_to": iso(new_start), **info}   # không còn đủ đoạn yên tĩnh: giữ mốc, ghi lại để quyết định
+            print(f"    CẢNH BÁO {k}: không dời được mốc bắt đầu (chỉ còn {w_on - new_start:.0f} s yên tĩnh): {violation}", flush=True)
     sel = (tm >= start * 1000) & (tm < end * 1000)
     path = data_dir / f"{k}.csv"
     raw[sel].to_csv(path, index=False, encoding="utf-8")
-    pre = pd.Series(lab[(t >= start) & (t < onset)]).value_counts().to_dict()
+    pre = pd.Series(lab[(t >= start) & (t < w_on)]).value_counts().to_dict()
     post = pd.Series(lab[(t >= onset) & (t < end)]).value_counts().to_dict()
     seg = dict(id=k, title=p["title"], cls=p["cls"], start=iso(start), start_planned=p["start"], end=p["end"], onset_nominal=p["onset"], onset_ts=onset,
                onset=datetime.fromtimestamp(onset, tz=timezone.utc).isoformat(timespec="milliseconds"),
-               onset_window=iso(math.floor(onset / WINDOW_S) * WINDOW_S), start_moved=moved, n_flows=int(sel.sum()), file=str(path), doc_s=p["doc_s"],
-               flows_before_onset=pre, flows_after_onset=post, duration_s=end - start, calm_s=onset - start)
+               onset_window=iso(w_on), start_moved=moved, calm_violation=violation, n_flows=int(sel.sum()), file=str(path), doc_s=p["doc_s"],
+               flows_before_onset=pre, flows_after_onset=post, duration_s=end - start, calm_s=w_on - start)
     print(f"{k} {p['title']}: {iso(start)} → {p['end']}, mốc thật {seg['onset']}, {seg['n_flows']:,} flow ({os.path.getsize(path) / 1024:.0f} KB)")
-    print(f"    trước mốc: {pre} | từ mốc: {post}" + (f" | ĐÃ DỜI MỐC BẮT ĐẦU: {moved}" if moved else " | phần trước mốc chỉ có Normal, không dời"), flush=True)
+    print(f"    trước mốc: {pre} | từ mốc: {post}" + (f" | ĐÃ DỜI MỐC BẮT ĐẦU: {moved}" if moved else (" | CÓ FLOW LẠ TRƯỚC MỐC, KHÔNG DỜI ĐƯỢC" if violation else " | phần trước mốc chỉ có Normal, không dời")), flush=True)
     return seg
 
 
@@ -152,14 +160,15 @@ def verify_segment(seg, test_wins, dataset):
     flows, classes, _ = bg.load_clean(dataset, seg["file"])
     wins = np.unique(np.floor(flows["ts"].to_numpy() / WINDOW_S).astype(np.int64))
     outside = [int(w) for w in wins if int(w) not in test_wins]
-    pre = flows[flows["ts"] < seg["onset_ts"]]
+    pre = flows[flows["ts"] < math.floor(seg["onset_ts"] / WINDOW_S) * WINDOW_S]
     chk = {"n_flows_clean": int(len(flows)), "n_windows": int(len(wins)), "classes": list(classes), "windows_outside_test": len(outside),
            "labels_before_onset": sorted(set(pre["label"])), "n_before_onset": int(len(pre)), "dropped_by_clean": int(seg["n_flows"] - len(flows))}
     print(seg["id"], chk, flush=True)
     if outside:
         raise RuntimeError(f"{seg['id']}: {len(outside)} cửa sổ không thuộc tập test")
-    if set(pre["label"]) != {"Normal"}:
-        raise RuntimeError(f"{seg['id']}: trước mốc còn nhãn {set(pre['label'])}")
+    chk["normal_only_before_onset"] = set(pre["label"]) == {"Normal"}
+    if not chk["normal_only_before_onset"]:
+        print(f"    CẢNH BÁO {seg['id']}: trước cửa sổ chứa mốc tấn công còn nhãn {set(pre['label'])} ({int((pre['label'] != 'Normal').sum())} flow); xem segments.json")
     if chk["dropped_by_clean"] > 0.01 * seg["n_flows"]:
         raise RuntimeError(f"{seg['id']}: làm sạch bỏ quá nhiều flow ({chk['dropped_by_clean']})")
     return chk
@@ -194,7 +203,7 @@ def result_table(SEG, RUNS, models):
             d = R["ep"]["detection_s"]
             rows.append({"đoạn": k, "mô hình": m, "mốc tấn công thật": s["onset"][11:23], "phát hiện": R["ep"]["detected"],
                          "cảnh báo đầu tiên từ mốc": R["first_alert_t"], "thời gian phát hiện (s)": None if d is None else round(d, 3),
-                         "kịch bản (s)": s["doc_s"], "báo nhầm trước mốc (cửa sổ)": len(R["calm_alerts"]), "p95 ms/cửa sổ": round(R["p95_ms"], 1),
+                         "kịch bản (s)": s["doc_s"], "chỉ Normal trước mốc": s["check"]["normal_only_before_onset"], "báo nhầm trước mốc (cửa sổ)": len(R["calm_alerts"]), "p95 ms/cửa sổ": round(R["p95_ms"], 1),
                          "lệch offline (node)": R["agreement"]["n_mis_thr"], "cửa sổ lệch cấu trúc": R["agreement"]["struct_bad"]})
     return pd.DataFrame(rows)
 

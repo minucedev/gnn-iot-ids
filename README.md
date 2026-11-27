@@ -100,6 +100,19 @@ python -I scripts/detector.py --config detector_config.json --model hybrid_gat_l
 - `--speedup N`: chờ cho thời gian thật chậm hơn thời gian dữ liệu N lần (mặc định không chờ). `--max-windows N`: dừng sau N cửa sổ. `--no-reference`: không đối chiếu với đồ thị offline.
 - Kết quả trong `--out`: `alerts.csv` (t_close, window, ip, pred_class, p_attack, p_class, proc_ms), `windows.csv` (độ trễ từng cửa sổ, RAM, đối chiếu offline), `detector_summary.json` (mô hình, ngưỡng, CPU, phiên bản thư viện).
 - Đánh giá: `python -I scripts/realtime_eval.py <thư mục --out> <thư mục bảng> <thư mục hình>` ghi `latency.json`, `realtime_eval.json`, `alerts_sample.csv`, `gd8_*.png`.
+- Tùy chọn cho demo (không dùng thì kết quả y hệt trước): `--start`, `--end` (giờ UTC dạng ISO, chạy đúng một đoạn), `--print-windows` (mỗi cửa sổ một dòng:
+  giờ, số node, số cạnh, ms, số cảnh báo; cảnh báo in IP, lớp, p = 1 − P(Normal)), `--color`, `--max-alert-lines`, `--stop-after-alert`, `--alert-from`,
+  `--dump-first-alert <json>`, `--flows-csv`, `--partial-flows`. Ví dụ một đoạn:
+  `python -I scripts/detector.py --config detector_config.json --model hybrid_gat_lgbm_oofavg_il --out demo_out --flows-csv D1.csv --partial-flows --no-reference --start 2019-04-24T20:07:00 --end 2019-04-24T20:12:00 --speedup 5 --print-windows`.
+
+### Demo cho buổi bảo vệ (kịch bản [report/KICH_BAN_DEMO.md](report/KICH_BAN_DEMO.md))
+
+- **Chạy trực tiếp trên Kaggle:** notebook [22_demo](notebooks/22_demo.ipynb) (slug `gnn-iot-ids-22-demo`, CPU, Internet bật). Ô 1 cài đặt, ô 2 khởi động (nạp mô hình một lần), rồi ba ô D1, D2, D3
+  phát lại ×5 và in từng cửa sổ, ô vẽ đồ thị cửa sổ có cảnh báo đầu tiên, bảng tốc độ, bảng giới hạn. Đầu vào là output của [22a_demo_prep](notebooks/22a_demo_prep.ipynb)
+  (cắt 3 đoạn, chạy thử, xuất `demo_replay.json`); tính toán nằm trong [scripts/demo_prep.py](scripts/demo_prep.py) và [scripts/demo_server.py](scripts/demo_server.py).
+- **Dự phòng không cần mạng:** mở [report/demo/demo_replay.html](report/demo/demo_replay.html) bằng trình duyệt (nhấp đúp file, không cần Python hay Internet). Trang tự chứa
+  dữ liệu: chọn D1, D2, D3, phát lại từng cửa sổ (tốc độ chỉnh được), cảnh báo đỏ, đồ thị cửa sổ cảnh báo đầu tiên, bảng tốc độ và bảng giới hạn. Nhúng lại dữ liệu mới:
+  `python3 -I report/demo/embed_replay.py <demo_replay.json>`.
 
 ## Báo cáo và slide
 
@@ -130,6 +143,7 @@ Mọi tính toán chạy trên Kaggle (tài khoản có quyền đọc dataset `
 | 9 | `20_realtime` | Phát lại toàn bộ flow test: độ trễ, khớp online/offline, cảnh báo giả, thời gian phát hiện, RAM | CPU |
 | 10 | `20a_undetected` | Vì sao một số đợt tấn công không có cảnh báo | CPU |
 | 11 | `21_reproduce` | Chạy lại bước 7 từ output đã lưu, so với bảng trong repo (lệch F1-macro ≤ 0,5 điểm %) | CPU |
+| 12 | `22a_demo_prep`, `22_demo` | Demo bảo vệ: cắt 3 đoạn D1–D3, chạy thử, xuất `demo_replay.json`; notebook demo phát lại ×5 | CPU |
 
 Công cụ chẩn đoán RAM: `20b`, `20c`, `20d` (`scripts/ram_diag.py`). Kết quả đã kéo về lưu ở `reports/kaggle/<slug>/`, bảng ở `reports/tables/`,
 hình ở `reports/figures/`. Chạy kiểm thử trên Kaggle (`pytest -q`, mỗi notebook làm bước này); WSL không có pip nên không chạy được pytest ở máy cá nhân.
